@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@import "tailwindcss";
+
 @theme {
-  --font-sans: "Inter", sans-serif;
+  /* --font-sans: "Inter", sans-serif; */
+  --font-sans: "JetBrainsMono Nerd Font", monospace;
+
+  /* LoreWeaver Palette - Option 3: The Cyberpunk Ledger */
+  --color-chrome: #12111A;          /* Moody cosmic dark violet-grey canvas */
+  --color-chrome-surface: #1D1B26;  /* Elevated layout containers and sidebars */
+  --color-chrome-border: #262433;   /* Visible, cold panel vertical line rules */
+  --color-accent: #00E5FF;          /* High-voltage neon cyan/teal accent */
 }
