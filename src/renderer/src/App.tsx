@@ -1,9 +1,12 @@
 import Versions from './components/Versions'
 import { Node } from './components/Node'
+import { useUI } from './context/UIContext'
+
 // import electronLogo from './assets/electron.svg'
 
 function App(): React.JSX.Element {
   // const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+  const { currentMode, setCurrentMode } = useUI()
 
   return (
     <>
@@ -16,19 +19,22 @@ function App(): React.JSX.Element {
           <nav className="mt-4 flex-1">
             <a
               href="#"
-              className="block py-2 px-6 hover:bg-chrome/50 text-white/90 hover:text-white"
+              className={`block py-2 px-6 hover:bg-chrome/50 ${currentMode === 'weaver' ? 'text-accent' : 'text-white/90'} hover:text-white`}
+              onClick={() => setCurrentMode('weaver')}
             >
               󰋘 Weaver
             </a>
             <a
               href="#"
-              className="block py-2 px-6 hover:bg-chrome/50 text-white/90 hover:text-white"
+              className={`block py-2 px-6 hover:bg-chrome/50 ${currentMode === 'keeper' ? 'text-accent' : 'text-white/90'} hover:text-white`}
+              onClick={() => setCurrentMode('keeper')}
             >
               󰋘 Keeper
             </a>
             <a
               href="#"
-              className="block py-2 px-6 hover:bg-chrome/50 text-white/90 hover:text-white"
+              className={`block py-2 px-6 hover:bg-chrome/50 ${currentMode === 'settings' ? 'text-accent' : 'text-white/90'} hover:text-white`}
+              onClick={() => setCurrentMode('settings')}
             >
               󰒓 Settings
             </a>
