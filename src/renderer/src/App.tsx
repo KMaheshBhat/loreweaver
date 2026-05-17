@@ -1,84 +1,91 @@
-import Versions from './components/Versions'
-import { Node } from './components/Node'
+import { useState } from 'react'
 import { useUI } from './context/UIContext'
 
-// import electronLogo from './assets/electron.svg'
-
 function App(): React.JSX.Element {
-  // const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
   const { currentMode, setCurrentMode } = useUI()
+  const [versions] = useState(window.electron.process.versions)
 
   return (
     <>
-      {/* Root Container: Full dark chrome canvas background & white base text */}
-      <div className="flex h-screen w-screen bg-chrome text-white overflow-hidden select-none">
+      {/* Root Container: Full dark chrome canvas background & base layout sizing */}
+      <div className="flex h-screen w-screen bg-surface-t1 font-sans overflow-hidden select-none">
         {/* Leftmost Navigation Sidebar (Chrome Surface variant) */}
-        <aside className="w-50 bg-chrome-surface flex-shrink-0 flex flex-col border-r border-chrome-border">
-          <div className="px-6 pt-6 font-bold text-xl text-white text-glow"> LoreWeaver</div>
-          <div className="px-6 font-bold text-xs text-accent">the Loom Throne</div>
+        <aside className="w-50 bg-surface-t2-panel flex-shrink-0 flex flex-col border-r border-transparent layout-t2-see-through">
+          <div className="px-6 pt-6 text-t1"> LoreWeaver</div>
+          <div className="px-6 text-t4 text-accent">the Loom Throne</div>
           <nav className="mt-4 flex-1">
             <a
               href="#"
-              className={`block py-2 px-6 hover:bg-chrome/50 ${currentMode === 'weaver' ? 'text-accent' : 'text-white/90'} hover:text-white`}
+              className={`block py-2 px-6 hover:bg-surface-t1/50 text-t3 ${currentMode === 'weaver' ? 'decorator-beta-focus' : ''} hover:text-t2`}
               onClick={() => setCurrentMode('weaver')}
             >
               󰋘 Weaver
             </a>
             <a
               href="#"
-              className={`block py-2 px-6 hover:bg-chrome/50 ${currentMode === 'keeper' ? 'text-accent' : 'text-white/90'} hover:text-white`}
+              className={`block py-2 px-6 hover:bg-surface-t1/50 text-t3 ${currentMode === 'keeper' ? 'decorator-beta-focus' : ''} hover:text-t2`}
               onClick={() => setCurrentMode('keeper')}
             >
               󰋘 Keeper
             </a>
             <a
               href="#"
-              className={`block py-2 px-6 hover:bg-chrome/50 ${currentMode === 'settings' ? 'text-accent' : 'text-white/90'} hover:text-white`}
+              className={`block py-2 px-6 hover:bg-surface-t1/50 text-t3 ${currentMode === 'settings' ? 'decorator-beta-focus' : ''} hover:text-t2`}
               onClick={() => setCurrentMode('settings')}
             >
               󰒓 Settings
             </a>
           </nav>
-          <Versions />
+          <ul className="p-4 space-y-1 text-t4 border-t border-transparent layout-t2-see-through">
+            <li>Electron v{versions.electron}</li>
+            <li>Chromium v{versions.chrome}</li>
+            <li>Node v{versions.node}</li>
+          </ul>
         </aside>
 
         {/* Main Work Area: Multi-column view tethered with raw vertical rules */}
         <div className="flex-1 flex flex-row min-w-[600px]">
           {/* Left Column (25% width proportional) */}
-          <div className="w-1/4 flex flex-col border-r border-chrome-border overflow-y-auto p-4">
-            <h2 className="font-bold mb-2 text-accent">󰛡 Context</h2>
-            <p className="text-sm text-white/70 truncate">Keeps 25% width.</p>
-            <p className="text-sm text-white/70 truncate text-accent">󰋘 System Instructions</p>
-            <p className="text-sm text-white/70 truncate text-accent">󰋘 Character #1</p>
-            <p className="text-sm text-white/70 truncate text-accent">󰋘 Character #2</p>
-            <p className="text-sm text-white/70 truncate text-accent">󰋘 Scenario</p>
-            <p className="text-sm text-white/70 truncate text-accent">󰋘 Summary #1</p>
-            <p className="text-sm text-white/70 truncate text-accent">󰋘 Summary #2</p>
-            <p className="text-sm text-white/70 truncate text-accent">󰋘 Summary #3</p>
+          <div className="w-1/4 flex flex-col border-r border-transparent layout-t2-see-through overflow-y-auto p-4">
+            <h2 className="text-t1 text-accent mb-2">󰛡 Context</h2>
+            <p className="text-t3 truncate mb-2">Keeps 25% width.</p>
+            <p className="text-t3 truncate text-accent">󰋘 System Instructions</p>
+            <p className="text-t3 truncate text-accent">󰋘 Character #1</p>
+            <p className="text-t3 truncate text-accent">󰋘 Character #2</p>
+            <p className="text-t3 truncate text-accent">󰋘 Scenario</p>
+            <p className="text-t3 truncate text-accent">󰋘 Summary #1</p>
+            <p className="text-t3 truncate text-accent">󰋘 Summary #2</p>
+            <p className="text-t3 truncate text-accent">󰋘 Summary #3</p>
           </div>
 
           {/* Middle Column / Workspace (50% width proportional) */}
-          <div className="w-1/2 flex flex-col border-r border-chrome-border h-full">
+          <div className="w-1/2 flex flex-col border-r border-transparent layout-t2-see-through h-full">
             {/* Scrollable content feed area */}
             <div className="flex-1 overflow-y-auto p-4">
-              <h2 className="font-bold mb-2 text-white text-shadow-xl shadow-sky-400">
-                󰛡 The Weave - Tapestry
-              </h2>
-              <p className="text-sm text-white/70 mb-4">
-                Keeps 50% width. Double the size of the sides.
-              </p>
+              <h2 className="text-t1 mb-2">󰛡 The Weave - Tapestry</h2>
+              <p className="text-t3 mb-4">Keeps 50% width. Double the size of the sides.</p>
               <ul>
-                <Node id={75} content="The narrative begins to unfold..." />
-                <Node id={76} content="Tension rises as events escalate." />
-                <Node id={77} content="A pivotal moment changes everything." active />
+                <li className="p-3 mb-2 bg-surface-t3 rounded transition-all duration-300 decorator-beta-blur">
+                  <div className="text-t4 mb-1">󰋘 Turn #75</div>
+                  <div className="text-t3">The narrative begins to unfold...</div>
+                </li>
+                <li className="p-3 mb-2 bg-surface-t3 rounded transition-all duration-300 decorator-beta-blur">
+                  <div className="text-t4 mb-1">󰋘 Turn #76</div>
+                  <div className="text-t3">Tension rises as events escalate.</div>
+                </li>
+                {/* Raw Mock Block matching the evaluated execution of <Node active={true}> */}
+                <li className="p-3 mb-2 bg-surface-t3 rounded transition-all duration-300 decorator-beta-focus">
+                  <div className="text-t4 mb-1">󰋘 Turn #77</div>
+                  <div className="text-t3">Anthar&apos;s gaze lingers on the ledger layout...</div>
+                </li>
               </ul>
             </div>
 
             {/* Bottom-anchored Mock Multi-line Input Wrapper */}
-            <div className="border-t border-chrome-border p-4 bg-chrome-surface/30">
-              <div className="relative overflow-hidden bg-chrome-surface border border-chrome-border">
+            <div className="border-t border-transparent layout-t2-see-through p-4 bg-surface-t2-panel/30">
+              <div className="relative overflow-hidden bg-surface-t2-panel border border-transparent layout-t2-see-through">
                 {/* 1. Text Layer */}
-                <div className="w-full min-h-[80px] p-3 text-accent text-sm whitespace-pre-wrap cursor-text rounded-none focus:outline-none selection:bg-accent/20">
+                <div className="w-full min-h-[80px] p-3 text-t3 whitespace-pre-wrap cursor-text rounded-none focus:outline-none decorator-delta-focus">
                   󰋙 [Mock Multi-line Input Box Area] <br />
                   Type your narrative commit or prompt here... (drafting Turn#79)
                 </div>
@@ -88,9 +95,9 @@ function App(): React.JSX.Element {
 
           {/* Right Column (25% width proportional) */}
           <div className="w-1/4 flex flex-col overflow-y-auto p-4">
-            <h2 className="font-bold mb-2 text-white/90">󰛡 Causality Accounting</h2>
-            <p className="text-sm text-white/70 truncate">Keeps 25% width.</p>
-            <ul>
+            <h2 className="text-t1 mb-2">󰛡 Causality Accounting</h2>
+            <p className="text-t3 truncate mb-2">Keeps 25% width.</p>
+            <ul className="text-t3">
               <li>󰋘 Result #76-1</li>
               <li>󰋘 Result #76-2</li>
             </ul>
