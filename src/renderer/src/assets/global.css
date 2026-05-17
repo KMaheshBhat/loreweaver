@@ -1,14 +1,43 @@
-@import "tailwindcss";
-
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* --font-sans: "Inter", sans-serif; */
-  --font-sans: "JetBrainsMono Nerd Font", monospace;
+  --font-sans: 'JetBrainsMono Nerd Font', monospace;
 
   /* LoreWeaver Palette - Option 3: The Cyberpunk Ledger */
-  --color-chrome: #12111A;          /* Moody cosmic dark violet-grey canvas */
-  --color-chrome-surface: #1D1B26;  /* Elevated layout containers and sidebars */
-  --color-chrome-border: #262433;   /* Visible, cold panel vertical line rules */
-  --color-accent: #00E5FF;          /* High-voltage neon cyan/teal accent */
+  --color-chrome: #12111a; /* Moody cosmic dark violet-grey canvas */
+  --color-chrome-surface: #1d1b26; /* Elevated layout containers and sidebars */
+  --color-chrome-border: #262433; /* Visible, cold panel vertical line rules */
+  --color-accent: #00e5ff; /* High-voltage neon cyan/teal accent */
+
+  @keyframes text-glow-pulse {
+    0%,
+    100% {
+      text-shadow: 0 0 12px color-mix(in srgb, var(--color-accent) 80%, transparent);
+    }
+    50% {
+      text-shadow: 0 0 32px color-mix(in srgb, var(--color-accent) 95%, transparent);
+    }
+  }
+
+  @keyframes box-glow-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 6px color-mix(in srgb, var(--color-accent) 10%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 12px color-mix(in srgb, var(--color-accent) 65%, transparent);
+    }
+  }
+
+  --animate-text-glow: text-glow-pulse 3s ease-in-out infinite;
+  --animate-box-glow: box-glow-pulse 3s ease-in-out infinite;
+}
+
+@utility text-glow {
+  animation: var(--animate-text-glow);
+}
+
+@utility box-glow {
+  animation: var(--animate-box-glow);
 }

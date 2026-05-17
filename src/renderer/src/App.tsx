@@ -1,4 +1,5 @@
 import Versions from './components/Versions'
+import { Node } from './components/Node'
 // import electronLogo from './assets/electron.svg'
 
 function App(): React.JSX.Element {
@@ -10,8 +11,8 @@ function App(): React.JSX.Element {
       <div className="flex h-screen w-screen bg-chrome text-white overflow-hidden select-none">
         {/* Leftmost Navigation Sidebar (Chrome Surface variant) */}
         <aside className="w-48 bg-chrome-surface flex-shrink-0 flex flex-col border-r border-chrome-border">
-          <div className="px-6 pt-6 font-bold text-xl text-white">LoreWeaver</div>
-          <div className="px-6 font-bold text-xs text-accent">The Loom Throne</div>
+          <div className="px-6 pt-6 font-bold text-xl text-white text-glow">LoreWeaver</div>
+          <div className="px-6 font-bold text-xs text-accent">the Loom Throne</div>
           <nav className="mt-4 flex-1">
             <a
               href="#"
@@ -61,9 +62,9 @@ function App(): React.JSX.Element {
                 Keeps 50% width. Double the size of the sides.
               </p>
               <ul>
-                <li>Turn #75</li>
-                <li>Turn #76</li>
-                <li>Turn #77</li>
+                <Node id={75} content="The narrative begins to unfold..." />
+                <Node id={76} content="Tension rises as events escalate." />
+                <Node id={77} content="A pivotal moment changes everything." active />
               </ul>
             </div>
 
@@ -73,18 +74,8 @@ function App(): React.JSX.Element {
                 {/* 1. Text Layer */}
                 <div className="w-full min-h-[80px] p-3 text-accent text-sm whitespace-pre-wrap cursor-text rounded-none focus:outline-none selection:bg-accent/20">
                   [Mock Multi-line Input Box Area] <br />
-                  Type your narrative commit or prompt here... (drafting Turn#78)
+                  Type your narrative commit or prompt here... (drafting Turn#79)
                 </div>
-
-                {/* 2. Scanline Overlay: Blends MULTIPLY over the text to physically cut lines through the pixels */}
-                <div
-                  className="absolute inset-0 pointer-events-none mix-blend-multiply"
-                  style={{
-                    backgroundImage:
-                      'linear-gradient(rgba(0, 0, 0, 0) 30%, rgba(18, 17, 26, 0.65) 30%)',
-                    backgroundSize: '100% 4px'
-                  }}
-                />
               </div>
             </div>
           </div>
