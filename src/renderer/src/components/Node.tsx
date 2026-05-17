@@ -20,7 +20,7 @@ export function Node({ id, content, timestamp, active }: NodePropsWithTurn): Rea
         active ? 'border-accent box-glow' : 'border-chrome-border'
       }`}
     >
-      <div className="text-xs text-accent mb-1">Turn #{id}</div>
+      <div className="text-xs text-accent mb-1">󰋘 Turn #{id}</div>
       <div className="text-sm text-white">{content}</div>
       {timestamp && <div className="text-xs text-white/50 mt-1">{timestamp}</div>}
     </li>
