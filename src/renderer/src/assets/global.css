@@ -80,8 +80,7 @@
 @utility text-t1 {
   color: var(--text-tier1);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: 1.2rem;
 }
 @utility text-t2 {
   color: var(--text-tier2);
