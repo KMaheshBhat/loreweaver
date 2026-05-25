@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { setupLedgerHandlers } from './ledger'
 
 function createWindow(): void {
   // Create the browser window.
@@ -33,6 +34,11 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  // For DevTools on Start
+  // mainWindow.webContents.openDevTools({
+  //   mode: 'detach'
+  // })
 }
 
 // This method will be called when Electron has finished
@@ -51,6 +57,8 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  setupLedgerHandlers()
 
   createWindow()
 

@@ -1,4 +1,3 @@
-// UIProvider.tsx
 import { ReactNode, ReactElement, useState } from 'react'
 import { UIContext, AppMode } from './UIContext'
 

@@ -1,9 +1,19 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useUI } from './context/UIContext'
+import { GraphNode } from '@engine/types/base'
+import { ChromeNode } from '@engine/types/chrome'
 
 function App(): React.JSX.Element {
   const { currentMode, setCurrentMode } = useUI()
   const [versions] = useState(window.electron.process.versions)
+  const [nodes, setNodes] = useState<GraphNode[]>([])
+
+  useEffect(() => {
+    window.api.engine.querySidebarNodes().then((rawNodes: GraphNode[]) => {
+      console.log('Got sidebar nodes', rawNodes)
+      setNodes(rawNodes)
+    })
+  }, [])
 
   return (
     <>
@@ -14,27 +24,22 @@ function App(): React.JSX.Element {
           <div className="px-6 pt-6 text-t1"> LoreWeaver</div>
           <div className="px-6 text-t4 text-accent">the Loom Throne</div>
           <nav className="mt-4 flex-1">
-            <a
-              href="#"
-              className={`block py-2 px-6 hover:bg-surface-t1/50 text-t3 ${currentMode === 'weaver' ? 'decorator-beta-focus' : ''} hover:text-t2`}
-              onClick={() => setCurrentMode('weaver')}
-            >
-              󰋘 Weaver
-            </a>
-            <a
-              href="#"
-              className={`block py-2 px-6 hover:bg-surface-t1/50 text-t3 ${currentMode === 'keeper' ? 'decorator-beta-focus' : ''} hover:text-t2`}
-              onClick={() => setCurrentMode('keeper')}
-            >
-              󰋘 Keeper
-            </a>
-            <a
-              href="#"
-              className={`block py-2 px-6 hover:bg-surface-t1/50 text-t3 ${currentMode === 'settings' ? 'decorator-beta-focus' : ''} hover:text-t2`}
-              onClick={() => setCurrentMode('settings')}
-            >
-              󰒓 Settings
-            </a>
+            {nodes.map((node) => {
+              const chromeNode = node as ChromeNode
+              const title = chromeNode.data.title ?? chromeNode.data.id ?? 'UNKNOWN'
+              const icon = chromeNode.data.icon ?? '󰋘'
+              const routeMode = chromeNode.data.routeMode
+              return (
+                <a
+                  key={chromeNode.id}
+                  href="#"
+                  className={`block py-2 px-6 hover:bg-surface-t1/50 text-t3 ${currentMode === routeMode ? 'decorator-beta-focus' : ''} hover:text-t2`}
+                  onClick={() => setCurrentMode(routeMode)}
+                >
+                  {icon} {title}
+                </a>
+              )
+            })}
           </nav>
           <ul className="p-4 space-y-1 text-t4 border-t border-transparent layout-t2-see-through">
             <li>Electron v{versions.electron}</li>
