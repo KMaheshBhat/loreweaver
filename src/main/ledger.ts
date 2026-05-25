@@ -6,9 +6,21 @@ import { createGraphNode } from '@engine/logic/base'
 
 // 1. The central in-memory ledger (State)
 const centralLedger: GraphNodeMap = {
-  weaver: createChromeNode('weaver').withTitle('Weaver').withIcon('󰋘').withMenuVisibility(true).build(),
-  keeper: createChromeNode('keeper').withTitle('Keeper').withIcon('󰋘').withMenuVisibility(true).build(),
-  settings: createChromeNode('settings').withTitle('Settings').withIcon('󰒓').withMenuVisibility(true).build(),
+  weaver: createChromeNode('weaver')
+    .withTitle('Weaver')
+    .withIcon('󰋘')
+    .withMenuVisibility(true)
+    .build(),
+  keeper: createChromeNode('keeper')
+    .withTitle('Keeper')
+    .withIcon('󰋘')
+    .withMenuVisibility(true)
+    .build(),
+  settings: createChromeNode('settings')
+    .withTitle('Settings')
+    .withIcon('󰒓')
+    .withMenuVisibility(true)
+    .build(),
   'secret-node': createGraphNode('secret-node')
     .withData({ content: 'Should not show in sidebar' })
     .build()
