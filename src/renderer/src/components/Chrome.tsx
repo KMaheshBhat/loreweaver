@@ -10,17 +10,6 @@ function Chrome(): React.JSX.Element {
         {/* Main Work Area: Multi-column view tethered with raw vertical rules */}
         <div className="flex-1 flex flex-row min-w-[600px]">
           {/* Left Column (25% width proportional) */}
-          {/* <div className="w-1/4 flex flex-col border-r border-transparent layout-t2-see-through overflow-y-auto p-4">
-            <h2 className="text-t2 text-accent mb-2">󰛡 Context</h2>
-            <p className="text-t3 truncate mb-2">Keeps 25% width.</p>
-            <p className="text-t3 truncate text-accent">󰋘 System Instructions</p>
-            <p className="text-t3 truncate text-accent">󰋘 Character #1</p>
-            <p className="text-t3 truncate text-accent">󰋘 Character #2</p>
-            <p className="text-t3 truncate text-accent">󰋘 Scenario</p>
-            <p className="text-t3 truncate text-accent">󰋘 Summary #1</p>
-            <p className="text-t3 truncate text-accent">󰋘 Summary #2</p>
-            <p className="text-t3 truncate text-accent">󰋘 Summary #3</p>
-          </div> */}
           <Context />
           {/* Middle Column / Workspace (50% width proportional) */}
           <div className="w-1/2 flex flex-col border-r border-transparent layout-t2-see-through h-full">

@@ -143,3 +143,35 @@
 @utility decorator-epsilon-blur {
   border: 1px dashed var(--theme-decorator-epsilon-blur-border);
 }
+
+/* Custom Terminal Scrollbar Utilities */
+@utility custom-terminal-scroll {
+  /* Standard modern properties (Firefox/Standards) */
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-tier2-border) transparent;
+
+  /* Webkit Engines (Electron/Chromium Chrome) */
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* The thumb represents the draggable scroll indicator */
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--surface-tier2-border);
+    border-radius: 9999px;
+  }
+
+  /* Make it pop subtly when the user hovers directly inside the column frame */
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: color-mix(
+      in srgb,
+      var(--theme-decorator-beta-focus-border) 40%,
+      var(--surface-tier2-border)
+    );
+  }
+}
