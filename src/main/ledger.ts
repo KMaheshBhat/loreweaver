@@ -80,6 +80,91 @@ const centralLedger: GraphNodeMap = {
       content:
         '## The Scenario: A Dusty Crossroads Inn\nSer Duncan the Tall stands frozen in a crowded tavern yard, his massive frame blocking the doorway as a group of hostile, drunk local guards close in around him. Egg, a bald kid in muddy boots, steps out from behind Dunk\'s massive legs, crossing his arms and boldly flashing a heavy gold signet ring engraved with a three-headed dragon. The tavern falls completely silent as the guards instantly drop to their knees in terror. Dunk lets out a heavy sigh, rubs his temples, and mutters, "Egg, you little lunk, we were supposed to be keeping a low profile."'
     })
+    .build(),
+  // --- Column 2 & 3 Dynamic Runtime History Logs ---
+  turn75: createGraphNode('weave:turn:75')
+    .withData({
+      group: 'weave',
+      title: 'Turn #75',
+      content: 'The narrative begins to unfold...',
+      timestamp: 1774432800000
+    })
+    .build(),
+  result75_1: createGraphNode('engine:result:75-1')
+    .withData({
+      group: 'system',
+      title: 'Result #75-1',
+      kind: 'causality',
+      targetTurn: 'weave:turn:75',
+      metrics: {
+        promptTokens: 1420,
+        completionTokens: 312,
+        inferenceTimeMs: 840
+      },
+      content:
+        'SUCCESS: Ledger synchronization committed. State delta evaluated clean against schema verification rules.'
+    })
+    .build(),
+  turn76: createGraphNode('weave:turn:76')
+    .withData({
+      group: 'weave',
+      title: 'Turn #76',
+      content: 'Tension rises as events escalate.',
+      timestamp: 1774432860000
+    })
+    .build(),
+  result76_1: createGraphNode('engine:result:76-1')
+    .withData({
+      group: 'system',
+      title: 'Result #76-1',
+      kind: 'causality',
+      targetTurn: 'weave:turn:76',
+      metrics: {
+        promptTokens: 1850,
+        completionTokens: 420,
+        inferenceTimeMs: 1100
+      },
+      content:
+        'SUCCESS: Context window shifted. Eviction pipeline cleared 2 stale beta-tier transient nodes.'
+    })
+    .build(),
+  result76_2: createGraphNode('engine:result:76-2')
+    .withData({
+      group: 'system',
+      title: 'Result #76-2',
+      kind: 'introspection',
+      targetTurn: 'weave:turn:76',
+      metrics: {
+        criticPromptTokens: 440,
+        criticCompletionTokens: 5,
+        verdict: 'CLEAN'
+      },
+      content:
+        'VALIDATION: David-model checked prose boundaries. Zero conversational handshakes or clichés discovered.'
+    })
+    .build(),
+  turn77: createGraphNode('weave:turn:77')
+    .withData({
+      group: 'weave',
+      title: 'Turn #77',
+      content: "Anthar's gaze lingers on the ledger layout...",
+      timestamp: 1774432920000
+    })
+    .build(),
+  result77_1: createGraphNode('engine:result:77-1')
+    .withData({
+      group: 'system',
+      title: 'Result #77-1',
+      kind: 'causality',
+      targetTurn: 'weave:turn:77',
+      metrics: {
+        promptTokens: 2100,
+        completionTokens: 18,
+        inferenceTimeMs: 220
+      },
+      content:
+        'BEEP! TRY AGAIN! Introspection loop intercepted a conversational handshake cliche ("Your move"). Re-rolling inference execution branch.'
+    })
     .build()
 }
 
