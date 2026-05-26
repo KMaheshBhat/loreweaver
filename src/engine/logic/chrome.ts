@@ -7,7 +7,6 @@ export function isChromeNode(node: GraphNode): node is ChromeNode {
 }
 
 export function querySidebarNodes(nodeMap: GraphNodeMap): GraphNode[] {
-  console.log(nodeMap)
   return Object.values(nodeMap)
     .filter(isChromeNode)
     .filter((node) => node.data.availableInMenu === true)

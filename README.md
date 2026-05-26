@@ -2,7 +2,7 @@
 
 ## goal
 
-Implement a local, single-player MVP of LoreWeaver as a thick desktop client that shifts text-roleplaying away from simple "glorified autocomplete" chatbots into a deterministic, state-driven simulation engine. 
+Implement a local, single-player MVP of LoreWeaver as a thick desktop client that shifts text-roleplaying away from simple "glorified autocomplete" chatbots into a deterministic, state-driven simulation engine.
 
 ### core pillars
 

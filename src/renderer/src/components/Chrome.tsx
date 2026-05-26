@@ -1,53 +1,11 @@
-import { useEffect, useState } from 'react'
-import { useUI } from './context/UIContext'
-import { GraphNode } from '@engine/types/base'
-import { ChromeNode } from '@engine/types/chrome'
+import Sidebar from './Sidebar'
 
-function App(): React.JSX.Element {
-  const { currentMode, setCurrentMode } = useUI()
-  const [versions] = useState(window.electron.process.versions)
-  const [nodes, setNodes] = useState<GraphNode[]>([])
-
-  useEffect(() => {
-    window.api.engine.querySidebarNodes().then((rawNodes: GraphNode[]) => {
-      console.log('Got sidebar nodes', rawNodes)
-      setNodes(rawNodes)
-    })
-  }, [])
-
+function Chrome(): React.JSX.Element {
   return (
     <>
       {/* Root Container: Full dark chrome canvas background & base layout sizing */}
       <div className="flex h-screen w-screen bg-surface-t1 font-sans overflow-hidden select-none">
-        {/* Leftmost Navigation Sidebar (Chrome Surface variant) */}
-        <aside className="w-50 bg-surface-t2-panel flex-shrink-0 flex flex-col border-r border-transparent layout-t2-see-through">
-          <div className="px-6 pt-6 text-t1"> LoreWeaver</div>
-          <div className="px-6 text-t4 text-accent">the Loom Throne</div>
-          <nav className="mt-4 flex-1">
-            {nodes.map((node) => {
-              const chromeNode = node as ChromeNode
-              const title = chromeNode.data.title ?? chromeNode.data.id ?? 'UNKNOWN'
-              const icon = chromeNode.data.icon ?? '󰋘'
-              const routeMode = chromeNode.data.routeMode
-              return (
-                <a
-                  key={chromeNode.id}
-                  href="#"
-                  className={`block py-2 px-6 hover:bg-surface-t1/50 text-t3 ${currentMode === routeMode ? 'decorator-beta-focus' : ''} hover:text-t2`}
-                  onClick={() => setCurrentMode(routeMode)}
-                >
-                  {icon} {title}
-                </a>
-              )
-            })}
-          </nav>
-          <ul className="p-4 space-y-1 text-t4 border-t border-transparent layout-t2-see-through">
-            <li>Electron v{versions.electron}</li>
-            <li>Chromium v{versions.chrome}</li>
-            <li>Node v{versions.node}</li>
-          </ul>
-        </aside>
-
+        <Sidebar />
         {/* Main Work Area: Multi-column view tethered with raw vertical rules */}
         <div className="flex-1 flex flex-row min-w-[600px]">
           {/* Left Column (25% width proportional) */}
@@ -62,7 +20,6 @@ function App(): React.JSX.Element {
             <p className="text-t3 truncate text-accent">󰋘 Summary #2</p>
             <p className="text-t3 truncate text-accent">󰋘 Summary #3</p>
           </div>
-
           {/* Middle Column / Workspace (50% width proportional) */}
           <div className="w-1/2 flex flex-col border-r border-transparent layout-t2-see-through h-full">
             {/* Scrollable content feed area */}
@@ -85,7 +42,6 @@ function App(): React.JSX.Element {
                 </li>
               </ul>
             </div>
-
             {/* Bottom-anchored Mock Multi-line Input Wrapper */}
             <div className="border-t border-transparent layout-t2-see-through p-4 bg-surface-t2-panel/30">
               <div className="relative overflow-hidden bg-surface-t2-panel border border-transparent layout-t2-see-through">
@@ -113,4 +69,4 @@ function App(): React.JSX.Element {
   )
 }
 
-export default App
+export default Chrome
