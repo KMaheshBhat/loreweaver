@@ -79,11 +79,12 @@
 @utility text-t1 {
   color: var(--text-tier1);
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
 }
 @utility text-t2 {
   color: var(--text-tier2);
   font-weight: 600;
+  font-size: 1.1rem;
 }
 @utility text-t3 {
   color: var(--text-tier3);

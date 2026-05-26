@@ -1,12 +1,15 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { GraphNode } from '@engine/types/base'
+import { ChromeNode } from '@engine/types/chrome'
 
 declare global {
   interface Window {
     electron: ElectronAPI
     api: {
       engine: {
-        querySidebarNodes: () => Promise<GraphNode[]>
+        app: () => Promise<GraphNode>
+        chrome: {
+          sidebarNodes: () => Promise<ChromeNode[]>
+        }
       }
     }
   }

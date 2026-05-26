@@ -6,6 +6,14 @@ import { createGraphNode } from '@engine/logic/base'
 
 // 1. The central in-memory ledger (State)
 const centralLedger: GraphNodeMap = {
+  app: createGraphNode('app')
+    .withData({
+      icon: '',
+      title: 'LoreWeaver',
+      version: process.env.npm_package_version,
+      name: process.env.npm_package_name
+    })
+    .build(),
   weaver: createChromeNode('weaver')
     .withTitle('Weaver')
     .withIcon('󰋘')
@@ -26,8 +34,11 @@ const centralLedger: GraphNodeMap = {
     .build()
 }
 
-export function setupLedgerHandlers(): void {
-  ipcMain.handle('nodes:query-sidebar', async (): Promise<GraphNode[]> => {
+export function setupHandlers(): void {
+  ipcMain.handle('app:node', async (): Promise<GraphNode> => {
+    return centralLedger.app
+  })
+  ipcMain.handle('chrome:sidebar-nodes', async (): Promise<GraphNode[]> => {
     return querySidebarNodes(centralLedger)
   })
 }

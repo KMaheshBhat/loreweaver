@@ -2,16 +2,6 @@ import { GraphNode, GraphNodeMap } from '@engine/types/base'
 import { ChromeNode, ChromeNodeData } from '@engine/types/chrome'
 import { createGraphNode, GraphNodeBuilder } from './base'
 
-export function isChromeNode(node: GraphNode): node is ChromeNode {
-  return node.kind === 'chrome' && typeof node.data === 'object' && node.data !== null
-}
-
-export function querySidebarNodes(nodeMap: GraphNodeMap): GraphNode[] {
-  return Object.values(nodeMap)
-    .filter(isChromeNode)
-    .filter((node) => node.data.availableInMenu === true)
-}
-
 export interface ChromeNodeBuilder extends GraphNodeBuilder {
   withTitle(title: string): ChromeNodeBuilder
   withRouteMode(routeMode: ChromeNodeData['routeMode']): ChromeNodeBuilder
@@ -70,4 +60,14 @@ export function createChromeNode(id: string): ChromeNodeBuilder {
     }
   }
   return builder
+}
+
+export function isChromeNode(node: GraphNode): node is ChromeNode {
+  return node.kind === 'chrome' && typeof node.data === 'object' && node.data !== null
+}
+
+export function querySidebarNodes(nodeMap: GraphNodeMap): GraphNode[] {
+  return Object.values(nodeMap)
+    .filter(isChromeNode)
+    .filter((node) => node.data.availableInMenu === true)
 }
