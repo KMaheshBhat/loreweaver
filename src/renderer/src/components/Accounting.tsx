@@ -4,7 +4,7 @@ import Title from './Title'
 import { createChromeNode } from '@engine/logic/chrome'
 import Card from './Card'
 
-function Context(): React.JSX.Element {
+function Accounting(): React.JSX.Element {
   const [nodes, setNodes] = useState<GraphNode[]>([])
   const [titleNode, setTitleNode] = useState<GraphNode>()
 
@@ -13,20 +13,19 @@ function Context(): React.JSX.Element {
       const sidebarNodes = await window.api.engine.chrome.sidebarNodes()
       const allNodes = await window.api.engine.weaver.nodes()
       const weaverConfig = sidebarNodes.find((node) => node.id === 'weaver')
-      const tTitle = weaverConfig?.data?.context?.['title'] ?? ''
-      const tIcon = weaverConfig?.data?.context?.['icon'] ?? ''
-      const tSubtitle = weaverConfig?.data?.context?.['subTitle'] ?? ''
-      const tNode = createChromeNode('context')
+      const tTitle = weaverConfig?.data?.accounting?.['title'] ?? ''
+      const tIcon = weaverConfig?.data?.accounting?.['icon'] ?? ''
+      const tSubtitle = weaverConfig?.data?.accounting?.['subTitle'] ?? ''
+      const tNode = createChromeNode('accounting')
         .withTitle(tTitle)
         .withIcon(tIcon)
         .withData({ subTitle: tSubtitle })
         .build()
       setTitleNode(tNode)
-      const targetPrefixes: string[] = weaverConfig?.data?.context?.['prefixes'] ?? []
+      const targetPrefixes: string[] = weaverConfig?.data?.accounting?.['prefixes'] ?? []
       const filtered = allNodes.filter((node) =>
         targetPrefixes.some((prefix) => node.id.startsWith(prefix))
       )
-      console.log(filtered)
       setNodes(filtered)
     }
     hydrateColumnData()
@@ -68,4 +67,4 @@ function Context(): React.JSX.Element {
   )
 }
 
-export default Context
+export default Accounting

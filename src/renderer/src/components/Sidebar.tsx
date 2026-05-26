@@ -11,42 +11,44 @@ function Sidebar(): React.JSX.Element {
   const [sidebarNodes, setSidebarNodes] = useState<ChromeNode[]>([])
 
   useEffect(() => {
-    window.api.engine.client().then((rawNode: GraphNode) => {
-      setAppNode(rawNode)
-    })
-  }, [])
-  useEffect(() => {
-    window.api.engine.chrome.sidebarNodes().then((rawNodes: ChromeNode[]) => {
-      setSidebarNodes(rawNodes)
-    })
+    const hydrateSidebarData = async (): Promise<void> => {
+      const [rawAppNode, rawSidebarNodes] = await Promise.all([
+        window.api.engine.client(),
+        window.api.engine.chrome.sidebarNodes()
+      ])
+      setAppNode(rawAppNode)
+      setSidebarNodes(rawSidebarNodes)
+    }
+
+    hydrateSidebarData()
   }, [])
 
   return (
-    <>
-      <aside className="w-50 bg-surface-t2-panel flex-shrink-0 flex flex-col border-r border-transparent layout-t2-see-through">
-        {appNode && (
-          <div className="px-6 pt-6">
-            <Title
-              node={appNode}
-              variant="h1"
-              titleKey="title"
-              iconKey="icon"
-              subTitleKey="version"
-            />
-          </div>
+    <aside className="w-50 bg-surface-t2-panel flex-shrink-0 flex flex-col border-r border-transparent layout-t2-see-through">
+      <div className="px-6 pt-6 min-h-[88px]">
+        {appNode ? (
+          <Title
+            node={appNode}
+            variant="h1"
+            titleKey="title"
+            iconKey="icon"
+            subTitleKey="version"
+          />
+        ) : (
+          <div className="animate-pulse bg-surface-t2-border/20 h-12 rounded w-4/5" />
         )}
-        <nav className="mt-4 flex-1">
-          {sidebarNodes.map((node) => (
-            <NavItem
-              key={node.id}
-              node={node}
-              isActive={currentMode === node.data.routeMode}
-              onClick={setCurrentMode}
-            />
-          ))}
-        </nav>
-      </aside>
-    </>
+      </div>
+      <nav className="mt-4 flex-1">
+        {sidebarNodes.map((node) => (
+          <NavItem
+            key={node.id}
+            node={node}
+            isActive={currentMode === node.data.routeMode}
+            onClick={setCurrentMode}
+          />
+        ))}
+      </nav>
+    </aside>
   )
 }
 
