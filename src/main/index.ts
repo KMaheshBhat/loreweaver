@@ -11,6 +11,7 @@ function createWindow(): void {
     height: 670,
     show: false,
     autoHideMenuBar: true,
+    titleBarStyle: 'hidden',
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -59,6 +60,10 @@ app.whenReady().then(() => {
   ipcMain.on('ping', () => console.log('pong'))
 
   setupHandlers()
+  ipcMain.on('engine:chrome:exit', () => {
+    // This allows future SQLite transaction buffers to flush naturally before closing the window handle
+    app.quit()
+  })
 
   createWindow()
 

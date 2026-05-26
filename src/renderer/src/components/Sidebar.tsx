@@ -1,14 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useUI } from '../context/UIContext'
 import { GraphNode } from '@engine/types/base'
 import { ChromeNode } from '@engine/types/chrome'
 import Title from './Title'
 import NavItem from './NavItem'
+import { createChromeNode } from '@engine/logic/chrome'
 
 function Sidebar(): React.JSX.Element {
   const { currentMode, setCurrentMode } = useUI()
   const [appNode, setAppNode] = useState<GraphNode>()
   const [sidebarNodes, setSidebarNodes] = useState<ChromeNode[]>([])
+
+  // Stabilize structural leaf node to prevent re-instantiation thrashing
+  const exitNode = useMemo(
+    () => createChromeNode('exit').withTitle('Exit').withIcon('󰿅').build(),
+    []
+  )
 
   useEffect(() => {
     const hydrateSidebarData = async (): Promise<void> => {
@@ -24,8 +31,9 @@ function Sidebar(): React.JSX.Element {
   }, [])
 
   return (
-    <aside className="w-50 bg-surface-t2-panel flex-shrink-0 flex flex-col border-r border-transparent layout-t2-see-through">
-      <div className="px-6 pt-6 min-h-[88px]">
+    <aside className="w-50 bg-surface-t2-panel flex-shrink-0 flex flex-col border-r border-transparent layout-t2-see-through h-full">
+      {/* Draggable Zone Header */}
+      <div className="px-6 pt-6 min-h-[88px] custom-header select-none">
         {appNode ? (
           <Title
             node={appNode}
@@ -38,15 +46,34 @@ function Sidebar(): React.JSX.Element {
           <div className="animate-pulse bg-surface-t2-border/20 h-12 rounded w-4/5" />
         )}
       </div>
-      <nav className="mt-4 flex-1">
-        {sidebarNodes.map((node) => (
+
+      {/* Nav Splitter: Flex-col pushes exit button cleanly to the baseline */}
+      <nav className="mt-4 flex-1 flex flex-col justify-between pb-4">
+        {/* Upper Navigation Block */}
+        <div className="flex flex-col space-y-1">
+          {sidebarNodes.map((node) => (
+            <NavItem
+              key={node.id}
+              node={node}
+              isActive={currentMode === node.data.routeMode}
+              onClick={setCurrentMode}
+            />
+          ))}
+        </div>
+
+        {/* Lower Core Control Anchor */}
+        <div className="border-t border-surface-t2-border/10 pt-4">
           <NavItem
-            key={node.id}
-            node={node}
-            isActive={currentMode === node.data.routeMode}
-            onClick={setCurrentMode}
+            key={exitNode.id}
+            node={exitNode}
+            isActive={false}
+            onClick={() => {
+              if (confirm('Are you sure you want to close the narrative engine?')) {
+                window.api.engine.chrome.exitApp()
+              }
+            }}
           />
-        ))}
+        </div>
       </nav>
     </aside>
   )

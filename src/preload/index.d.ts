@@ -9,6 +9,7 @@ declare global {
         client: () => Promise<GraphNode>
         chrome: {
           sidebarNodes: () => Promise<ChromeNode[]>
+          exitApp: () => void
         }
         weaver: {
           nodes(): Promise<GraphNode[]>

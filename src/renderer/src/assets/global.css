@@ -144,6 +144,11 @@
   border: 1px dashed var(--theme-decorator-epsilon-blur-border);
 }
 
+/* Custom Window Utilities */
+@utility custom-header {
+  -webkit-app-region: drag;
+}
+
 /* Custom Terminal Scrollbar Utilities */
 @utility custom-terminal-scroll {
   /* Standard modern properties (Firefox/Standards) */

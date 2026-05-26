@@ -6,7 +6,8 @@ const api = {
   engine: {
     client: () => ipcRenderer.invoke('client:node'),
     chrome: {
-      sidebarNodes: () => ipcRenderer.invoke('chrome:nodes:sidebar')
+      sidebarNodes: () => ipcRenderer.invoke('chrome:nodes:sidebar'),
+      exitApp: () => ipcRenderer.send('engine:chrome:exit')
     },
     weaver: {
       nodes: () => ipcRenderer.invoke('weaver:nodes')
