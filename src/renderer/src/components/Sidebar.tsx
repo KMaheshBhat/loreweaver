@@ -11,7 +11,7 @@ function Sidebar(): React.JSX.Element {
   const [sidebarNodes, setSidebarNodes] = useState<ChromeNode[]>([])
 
   useEffect(() => {
-    window.api.engine.app().then((rawNode: GraphNode) => {
+    window.api.engine.client().then((rawNode: GraphNode) => {
       setAppNode(rawNode)
     })
   }, [])
@@ -25,13 +25,15 @@ function Sidebar(): React.JSX.Element {
     <>
       <aside className="w-50 bg-surface-t2-panel flex-shrink-0 flex flex-col border-r border-transparent layout-t2-see-through">
         {appNode && (
-          <Title
-            node={appNode}
-            variant="h1"
-            titleKey="title"
-            iconKey="icon"
-            subTitleKey="version"
-          />
+          <div className="px-6 pt-6">
+            <Title
+              node={appNode}
+              variant="h1"
+              titleKey="title"
+              iconKey="icon"
+              subTitleKey="version"
+            />
+          </div>
         )}
         <nav className="mt-4 flex-1">
           {sidebarNodes.map((node) => (

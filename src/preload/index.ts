@@ -4,9 +4,12 @@ import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 const api = {
   engine: {
-    app: () => ipcRenderer.invoke('app:node'),
+    client: () => ipcRenderer.invoke('client:node'),
     chrome: {
-      sidebarNodes: () => ipcRenderer.invoke('chrome:sidebar-nodes')
+      sidebarNodes: () => ipcRenderer.invoke('chrome:nodes:sidebar')
+    },
+    weaver: {
+      nodes: () => ipcRenderer.invoke('weaver:nodes')
     }
   }
 }

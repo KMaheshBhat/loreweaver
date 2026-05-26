@@ -32,8 +32,8 @@ function Title({
 
   return (
     <>
-      <div className={`px-6 pt-6 ${variantMap[variant]} text-t1`}>{fullTitle}</div>
-      {subTitle && <div className="px-6 text-t4 text-accent">{String(subTitle)}</div>}
+      <div className={`${variantMap[variant]} text-t1`}>{fullTitle}</div>
+      {subTitle && <div className="text-t4 text-accent">{String(subTitle)}</div>}
     </>
   )
 }

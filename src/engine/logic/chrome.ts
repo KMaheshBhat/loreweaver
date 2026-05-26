@@ -66,7 +66,7 @@ export function isChromeNode(node: GraphNode): node is ChromeNode {
   return node.kind === 'chrome' && typeof node.data === 'object' && node.data !== null
 }
 
-export function querySidebarNodes(nodeMap: GraphNodeMap): GraphNode[] {
+export function querySidebarNodes(nodeMap: GraphNodeMap): ChromeNode[] {
   return Object.values(nodeMap)
     .filter(isChromeNode)
     .filter((node) => node.data.availableInMenu === true)

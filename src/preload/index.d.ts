@@ -6,9 +6,12 @@ declare global {
     electron: ElectronAPI
     api: {
       engine: {
-        app: () => Promise<GraphNode>
+        client: () => Promise<GraphNode>
         chrome: {
           sidebarNodes: () => Promise<ChromeNode[]>
+        }
+        weaver: {
+          nodes(): Promise<GraphNode[]>
         }
       }
     }
