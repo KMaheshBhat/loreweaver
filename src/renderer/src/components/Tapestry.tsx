@@ -63,15 +63,18 @@ function Tapestry(): React.JSX.Element {
           )
         })}
       </div>
-      {/* Bottom-anchored Mock Multi-line Input Wrapper */}
-      <div className="border-t border-transparent layout-t2-see-through p-4 bg-surface-t2-panel/30">
-        <div className="relative overflow-hidden bg-surface-t2-panel border border-transparent layout-t2-see-through">
-          {/* 1. Text Layer */}
-          <div className="w-full min-h-[80px] p-3 text-t3 whitespace-pre-wrap cursor-text rounded-none focus:outline-none decorator-delta-focus">
-            󰋙 [Mock Multi-line Input Box Area] <br />
-            Type your narrative commit or prompt here... (drafting Turn#79)
-          </div>
-        </div>
+      {/* Bottom-anchored Active Synthesis Input Deck */}
+      <div className="flex flex-col gap-2 p-4 bg-surface-t1 border-t border-transparent layout-t2-see-through">
+        <textarea
+          className="w-full min-h-[90px] p-3 text-t3 bg-surface-t1-panel rounded-none outline-none resize-none transition-all duration-150 decorator-delta-blur focus:decorator-delta-focus"
+          placeholder="Draft your turn ..."
+        />
+        <button
+          type="button"
+          className="w-full py-2.5 text-center font-bold tracking-wider uppercase cursor-pointer rounded-none outline-none transition-all duration-150 bg-surface-t2-panel text-t1 border border-transparent hover:decorator-delta-focus active:scale-[0.99]"
+        >
+          󰋙 Go! Go! Go!
+        </button>
       </div>
     </div>
   )
