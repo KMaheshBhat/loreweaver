@@ -21,37 +21,41 @@
    DEFAULT THEME ASSIGNMENTS (Cyberpunk Ledger Base Configuration)
    ------------------------------------------------------------- */
 :root {
-  --theme-surface-tier1: #12111a;
-  --theme-surface-tier2-panel: #1d1b26;
-  --theme-surface-tier2-border: #262433;
-  --theme-surface-tier3: #1d1b26; /* Kept mapped to elevated backdrop for safety */
-  --theme-surface-tier4: #262433;
+  --theme-surface-tier1: rgb(18, 17, 26);
+  --theme-surface-tier2-panel: rgb(29, 27, 38);
+  --theme-surface-tier2-border: rgb(38, 36, 51);
+  --theme-surface-tier3: rgb(29, 27, 38);
+  --theme-surface-tier4: rgb(38, 36, 51);
 
-  --theme-text-tier1: #ffffff;
-  --theme-text-tier2: #ffffff;
+  --theme-text-tier1: rgb(255, 255, 255);
+  --theme-text-tier2: rgb(255, 255, 255);
   --theme-text-tier3: rgba(255, 255, 255, 0.9);
   --theme-text-tier4: rgba(255, 255, 255, 0.4);
 
   /* Abstract category configuration variables */
-  --theme-decorator-alpha-focus-bg: #2b2a33;
-  --theme-decorator-alpha-focus-text: #9e9da8;
-  --theme-decorator-alpha-focus-border: #44434d;
-  --theme-decorator-alpha-blur-bg: #1c1b22;
-  --theme-decorator-alpha-blur-text: #5c5b66;
-  --theme-decorator-alpha-blur-border: #2c2b33;
+  --theme-decorator-alpha-focus-bg: rgb(43, 42, 51);
+  --theme-decorator-alpha-focus-text: rgb(158, 157, 168);
+  --theme-decorator-alpha-focus-border: rgb(68, 67, 77);
+  --theme-decorator-alpha-blur-bg: rgb(28, 27, 34);
+  --theme-decorator-alpha-blur-text: rgb(92, 91, 102);
+  --theme-decorator-alpha-blur-border: rgb(44, 43, 51);
 
-  --theme-decorator-beta-focus-border: #00e5ff;
+  --theme-decorator-beta-focus-border: rgb(0, 229, 255);
   --theme-decorator-beta-focus-glow: 0 0 12px rgba(0, 229, 255, 0.6);
-  --theme-decorator-beta-blur-border: #006673;
+  --theme-decorator-beta-blur-border: rgb(0, 102, 115);
 
-  --theme-decorator-gamma-focus-border: #bd00ff;
-  --theme-decorator-gamma-blur-border: #59007a;
+  --theme-decorator-gamma-focus-border: rgb(189, 0, 255);
+  --theme-decorator-gamma-focus-glow: 0 0 12px rgba(189, 0, 255, 0.6);
+  --theme-decorator-gamma-blur-border: rgb(89, 0, 122);
 
-  --theme-decorator-delta-focus-border: #00ff66;
-  --theme-decorator-delta-blur-border: #006629;
+  --theme-decorator-delta-focus-border: rgb(0, 255, 102);
+  --theme-decorator-delta-focus-glow: 0 0 12px rgba(0, 255, 102, 0.6);
+  --theme-decorator-delta-blur-border: rgb(0, 102, 41);
 
-  --theme-decorator-epsilon-focus-border: #ff0055;
-  --theme-decorator-epsilon-blur-border: #80002a;
+  --theme-decorator-epsilon-focus-border: rgb(255, 0, 85);
+  --theme-decorator-epsilon-focus-glow: 0 0 12px rgba(255, 0, 85, 0.6);
+  --theme-decorator-epsilon-blur-border: rgb(128, 0, 42);
+
 }
 
 /* -------------------------------------------------------------
@@ -78,21 +82,22 @@
 /* Typography Hierarchy Utilities */
 @utility text-t1 {
   color: var(--text-tier1);
-  font-weight: 700;
+  font-weight: 100;
   font-size: 1.3rem;
 }
 @utility text-t2 {
   color: var(--text-tier2);
-  font-weight: 600;
+  font-weight: 100;
   font-size: 1.1rem;
 }
 @utility text-t3 {
   color: var(--text-tier3);
-  font-weight: 400;
+  font-weight: 100;
   line-height: 1.5;
 }
 @utility text-t4 {
   color: var(--text-tier4);
+  font-weight: 100;
   font-size: 0.75rem;
   letter-spacing: -0.01em;
 }
@@ -115,6 +120,7 @@
 @utility decorator-beta-focus {
   border: 1px solid var(--theme-decorator-beta-focus-border);
   box-shadow: var(--theme-decorator-beta-focus-glow);
+  font-weight: 500;
 }
 @utility decorator-beta-blur {
   border: 1px solid var(--theme-decorator-beta-blur-border);
@@ -123,14 +129,19 @@
 /* Category Gamma */
 @utility decorator-gamma-focus {
   border: 1px solid var(--theme-decorator-gamma-focus-border);
+  box-shadow: var(--theme-decorator-gamma-focus-glow);
+  font-weight: 500;
 }
 @utility decorator-gamma-blur {
   border: 1px solid var(--theme-decorator-gamma-blur-border);
+  font-weight: 500;
 }
 
 /* Category Delta */
 @utility decorator-delta-focus {
   border: 1px dashed var(--theme-decorator-delta-focus-border);
+  box-shadow: var(--theme-decorator-delta-focus-glow);
+  font-weight: 500;
 }
 @utility decorator-delta-blur {
   border: 1px dotted var(--theme-decorator-delta-blur-border);
@@ -139,6 +150,8 @@
 /* Category Epsilon */
 @utility decorator-epsilon-focus {
   border: 1px solid var(--theme-decorator-epsilon-focus-border);
+  box-shadow: var(--theme-decorator-epsilon-focus-glow);
+  font-weight: 500;
 }
 @utility decorator-epsilon-blur {
   border: 1px dashed var(--theme-decorator-epsilon-blur-border);
