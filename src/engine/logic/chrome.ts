@@ -29,6 +29,10 @@ export function createChromeNode(id: string): ChromeNodeBuilder {
       base.withEdge(e)
       return this
     },
+    withMeta(m) {
+      base.withMeta(m)
+      return this
+    },
     withTitle(t) {
       title = t
       return this

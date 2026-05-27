@@ -33,7 +33,7 @@ function Accounting(): React.JSX.Element {
 
   return (
     <div className="w-1/4 flex flex-col border-r border-transparent layout-t2-see-through overflow-y-auto custom-terminal-scroll">
-      <div className="sticky top-0 z-10 bg-surface-t1 px-4 pt-4 pb-3 border-b border-surface-t2-border/70">
+      <div className="sticky top-0 z-10 bg-surface-t1 px-4 pt-4 pb-3 border-b border-surface-t2-border/70 custom-header">
         {titleNode ? (
           <Title
             node={titleNode}
@@ -48,7 +48,6 @@ function Accounting(): React.JSX.Element {
       </div>
       <div className="flex-1 p-4 pt-3">
         {nodes.map((node, index) => {
-          const isActive = index % 2 === 1 || index % 4 === 3
           const isFocused = index % 4 >= 2
           return (
             <Card
@@ -57,7 +56,6 @@ function Accounting(): React.JSX.Element {
               titleKey="title"
               iconKey="icon"
               contentKey="content"
-              isActive={isActive}
               isFocused={isFocused}
             />
           )

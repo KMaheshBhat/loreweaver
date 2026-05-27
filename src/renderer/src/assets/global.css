@@ -32,13 +32,12 @@
   --theme-text-tier3: rgba(255, 255, 255, 0.9);
   --theme-text-tier4: rgba(255, 255, 255, 0.4);
 
-  /* Abstract category configuration variables */
-  --theme-decorator-alpha-focus-bg: rgb(43, 42, 51);
-  --theme-decorator-alpha-focus-text: rgb(158, 157, 168);
-  --theme-decorator-alpha-focus-border: rgb(68, 67, 77);
-  --theme-decorator-alpha-blur-bg: rgb(28, 27, 34);
-  --theme-decorator-alpha-blur-text: rgb(92, 91, 102);
-  --theme-decorator-alpha-blur-border: rgb(44, 43, 51);
+  --theme-decorator-alpha-focus-bg: rgba(255, 165, 0, 0.12);
+  --theme-decorator-alpha-focus-text: rgb(255, 191, 0);
+  --theme-decorator-alpha-focus-border: rgb(255, 140, 0);
+  --theme-decorator-alpha-blur-bg: rgba(204, 119, 0, 0.05);
+  --theme-decorator-alpha-blur-text: rgb(204, 136, 0);
+  --theme-decorator-alpha-blur-border: rgb(138, 79, 0);
 
   --theme-decorator-beta-focus-border: rgb(0, 229, 255);
   --theme-decorator-beta-focus-glow: 0 0 12px rgba(0, 229, 255, 0.6);
@@ -55,7 +54,6 @@
   --theme-decorator-epsilon-focus-border: rgb(255, 0, 85);
   --theme-decorator-epsilon-focus-glow: 0 0 12px rgba(255, 0, 85, 0.6);
   --theme-decorator-epsilon-blur-border: rgb(128, 0, 42);
-
 }
 
 /* -------------------------------------------------------------
@@ -102,59 +100,107 @@
   letter-spacing: -0.01em;
 }
 
-/* Abstract Decorator State Utilities */
+/* Abstract Multi-Dimensional Decorator State Utilities */
 
-/* Category Alpha: Fallback / Developer Screaming Layer */
-@utility decorator-alpha-focus {
+/* --- CATEGORY ALPHA: FALLBACK / INVALID SYSTEM LAYER --- */
+@utility decorator-alpha-active-focus {
   background-color: var(--theme-decorator-alpha-focus-bg);
   color: var(--theme-decorator-alpha-focus-text);
-  border: 1px dashed var(--theme-decorator-alpha-focus-border);
+  border: 1px solid var(--theme-decorator-alpha-focus-border);
 }
-@utility decorator-alpha-blur {
+@utility decorator-alpha-active-blur {
   background-color: var(--theme-decorator-alpha-blur-bg);
   color: var(--theme-decorator-alpha-blur-text);
   border: 1px solid var(--theme-decorator-alpha-blur-border);
 }
+@utility decorator-alpha-inactive-focus {
+  background-color: var(--theme-decorator-alpha-focus-bg);
+  color: var(--theme-decorator-alpha-focus-text);
+  border: 1px dashed var(--theme-decorator-alpha-focus-border);
+  opacity: 0.7;
+}
+@utility decorator-alpha-inactive-blur {
+  background-color: var(--theme-decorator-alpha-blur-bg);
+  color: var(--theme-decorator-alpha-blur-text);
+  border: 1px dotted var(--theme-decorator-alpha-blur-border);
+  opacity: 0.5;
+}
 
-/* Category Beta */
-@utility decorator-beta-focus {
+/* --- CATEGORY BETA: COMMITTED HISTORICAL TRUTH --- */
+@utility decorator-beta-active-focus {
   border: 1px solid var(--theme-decorator-beta-focus-border);
   box-shadow: var(--theme-decorator-beta-focus-glow);
   font-weight: 500;
 }
-@utility decorator-beta-blur {
+@utility decorator-beta-active-blur {
   border: 1px solid var(--theme-decorator-beta-blur-border);
 }
+@utility decorator-beta-inactive-focus {
+  border: 1px dashed var(--theme-decorator-beta-focus-border);
+  box-shadow: var(--theme-decorator-beta-focus-glow);
+  opacity: 0.7;
+}
+@utility decorator-beta-inactive-blur {
+  border: 1px dotted var(--theme-decorator-beta-blur-border);
+  opacity: 0.5;
+}
 
-/* Category Gamma */
-@utility decorator-gamma-focus {
+/* --- CATEGORY GAMMA: PROPOSED STATE CANDIDATES --- */
+@utility decorator-gamma-active-focus {
   border: 1px solid var(--theme-decorator-gamma-focus-border);
   box-shadow: var(--theme-decorator-gamma-focus-glow);
   font-weight: 500;
 }
-@utility decorator-gamma-blur {
+@utility decorator-gamma-active-blur {
   border: 1px solid var(--theme-decorator-gamma-blur-border);
   font-weight: 500;
 }
+@utility decorator-gamma-inactive-focus {
+  border: 1px dashed var(--theme-decorator-gamma-focus-border);
+  box-shadow: var(--theme-decorator-gamma-focus-glow);
+  opacity: 0.7;
+}
+@utility decorator-gamma-inactive-blur {
+  border: 1px dotted var(--theme-decorator-gamma-blur-border);
+  opacity: 0.5;
+}
 
-/* Category Delta */
-@utility decorator-delta-focus {
-  border: 1px dashed var(--theme-decorator-delta-focus-border);
+/* --- CATEGORY DELTA: ACTIVE TRANSIENT WORKSPACE DRAFTS --- */
+@utility decorator-delta-active-focus {
+  border: 1px solid var(--theme-decorator-delta-focus-border);
   box-shadow: var(--theme-decorator-delta-focus-glow);
   font-weight: 500;
 }
-@utility decorator-delta-blur {
+@utility decorator-delta-active-blur {
+  border: 1px solid var(--theme-decorator-delta-blur-border);
+}
+@utility decorator-delta-inactive-focus {
+  border: 1px dashed var(--theme-decorator-delta-focus-border);
+  box-shadow: var(--theme-decorator-delta-focus-glow);
+  opacity: 0.7;
+}
+@utility decorator-delta-inactive-blur {
   border: 1px dotted var(--theme-decorator-delta-blur-border);
+  opacity: 0.5;
 }
 
-/* Category Epsilon */
-@utility decorator-epsilon-focus {
+/* --- CATEGORY EPSILON: PIPELINE EXCEPTION HALTS --- */
+@utility decorator-epsilon-active-focus {
   border: 1px solid var(--theme-decorator-epsilon-focus-border);
   box-shadow: var(--theme-decorator-epsilon-focus-glow);
   font-weight: 500;
 }
-@utility decorator-epsilon-blur {
-  border: 1px dashed var(--theme-decorator-epsilon-blur-border);
+@utility decorator-epsilon-active-blur {
+  border: 1px solid var(--theme-decorator-epsilon-blur-border);
+}
+@utility decorator-epsilon-inactive-focus {
+  border: 1px dashed var(--theme-decorator-epsilon-focus-border);
+  box-shadow: var(--theme-decorator-epsilon-focus-glow);
+  opacity: 0.7;
+}
+@utility decorator-epsilon-inactive-blur {
+  border: 1px dotted var(--theme-decorator-epsilon-blur-border);
+  opacity: 0.5;
 }
 
 /* Custom Window Utilities */
@@ -164,11 +210,9 @@
 
 /* Custom Terminal Scrollbar Utilities */
 @utility custom-terminal-scroll {
-  /* Standard modern properties (Firefox/Standards) */
   scrollbar-width: thin;
   scrollbar-color: var(--surface-tier2-border) transparent;
 
-  /* Webkit Engines (Electron/Chromium Chrome) */
   &::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -178,13 +222,11 @@
     background: transparent;
   }
 
-  /* The thumb represents the draggable scroll indicator */
   &::-webkit-scrollbar-thumb {
     background-color: var(--surface-tier2-border);
     border-radius: 9999px;
   }
 
-  /* Make it pop subtly when the user hovers directly inside the column frame */
   &:hover::-webkit-scrollbar-thumb {
     background-color: color-mix(
       in srgb,

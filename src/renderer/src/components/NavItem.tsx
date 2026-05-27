@@ -21,7 +21,7 @@ function NavItem({
   const routeMode = node.data.routeMode
   const baseStyle =
     'block py-2 px-6 transition-all duration-150 text-t3 hover:bg-surface-t1/50 hover:text-t2'
-  const activeStyle = 'decorator-beta-focus text-t2'
+  const activeStyle = 'decorator-beta-active-focus text-t2'
 
   return (
     <a

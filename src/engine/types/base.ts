@@ -9,6 +9,7 @@ export interface GraphNode {
   kind: string
   data: Record<string, unknown>
   edges: Array<GraphEdge>
+  meta: Record<string, unknown>
 }
 
 export type GraphNodeMap = Record<string, GraphNode>

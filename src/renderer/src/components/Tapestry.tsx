@@ -33,7 +33,7 @@ function Tapestry(): React.JSX.Element {
 
   return (
     <div className="w-1/2 flex flex-col border-r border-transparent layout-t2-see-through overflow-y-auto custom-terminal-scroll">
-      <div className="sticky top-0 z-10 bg-surface-t1 px-4 pt-4 pb-3 border-b border-surface-t2-border/70">
+      <div className="sticky top-0 z-10 bg-surface-t1 px-4 pt-4 pb-3 border-b border-surface-t2-border/70 custom-header">
         {titleNode ? (
           <Title
             node={titleNode}
@@ -48,7 +48,6 @@ function Tapestry(): React.JSX.Element {
       </div>
       <div className="flex-1 p-4 pt-3">
         {nodes.map((node, index) => {
-          const isActive = index % 2 === 1 || index % 4 === 3
           const isFocused = index % 4 >= 2
           return (
             <Card
@@ -57,7 +56,6 @@ function Tapestry(): React.JSX.Element {
               titleKey="title"
               iconKey="icon"
               contentKey="content"
-              isActive={isActive}
               isFocused={isFocused}
             />
           )
@@ -66,12 +64,12 @@ function Tapestry(): React.JSX.Element {
       {/* Bottom-anchored Active Synthesis Input Deck */}
       <div className="flex flex-col gap-2 p-4 bg-surface-t1 border-t border-transparent layout-t2-see-through">
         <textarea
-          className="w-full min-h-[90px] p-3 text-t3 bg-surface-t1-panel rounded-none outline-none resize-none transition-all duration-150 decorator-delta-blur focus:decorator-delta-focus"
+          className="w-full min-h-[90px] p-3 text-t3 bg-surface-t1-panel rounded-none outline-none resize-none transition-all duration-150 decorator-delta-active-blur focus:decorator-delta-active-focus"
           placeholder="Draft your turn ..."
         />
         <button
           type="button"
-          className="w-full py-2.5 text-center font-bold tracking-wider uppercase cursor-pointer rounded-none outline-none transition-all duration-150 bg-surface-t2-panel text-t1 border border-transparent hover:decorator-delta-focus active:scale-[0.99]"
+          className="w-full py-2.5 text-center font-bold tracking-wider uppercase cursor-pointer rounded-none outline-none transition-all duration-150 bg-surface-t2-panel text-t1 border border-transparent hover:decorator-delta-active-focus active:scale-[0.99]"
         >
           󰋙 Go! Go! Go!
         </button>
