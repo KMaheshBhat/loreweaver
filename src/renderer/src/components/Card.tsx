@@ -18,12 +18,8 @@ function Card({
   const title = String(node.data[titleKey] ?? node.data.id ?? 'UNKNOWN')
   const icon = String(node.data[iconKey] ?? '󰋘')
   const baseStyle = 'p-3 mb-2 bg-surface-t3 rounded transition-all duration-300'
-  
-  // 1. Direct State Extraction & Normalization
   const recordState = String(node.meta?.recordState ?? 'invalid')
   const engagementState = String(node.meta?.engagementState ?? 'inactive')
-
-  // 2. Strict Matrix Mapping per Design System layer rules
   const tierMap: Record<string, Record<string, { focus: string; blur: string }>> = {
     invalid: {
       active: { focus: 'decorator-alpha-active-focus', blur: 'decorator-alpha-active-blur' },
@@ -43,26 +39,23 @@ function Card({
     },
     failed: {
       active: { focus: 'decorator-epsilon-active-focus', blur: 'decorator-epsilon-active-blur' },
-      inactive: { focus: 'decorator-epsilon-inactive-focus', blur: 'decorator-epsilon-inactive-blur' }
+      inactive: {
+        focus: 'decorator-epsilon-inactive-focus',
+        blur: 'decorator-epsilon-inactive-blur'
+      }
     }
   }
-
-  // 3. Dual-Path Defensive Fallback Resolution
   const targetTier = tierMap[recordState] ?? tierMap['invalid']
   const targetEngagement = targetTier[engagementState] ?? targetTier['inactive']
-  
-  // Apply visual signature depending on local viewport state selection
   const decoratorStyle = isFocused ? targetEngagement.focus : targetEngagement.blur
-
   let description = ''
   if (contentKey) {
     description = String(node.data[contentKey] ?? '')
   }
-
   return (
     <div className={`${baseStyle} ${decoratorStyle}`}>
       <div className="text-t3 mb-1 flex items-center gap-2">
-        <span>{icon}</span> 
+        <span>{icon}</span>
         <span>{title}</span>
       </div>
       {description && <div className="text-t4 whitespace-pre-wrap">{description}</div>}
@@ -71,4 +64,3 @@ function Card({
 }
 
 export default Card
-
