@@ -1,8 +1,6 @@
 // src/main/ledger.ts
-import { createGraphNode } from '@engine/logic/base'
-import { createChromeNode, querySidebarNodes } from '@engine/logic/chrome'
-import { GraphNode, GraphNodeMap } from '@engine/types/base'
-import { ChromeNode } from '@engine/types/chrome'
+import { createGraphNode, GraphNode, GraphNodeMap } from '@engine/model/base'
+import { ChromeNode, createChromeNode, querySidebarNodes } from '@engine/model/chrome'
 import { ipcMain } from 'electron'
 
 const centralLedger: GraphNodeMap = {

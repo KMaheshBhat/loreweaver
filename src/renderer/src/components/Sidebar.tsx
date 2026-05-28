@@ -1,10 +1,9 @@
-import { useEffect, useState, useMemo } from 'react'
+import { GraphNode } from '@engine/model/base'
+import { ChromeNode, createChromeNode } from '@engine/model/chrome'
+import { useEffect, useMemo, useState } from 'react'
 import { useUI } from '../context/UIContext'
-import { GraphNode } from '@engine/types/base'
-import { ChromeNode } from '@engine/types/chrome'
-import Title from './Title'
 import NavItem from './NavItem'
-import { createChromeNode } from '@engine/logic/chrome'
+import Title from './Title'
 
 function Sidebar(): React.JSX.Element {
   const { currentMode, setCurrentMode } = useUI()

@@ -1,8 +1,8 @@
+import { GraphNode } from '@engine/model/base'
+import { createChromeNode } from '@engine/model/chrome'
 import { useEffect, useState } from 'react'
-import { GraphNode } from '@engine/types/base'
-import Title from './Title'
-import { createChromeNode } from '@engine/logic/chrome'
 import Card from './Card'
+import Title from './Title'
 
 function Tapestry(): React.JSX.Element {
   const [nodes, setNodes] = useState<GraphNode[]>([])

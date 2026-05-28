@@ -1,4 +1,4 @@
-import { ChromeNode } from '@engine/types/chrome'
+import { ChromeNode } from '@engine/model/chrome'
 import { AppMode } from '../context/UIContext'
 
 interface NavItemProps {

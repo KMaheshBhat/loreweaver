@@ -1,4 +1,4 @@
-import { GraphNode } from '@engine/types/base'
+import { GraphNode } from '@engine/model/base'
 
 interface CardItemprops {
   node: GraphNode
