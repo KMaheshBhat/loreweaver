@@ -8,6 +8,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 import { ChromeIncubate } from '@adaptor/incubate/chrome'
+import { WWIncubate } from '@adaptor/incubate/ww'
 
 function createWindow(): BrowserWindow {
   // Create the browser window.
@@ -77,9 +78,15 @@ app.whenReady().then(async () => {
   // At this stage, we instantiate our chosen 'Incubate' adapter and run the init workflow.
   const chrome = new ChromeIncubate()
   const asoiaf = new ASOIAFIncubate()
+  const choice = 1
+  const ww = new WWIncubate()
   const initIntent: Intent = { id: 'init-0', kind: 'init', nodes: [], meta: {} }
   await ledger.runWorkflow(chrome, initIntent)
-  await ledger.runWorkflow(asoiaf, initIntent)
+  if (choice === 1) {
+    await ledger.runWorkflow(asoiaf, initIntent)
+  } else {
+    await ledger.runWorkflow(ww, initIntent)
+  }
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
