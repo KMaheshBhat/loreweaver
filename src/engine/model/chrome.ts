@@ -1,5 +1,4 @@
-import { GraphNode, GraphNodeMap } from './base'
-import { createGraphNode, GraphNodeBuilder } from './base'
+import { createGraphNode, GraphNode, GraphNodeBuilder } from './base'
 
 export interface ChromeNodeData {
   title: string
@@ -84,10 +83,4 @@ export function isChromeNode(node: GraphNode): node is ChromeNode {
 
 export function isSidebarNode(node: GraphNode): node is ChromeNode {
   return isChromeNode(node) && node.data.availableInMenu === true
-}
-
-export function querySidebarNodes(nodeMap: GraphNodeMap): ChromeNode[] {
-  return Object.values(nodeMap)
-    .filter(isChromeNode)
-    .filter((node) => node.data.availableInMenu === true)
 }

@@ -7,6 +7,7 @@ import { Intent } from '@engine/model/intent'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
+import { ChromeIncubate } from '@adaptor/incubate/chrome'
 
 function createWindow(): BrowserWindow {
   // Create the browser window.
@@ -74,8 +75,10 @@ app.whenReady().then(async () => {
 
   // 3. On-Start Lifecycle: Trigger Genesis
   // At this stage, we instantiate our chosen 'Incubate' adapter and run the init workflow.
+  const chrome = new ChromeIncubate()
   const asoiaf = new ASOIAFIncubate()
   const initIntent: Intent = { id: 'init-0', kind: 'init', nodes: [], meta: {} }
+  await ledger.runWorkflow(chrome, initIntent)
   await ledger.runWorkflow(asoiaf, initIntent)
 
   // IPC test
