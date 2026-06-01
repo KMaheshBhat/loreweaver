@@ -1,4 +1,4 @@
-import { GraphNode, GraphNodeMap } from '../model/base'
+import { GraphNode, GraphNodeMap } from '@engine/model/base'
 
 export interface RecordProvider {
   /**

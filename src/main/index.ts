@@ -1,14 +1,18 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { ASOIAFIncubate } from '@adaptor/incubate/asoiaf'
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+import { Ledger } from '@engine/domain/ledger'
+import { GraphNode } from '@engine/model/base'
+import { ChromeNode, isSidebarNode } from '@engine/model/chrome'
+import { Intent } from '@engine/model/intent'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { setupHandlers } from './ledger'
 
-function createWindow(): void {
+function createWindow(): BrowserWindow {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1280,
+    height: 800,
     show: false,
     autoHideMenuBar: true,
     titleBarStyle: 'hidden',
@@ -40,12 +44,14 @@ function createWindow(): void {
   // mainWindow.webContents.openDevTools({
   //   mode: 'detach'
   // })
+
+  return mainWindow
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -56,21 +62,54 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
+  // 1. Initialize the Deterministic Vessel (Empty)
+  const ledger = new Ledger()
+
+  // 2. The Reactive Bridge (Forwarding Ledger events to UI) [8]
+  const forward = (win: BrowserWindow): void => {
+    ledger.on('node:created', (n) => win.webContents.send('node:created', n))
+    ledger.on('node:updated', (n) => win.webContents.send('node:updated', n))
+    ledger.on('node:removed', (n) => win.webContents.send('node:removed', n))
+  }
+
+  // 3. On-Start Lifecycle: Trigger Genesis
+  // At this stage, we instantiate our chosen 'Incubate' adapter and run the init workflow.
+  const asoiaf = new ASOIAFIncubate()
+  const initIntent: Intent = { id: 'init-0', kind: 'init', nodes: [], meta: {} }
+  await ledger.runWorkflow(asoiaf, initIntent)
+
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
-  setupHandlers()
+  ipcMain.handle('client:node', async (): Promise<GraphNode | undefined> => {
+    return ledger.getNode('client')
+  })
+
+  ipcMain.handle('chrome:nodes:sidebar', async (): Promise<ChromeNode[]> => {
+    return ledger.getNodes().filter(isSidebarNode)
+  })
+
+  ipcMain.handle('weaver:nodes', async (): Promise<GraphNode[]> => {
+    return ledger.getNodes().filter((node) => node.data.group === 'weave')
+  })
+
   ipcMain.on('engine:chrome:exit', () => {
     // This allows future SQLite transaction buffers to flush naturally before closing the window handle
     app.quit()
   })
 
-  createWindow()
+  const mainWindow = createWindow()
+  forward(mainWindow)
 
   app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    // On macOS, re-create a window when the dock icon is clicked
+    // and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) {
+      // 1. Create the new window instance
+      const newWindow = createWindow()
+      // 2. Re-establish the Reactive Bridge for this specific instance [2]
+      forward(newWindow)
+    }
   })
 })
 

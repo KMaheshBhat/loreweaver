@@ -82,6 +82,10 @@ export function isChromeNode(node: GraphNode): node is ChromeNode {
   return node.kind === 'chrome' && typeof node.data === 'object' && node.data !== null
 }
 
+export function isSidebarNode(node: GraphNode): node is ChromeNode {
+  return isChromeNode(node) && node.data.availableInMenu === true
+}
+
 export function querySidebarNodes(nodeMap: GraphNodeMap): ChromeNode[] {
   return Object.values(nodeMap)
     .filter(isChromeNode)

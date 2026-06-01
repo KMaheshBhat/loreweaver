@@ -1,9 +1,7 @@
-// src/main/ledger.ts
-import { createGraphNode, GraphNode, GraphNodeMap } from '@engine/model/base'
-import { ChromeNode, createChromeNode, querySidebarNodes } from '@engine/model/chrome'
-import { ipcMain } from 'electron'
+import { createGraphNode, GraphNodeMap } from '@engine/model/base'
+import { createChromeNode } from '@engine/model/chrome'
 
-const centralLedger: GraphNodeMap = {
+export const seedNodes: GraphNodeMap = {
   client: createGraphNode('client')
     .withData({
       icon: '',
@@ -250,16 +248,4 @@ const centralLedger: GraphNodeMap = {
       engagementState: 'active'
     })
     .build()
-}
-
-export function setupHandlers(): void {
-  ipcMain.handle('client:node', async (): Promise<GraphNode> => {
-    return centralLedger.client
-  })
-  ipcMain.handle('chrome:nodes:sidebar', async (): Promise<ChromeNode[]> => {
-    return querySidebarNodes(centralLedger)
-  })
-  ipcMain.handle('weaver:nodes', async (): Promise<GraphNode[]> => {
-    return Object.values(centralLedger).filter((node) => node.data.group === 'weave')
-  })
 }

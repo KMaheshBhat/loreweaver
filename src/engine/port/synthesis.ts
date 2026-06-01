@@ -1,5 +1,5 @@
-import { GraphNode } from '../model/base'
-import { Intent } from '../model/intent'
+import { GraphNode } from '@engine/model/base'
+import { Intent } from '@engine/model/intent'
 
 export interface TextSynthesisChunk {
   /** The real-time text segment delta generated during the active loop turn. */

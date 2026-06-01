@@ -7,7 +7,8 @@ export default defineConfig({
   main: {
     resolve: {
       alias: {
-        '@engine': resolve('src/engine')
+        '@engine': resolve('src/engine'),
+        '@adaptor': resolve('src/adaptor')
       }
     },
     build: {
@@ -23,7 +24,8 @@ export default defineConfig({
     resolve: {
       alias: {
         '@renderer': resolve('src/renderer/src'),
-        '@engine': resolve('src/engine')
+        '@engine': resolve('src/engine'),
+        '@adaptor': resolve('src/adaptor')
       }
     },
     plugins: [tailwindcss(), react()]
