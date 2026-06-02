@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { GraphNode } from '@engine/model/base'
 
 // Custom APIs for renderer
 const api = {
@@ -10,7 +11,15 @@ const api = {
       exitApp: () => ipcRenderer.send('engine:chrome:exit')
     },
     weaver: {
-      nodes: () => ipcRenderer.invoke('weaver:nodes')
+      nodes: () => ipcRenderer.invoke('weaver:nodes'),
+      /**
+       * Dispatches one or more nodes to the engine.
+       * If a single node is passed, it is wrapped in an array for the Intent.
+       */
+      submitTurn: (payload: GraphNode | GraphNode[]) => {
+        const nodes = Array.isArray(payload) ? payload : [payload]
+        return ipcRenderer.invoke('weaver:submit', nodes)
+      }
     }
   }
 }

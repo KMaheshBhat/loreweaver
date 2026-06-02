@@ -13,6 +13,11 @@ declare global {
         }
         weaver: {
           nodes(): Promise<GraphNode[]>
+          /**
+           * Dispatches a proposed narrative turn (GraphNodes) to the engine
+           * for ingestion and synthesis resolution.
+           */
+          submitTurn(node: GraphNode | GraphNode[]): Promise<void>
         }
       }
     }

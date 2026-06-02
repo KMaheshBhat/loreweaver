@@ -9,6 +9,7 @@ import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 import { ChromeIncubate } from '@adaptor/incubate/chrome'
 import { HighMagicAcademyIncubate } from '@adaptor/incubate/high-magic-academy'
+import { WeaverIncubate } from '@adaptor/incubate/weaver'
 
 function createWindow(): BrowserWindow {
   // Create the browser window.
@@ -66,6 +67,7 @@ app.whenReady().then(async () => {
 
   // 1. Initialize the Deterministic Vessel (Empty)
   const ledger = new Ledger()
+  const weaver = new WeaverIncubate() // The operational adaptor
 
   // 2. The Reactive Bridge (Forwarding Ledger events to UI) [8]
   const forward = (win: BrowserWindow): void => {
@@ -101,6 +103,17 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('weaver:nodes', async (): Promise<GraphNode[]> => {
     return ledger.getNodes().filter((node) => node.data.group === 'weave')
+  })
+
+  ipcMain.handle('weaver:submit', async (_event, nodes: GraphNode[]): Promise<void> => {
+    const submitIntent: Intent = {
+      id: `intent-submit-${Date.now()}`,
+      kind: 'submit-turn',
+      nodes: nodes, // Now correctly typed as GraphNode[]
+      meta: {}
+    }
+    // ledger.runWorkflow dispatches the intent to our Weaver adaptor
+    await ledger.runWorkflow(weaver, submitIntent)
   })
 
   ipcMain.on('engine:chrome:exit', () => {
