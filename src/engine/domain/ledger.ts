@@ -10,7 +10,7 @@ import { EventEmitter } from 'events'
  */
 export class Ledger extends EventEmitter {
   private nodes: GraphNodeMap = {}
-  private participants: WorkflowProvider[] = []
+  private workflowProviders: WorkflowProvider[] = []
 
   constructor() {
     super()
@@ -43,10 +43,19 @@ export class Ledger extends EventEmitter {
    * @param participant The workflow provider to register.
    */
   public registerWorkflowProvider(participant: WorkflowProvider): void {
-    if (!this.participants.find((p) => p.id === participant.id)) {
-      this.participants.push(participant)
+    if (!this.workflowProviders.find((p) => p.id === participant.id)) {
+      this.workflowProviders.push(participant)
       console.log(`Ledger: Registered participant [${participant.id}]`)
     }
+  }
+
+  /**
+   * Retrieves a workflow provider by its ID.
+   * @param id The ID of the workflow provider to retrieve.
+   * @returns The workflow provider with the specified ID, or `undefined` if not found.
+   */
+  public getWorkflowProvider(id: string): WorkflowProvider | undefined {
+    return this.workflowProviders.find((p) => p.id === id)
   }
 
   /**
@@ -64,7 +73,7 @@ export class Ledger extends EventEmitter {
       commitBatch: (ids) => this.commit(ids)
     }
     console.log(`Ledger: Running workflow [${intent.id}] from ${intent.meta.source}`)
-    for (const participant of this.participants) {
+    for (const participant of this.workflowProviders) {
       if (participant.supportedKinds.includes(intent.kind)) {
         await participant.execute(context, intent, options)
       }
