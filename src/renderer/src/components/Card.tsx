@@ -1,4 +1,5 @@
 import { GraphNode } from '@engine/model/base'
+import { useEffect, useState } from 'react'
 
 interface CardItemprops {
   node: GraphNode
@@ -18,6 +19,36 @@ function Card({
   const title = String(node.data[titleKey] ?? node.data.id ?? 'UNKNOWN')
   const icon = String(node.data[iconKey] ?? '󰋘')
   const baseStyle = 'p-3 mb-2 bg-surface-t3 rounded transition-all duration-300'
+  let description = ''
+  contentKey && (description = String(node.data[contentKey] ?? ''))
+  const [desc, setDesc] = useState(description)
+  const [decStyle, setDecStyle] = useState(resolveDecoratorStyle(node, isFocused))
+  useEffect(() => {
+    const removeListener = window.electron.ipcRenderer.on(
+      'node:updated',
+      (_event, updatedNode: GraphNode) => {
+        if (updatedNode.id === node.id) {
+          contentKey && setDesc(String(updatedNode.data[contentKey] ?? ''))
+          setDecStyle(resolveDecoratorStyle(updatedNode, isFocused))
+        }
+      }
+    )
+    return () => {
+      removeListener()
+    }
+  }, [contentKey, node.id, isFocused])
+  return (
+    <div className={`${baseStyle} ${decStyle}`}>
+      <div className="text-t3 mb-1 flex items-center gap-2">
+        <span>{icon}</span>
+        <span>{title}</span>
+      </div>
+      {desc && <div className="text-t4 whitespace-pre-wrap">{desc}</div>}
+    </div>
+  )
+}
+
+function resolveDecoratorStyle(node: GraphNode, isFocused: boolean): string {
   const recordState = String(node.meta?.recordState ?? 'invalid')
   const engagementState = String(node.meta?.engagementState ?? 'inactive')
   const tierMap: Record<string, Record<string, { focus: string; blur: string }>> = {
@@ -47,20 +78,7 @@ function Card({
   }
   const targetTier = tierMap[recordState] ?? tierMap['invalid']
   const targetEngagement = targetTier[engagementState] ?? targetTier['inactive']
-  const decoratorStyle = isFocused ? targetEngagement.focus : targetEngagement.blur
-  let description = ''
-  if (contentKey) {
-    description = String(node.data[contentKey] ?? '')
-  }
-  return (
-    <div className={`${baseStyle} ${decoratorStyle}`}>
-      <div className="text-t3 mb-1 flex items-center gap-2">
-        <span>{icon}</span>
-        <span>{title}</span>
-      </div>
-      {description && <div className="text-t4 whitespace-pre-wrap">{description}</div>}
-    </div>
-  )
+  return isFocused ? targetEngagement.focus : targetEngagement.blur
 }
 
 export default Card

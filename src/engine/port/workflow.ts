@@ -1,5 +1,6 @@
 import { Intent } from '@engine/model/intent'
 import { GraphNode } from '@engine/model/base'
+import { TextToTextSynthesisProvider } from './synthesis'
 
 /**
  * The Capability Object passed to a workflow during execution.
@@ -7,6 +8,7 @@ import { GraphNode } from '@engine/model/base'
  * validation, and granular event broadcasting.
  */
 export interface WorkflowContext {
+  getTextToTextSynthesisProviders: () => TextToTextSynthesisProvider[]
   addNode: (node: GraphNode) => void
   updateNode: (
     id: string,

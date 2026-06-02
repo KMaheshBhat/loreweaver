@@ -67,7 +67,8 @@ function Tapestry(): React.JSX.Element {
   }
 
   return (
-    <div className="w-1/2 flex flex-col border-r border-transparent layout-t2-see-through overflow-y-auto custom-terminal-scroll">
+    <div className="w-1/2 h-full flex flex-col border-r border-transparent layout-t2-see-through overflow-hidden">
+      {/* Locked Header */}
       <div className="sticky top-0 z-10 bg-surface-t1 px-4 pt-4 pb-3 border-b border-surface-t2-border/70 custom-header">
         {titleNode ? (
           <Title
@@ -81,7 +82,7 @@ function Tapestry(): React.JSX.Element {
           <div className="animate-pulse bg-surface-t2-border/20 h-10 rounded" />
         )}
       </div>
-      <div className="flex-1 p-4 pt-3">
+      <div className="flex-1 p-4 pt-3 overflow-y-auto custom-terminal-scroll">
         {nodes.map((node, index) => {
           const isFocused = index % 4 >= 2
           return (
@@ -96,7 +97,7 @@ function Tapestry(): React.JSX.Element {
           )
         })}
       </div>
-      <div className="flex flex-col gap-2 p-4 bg-surface-t1 border-t border-surface-t2-border/40 layout-t2-see-through">
+      <div className="flex flex-col gap-2 p-4 bg-surface-t1 border-t border-surface-t2-border/40 layout-t2-see-through shrink-0">
         <textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}

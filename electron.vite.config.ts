@@ -8,11 +8,14 @@ export default defineConfig({
     resolve: {
       alias: {
         '@engine': resolve('src/engine'),
-        '@adaptor': resolve('src/adaptor')
+        '@adaptor': resolve('src/adaptor'),
+        '@earendil-works/pi-ai': resolve('node_modules/@earendil-works/pi-ai/dist/index.js')
       }
     },
     build: {
-      externalizeDeps: true
+      externalizeDeps: {
+        exclude: ['@earendil-works/pi-ai']
+      }
     }
   },
   preload: {

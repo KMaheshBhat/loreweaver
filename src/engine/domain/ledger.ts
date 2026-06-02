@@ -91,6 +91,7 @@ export class Ledger extends EventEmitter {
    */
   async runWorkflow(intent: Intent, options?: Record<string, unknown>): Promise<void> {
     const context: WorkflowContext = {
+      getTextToTextSynthesisProviders: () => this.tttSynthesisProviders,
       addNode: (node) => this.add(node),
       updateNode: (id, data, meta) => this.update(id, data, meta),
       removeNode: (id) => this.remove(id),

@@ -10,6 +10,7 @@ import icon from '../../resources/icon.png?asset'
 import { ChromeIncubate } from '@adaptor/incubate/chrome'
 import { HighMagicAcademyIncubate } from '@adaptor/incubate/high-magic-academy'
 import { WeaverIncubate } from '@adaptor/incubate/weaver'
+import { PiAiSynthesisProvider } from '@adaptor/incubate/pi-ai'
 
 /**
  * Creates the main application window with Electron configuration.
@@ -17,7 +18,7 @@ import { WeaverIncubate } from '@adaptor/incubate/weaver'
  * @returns The configured BrowserWindow instance.
  */
 function createWindow(): BrowserWindow {
-  const enableDevToolOnStart = false
+  const enableDevToolOnStart = true
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -82,8 +83,11 @@ app.whenReady().then(async () => {
   const choice = 1
 
   ledger.registerWorkflowProvider(chrome)
-  choice == 1 ? ledger.registerWorkflowProvider(glf) : ledger.registerWorkflowProvider(hma)
+  choice % 2 == 1 ? ledger.registerWorkflowProvider(glf) : ledger.registerWorkflowProvider(hma)
   ledger.registerWorkflowProvider(weaver)
+
+  const pa = new PiAiSynthesisProvider()
+  ledger.registerSynthesisProvider(pa)
 
   // The Reactive Bridge (Forwarding Ledger events to UI) [8]
   const forward = (win: BrowserWindow): void => {
