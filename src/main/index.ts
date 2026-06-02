@@ -11,7 +11,14 @@ import { ChromeIncubate } from '@adaptor/incubate/chrome'
 import { HighMagicAcademyIncubate } from '@adaptor/incubate/high-magic-academy'
 import { WeaverIncubate } from '@adaptor/incubate/weaver'
 
+/**
+ * Creates the main application window with Electron configuration.
+ *
+ * @returns The configured BrowserWindow instance.
+ */
 function createWindow(): BrowserWindow {
+  const enableDevToolOnStart = false
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1280,
@@ -44,9 +51,10 @@ function createWindow(): BrowserWindow {
   }
 
   // For DevTools on Start
-  // mainWindow.webContents.openDevTools({
-  //   mode: 'detach'
-  // })
+  enableDevToolOnStart &&
+    mainWindow.webContents.openDevTools({
+      mode: 'detach'
+    })
 
   return mainWindow
 }
@@ -65,7 +73,7 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // 1. Initialize the Deterministic Vessel (Empty)
+  // Initialize the Deterministic Vessel (Empty)
   const ledger = new Ledger()
   const chrome = new ChromeIncubate()
   const weaver = new WeaverIncubate() // The operational adaptor
@@ -77,20 +85,17 @@ app.whenReady().then(async () => {
   choice == 1 ? ledger.registerWorkflowProvider(glf) : ledger.registerWorkflowProvider(hma)
   ledger.registerWorkflowProvider(weaver)
 
-  // 2. The Reactive Bridge (Forwarding Ledger events to UI) [8]
+  // The Reactive Bridge (Forwarding Ledger events to UI) [8]
   const forward = (win: BrowserWindow): void => {
     ledger.on('node:created', (n) => win.webContents.send('node:created', n))
     ledger.on('node:updated', (n) => win.webContents.send('node:updated', n))
     ledger.on('node:removed', (n) => win.webContents.send('node:removed', n))
   }
 
-  // 3. On-Start Lifecycle: Trigger Genesis
+  // On-Start Lifecycle: Trigger Genesis
   // At this stage, we instantiate our chosen 'Incubate' adapter and run the init workflow.
   const initIntent: Intent = { id: 'init-0', kind: 'init', nodes: [], meta: { source: 'system' } }
   await ledger.runWorkflow(initIntent)
-
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
 
   ipcMain.handle('client:node', async (): Promise<GraphNode | undefined> => {
     return ledger.getNode('client')
@@ -108,15 +113,13 @@ app.whenReady().then(async () => {
     const submitIntent: Intent = {
       id: `intent-submit-${Date.now()}`,
       kind: 'submit-turn',
-      nodes: nodes, // Now correctly typed as GraphNode[]
+      nodes: nodes,
       meta: { source: 'client' }
     }
-    // ledger.runWorkflow dispatches the intent to our Weaver adaptor
     await ledger.runWorkflow(submitIntent)
   })
 
   ipcMain.on('engine:chrome:exit', () => {
-    // This allows future SQLite transaction buffers to flush naturally before closing the window handle
     app.quit()
   })
 
@@ -127,9 +130,7 @@ app.whenReady().then(async () => {
     // On macOS, re-create a window when the dock icon is clicked
     // and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) {
-      // 1. Create the new window instance
       const newWindow = createWindow()
-      // 2. Re-establish the Reactive Bridge for this specific instance [2]
       forward(newWindow)
     }
   })

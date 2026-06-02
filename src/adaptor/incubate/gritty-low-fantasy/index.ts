@@ -4,13 +4,21 @@ import { seedNodes } from './records'
 
 /**
  * The Gritty Low Fantasy Genesis Adaptor.
- * Orchestrates the "Inking" of the world into the Ledger.
+ * Orchestrates the "Inking" of the gritty low fantasy world into the Ledger.
+ * Responsible for seeding the narrative state, characters, and scenario nodes.
  */
 export class GrittyLowFantasyIncubate implements WorkflowProvider {
   public readonly id = 'gritty-low-fantasy:incubate'
 
   public readonly supportedKinds = ['init']
 
+  /**
+   * Executes the gritty low fantasy initialization workflow.
+   * Seeds the ledger with narrative nodes when an 'init' intent is received.
+   *
+   * @param context The workflow context for state mutation.
+   * @param intent The intent triggering this workflow.
+   */
   async execute(context: WorkflowContext, intent: Intent): Promise<void> {
     if (intent.kind === 'init') {
       console.log(

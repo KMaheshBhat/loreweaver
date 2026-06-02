@@ -11,6 +11,13 @@ export class WeaverIncubate implements WorkflowProvider {
 
   public readonly supportedKinds = ['submit-turn']
 
+  /**
+   * Executes the narrative turn submission workflow.
+   * Processes all nodes carried by the intent and adds them to the ledger.
+   *
+   * @param context The workflow context for state mutation.
+   * @param intent The intent containing the narrative turn nodes to process.
+   */
   async execute(context: WorkflowContext, intent: Intent): Promise<void> {
     if (intent.kind === 'submit-turn') {
       // Loop through all nodes carried by the intent (Proposed + Updates)

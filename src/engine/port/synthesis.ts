@@ -1,6 +1,11 @@
 import { GraphNode } from '@engine/model/base'
 import { Intent } from '@engine/model/intent'
 
+/**
+ * A chunk of text generated during streaming synthesis.
+ * Carries the actual text delta and optional metadata from the
+ * underlying text-generation provider.
+ */
 export interface TextSynthesisChunk {
   /** The real-time text segment delta generated during the active loop turn. */
   delta?: string
@@ -13,6 +18,11 @@ export interface TextSynthesisChunk {
   meta?: Record<string, unknown>
 }
 
+/**
+ * The text-generation contract for the System of Synthesis.
+ * Implementations of this interface are responsible for dispatching
+ * text-generation requests and streaming back structured chunks.
+ */
 export interface TextToTextSynthesisProvider {
   /**
    * Dispatches an isolated text-generation frame to an abstract inference engine.

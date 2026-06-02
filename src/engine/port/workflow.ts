@@ -17,6 +17,12 @@ export interface WorkflowContext {
   commitBatch: (ids: string[]) => void
 }
 
+/**
+ * The contract for a workflow participant.
+ * Implementations of this interface register with the ledger to
+ * handle specific intent kinds and execute deterministic logic
+ * against the graph state.
+ */
 export interface WorkflowProvider {
   /** A unique identifier for the participant (e.g., 'causality-accounting') */
   id: string
@@ -26,8 +32,8 @@ export interface WorkflowProvider {
    * e.g., ['submit-turn', 'init']
    */
   supportedKinds: string[]
-  /**
 
+  /**
    * Executes a deterministic sequence against the engine state.
    * @param context The Ledger-provided capabilities for state mutation.
    * @param intent The client input intent payload injected into the pipeline conduit.

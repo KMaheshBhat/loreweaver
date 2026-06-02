@@ -17,14 +17,31 @@ export class Ledger extends EventEmitter {
     this.setMaxListeners(1000)
   }
 
+  /**
+   * Retrieves a single node by its id.
+   *
+   * @param id The unique identifier of the node to retrieve.
+   * @returns The node if found, undefined otherwise.
+   */
   getNode(id: string): GraphNode | undefined {
     return this.nodes[id]
   }
 
+  /**
+   * Returns all nodes currently in the ledger.
+   *
+   * @returns An array of all nodes.
+   */
   getNodes(): GraphNode[] {
     return Object.values(this.nodes)
   }
 
+  /**
+   * Registers a workflow participant to receive intents of specific kinds.
+   * Participants receive intents that match their `supportedKinds` array.
+   *
+   * @param participant The workflow provider to register.
+   */
   public registerWorkflowProvider(participant: WorkflowProvider): void {
     if (!this.participants.find((p) => p.id === participant.id)) {
       this.participants.push(participant)
@@ -32,6 +49,13 @@ export class Ledger extends EventEmitter {
     }
   }
 
+  /**
+   * Dispatches an intent to all registered workflow participants that support its kind.
+   * Each participant receives a context object containing mutation capabilities.
+   *
+   * @param intent The intent to dispatch through the workflow pipeline.
+   * @param options Optional configuration for the workflow execution.
+   */
   async runWorkflow(intent: Intent, options?: Record<string, unknown>): Promise<void> {
     const context: WorkflowContext = {
       addNode: (node) => this.add(node),

@@ -1,5 +1,10 @@
 import { GraphNode, GraphNodeMap } from '@engine/model/base'
 
+/**
+ * The persistence contract for the System of Record.
+ * Implementations of this interface are responsible for loading
+ * and committing graph nodes to/from storage.
+ */
 export interface RecordProvider {
   /**
    * Hydrates the authoritative in-memory graph map from storage during boot.
