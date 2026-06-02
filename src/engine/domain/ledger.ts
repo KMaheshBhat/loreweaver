@@ -1,5 +1,6 @@
 import { GraphNode, GraphNodeMap } from '@engine/model/base'
 import { Intent } from '@engine/model/intent'
+import { TextToTextSynthesisProvider } from '@engine/port/synthesis'
 import { WorkflowContext, WorkflowProvider } from '@engine/port/workflow'
 import { EventEmitter } from 'events'
 
@@ -11,6 +12,7 @@ import { EventEmitter } from 'events'
 export class Ledger extends EventEmitter {
   private nodes: GraphNodeMap = {}
   private workflowProviders: WorkflowProvider[] = []
+  private tttSynthesisProviders: TextToTextSynthesisProvider[] = []
 
   constructor() {
     super()
@@ -34,6 +36,28 @@ export class Ledger extends EventEmitter {
    */
   getNodes(): GraphNode[] {
     return Object.values(this.nodes)
+  }
+
+  /**
+   * Registers a text-to-text synthesis provider.
+   *
+   * @param provider The text-to-text synthesis provider to register.
+   */
+  public registerSynthesisProvider(provider: TextToTextSynthesisProvider): void {
+    if (!this.tttSynthesisProviders.find((p) => p.id === provider.id)) {
+      this.tttSynthesisProviders.push(provider)
+      console.log(`Ledger: Registered synthesis provider [${provider.id}]`)
+    }
+  }
+
+  /**
+   * Retrieves a text-to-text synthesis provider by its ID.
+   *
+   * @param id The ID of the synthesis provider to retrieve.
+   * @returns The synthesis provider with the specified ID, or `undefined` if not found.
+   */
+  public getSynthesisProvider(id: string): TextToTextSynthesisProvider | undefined {
+    return this.tttSynthesisProviders.find((p) => p.id === id)
   }
 
   /**
