@@ -3,13 +3,15 @@ import { Intent } from '@engine/model/intent'
 import { seedNodes } from './records'
 
 /**
- * The ASOIAF Genesis Adaptor.
- * Orchestrates the "Inking" of the ASOIAF world into the Ledger.
+ * The Gritty Low Fantasy Genesis Adaptor.
+ * Orchestrates the "Inking" of the world into the Ledger.
  */
-export class ASOIAFIncubate implements WorkflowProvider {
+export class GrittyLowFantasyIncubate implements WorkflowProvider {
   async execute(context: WorkflowContext, intent: Intent): Promise<void> {
     if (intent.kind === 'init') {
-      console.log('Genesis: Waking the Dragon in the Incubation Sandbox...')
+      console.log(
+        'Sovereign Seal: Inking a world of grit, mud, and royals who think a hooded cloak counts as a disguise...'
+      )
       Object.values(seedNodes).forEach((node) => context.addNode(node))
     }
   }

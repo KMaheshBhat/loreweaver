@@ -12,26 +12,34 @@ export const seedNodes: GraphNodeMap = {
       engagementState: 'active'
     })
     .build(),
-  character1: createGraphNode('weave:char:egg')
+  character1: createGraphNode('weave:char:valen')
     .withData({
       group: 'weave',
-      title: 'Aegon Targaryen',
+      title: 'Valen "The Unseen"',
       isUser: true,
       content:
-        'Name: Aegon "Egg" Targaryen\nTitle: The Errantly Traveling Prince / The Uncrowned Dragon\nOrigins: The Red Keep, King\'s Landing (Fourth son of Prince Maekar Targaryen)\nAliases: Egg (childhood moniker), The Unlikely\nPrimary Weapon: His razor-sharp tongue, royal signet ring, and the sheer political leverage of his bloodline.'
+        'Name: Valen "The Unseen"\n' +
+        'Title: The Incognito Scion / The Gilded Exile\n' +
+        'Origins: The Iron Spires (Capital of a decaying empire)\n' +
+        'Aliases: Val (his traveling identity), The Disinherited\n' +
+        'Primary Weapon: A razor-sharp wit, a hidden Sovereign Seal, and the dangerous weight of a lineage he is trying to outrun.'
     })
     .withMeta({
       recordState: 'committed',
       engagementState: 'active'
     })
     .build(),
-  character2: createGraphNode('weave:char:dunk')
+  character2: createGraphNode('weave:char:kaelen')
     .withData({
       group: 'weave',
-      title: 'Ser Duncan',
+      title: 'Kaelen "The Bound"',
       isUser: true,
       content:
-        'Name: Ser Duncan "Dunk" the Tall\nTitle: The Hedge Knight\nOrigins: Flea Bottom, King\'s Landing (Former orphan)\nAliases: Dunk the Lunk, Thick as a Castle Wall\nPrimary Weapon: A broadsword, a heavy shield, and his imposing physical stature.'
+        'Name: Kaelen "The Bound"\n' +
+        'Title: The Disgraced Guardian / The Wayward Sword\n' +
+        'Origins: The Sinking Slums (A nameless gutter beneath the Iron Spires)\n' +
+        'Aliases: Kael the Wall, The Unbroken\n' +
+        'Primary Weapon: A scarred claymore, a notched heavy shield, and a massive physical frame built from years of desperate survival.'
     })
     .withMeta({
       recordState: 'committed',
@@ -41,10 +49,10 @@ export const seedNodes: GraphNodeMap = {
   summary1: createGraphNode('weave:summary:1')
     .withData({
       group: 'weave',
-      title: 'The Ashford Meadow Tourney',
+      title: 'The Tournament of the Marches',
       isUser: true,
       content:
-        "Dunk is a newly anointed hedge knight traveling alone until he reluctantly takes on Egg—a disguised, runaway Targaryen prince—as his squire. When Dunk strikes a royal prince to protect a helpless puppeteer, his life is forfeit until Egg reveals his hidden identity and triggers a legendary Trial of Seven combat. Though Dunk survives the brutal trial, the king's heir is tragically slain, prompting Egg's father to let the boy continue traveling incognito with Dunk to learn how to be a regular citizen before he ever learns how to be a king."
+        "Kaelen is a wandering sword traveling alone until he reluctantly takes on Valen—a disguised, runaway noble scion—as his ward. When Kaelen strikes a high-born lord to protect a helpless traveler, his life is forfeit until Valen reveals his hidden Sovereign Seal and triggers a legendary Judicial Combat. Though Kaelen survives the brutal trial, the High Lord's heir is tragically slain, prompting Valen's father to let the youth continue traveling incognito with Kaelen to learn the ways of the common folk before he ever takes his place among the elite."
     })
     .withMeta({
       recordState: 'committed',
@@ -54,10 +62,10 @@ export const seedNodes: GraphNodeMap = {
   summary2: createGraphNode('weave:summary:2')
     .withData({
       group: 'weave',
-      title: 'The Whitewalls Conspiracy',
+      title: 'The Spires Sedition',
       isUser: true,
       content:
-        "Looking for work, the duo arrives at Whitewalls castle for what is advertised as a peaceful wedding tourney, only for Dunk to slowly realize they have walked into a hornets' nest of secret Blackfyre traitors plotting a rebellion against the crown. Egg is captured trying to use his hidden identity to stop the uprising, forcing a heavily wounded Dunk to bluff his way past bloodthirsty lords and rescue his squire before the royal army arrives to crush the treasonous plot. The pair narrowly slips away into the countryside before the chaos can expose them, leaving them paranoid, exhausted, and desperately trying to keep a lower profile at any local inn."
+        'Looking for work, the duo arrives at a remote keep for what is advertised as a peaceful wedding feast, only for Kaelen to slowly realize they have walked into a nest of Seditionist traitors plotting a rebellion against the Iron Spires. Valen is captured trying to use his hidden identity to stop the uprising, forcing a heavily wounded Kaelen to bluff his way past bloodthirsty lords and rescue his ward before the Imperial Guard arrives to crush the treasonous plot. The pair narrowly slips away into the countryside before the chaos can expose them, leaving them paranoid, exhausted, and desperately trying to keep a lower profile at any local inn.'
     })
     .withMeta({
       recordState: 'committed',
@@ -69,7 +77,8 @@ export const seedNodes: GraphNodeMap = {
       group: 'weave',
       title: 'A Dusty Crossroads Inn',
       content:
-        '## The Scenario: A Dusty Crossroads Inn\nSer Duncan the Tall stands frozen in a crowded tavern yard, his massive frame blocking the doorway as a group of hostile, drunk local guards close in around him. Egg, a bald kid in muddy boots, steps out from behind Dunk\'s massive legs, crossing his arms and boldly flashing a heavy gold signet ring engraved with a three-headed dragon. The tavern falls completely silent as the guards instantly drop to their knees in terror. Dunk lets out a heavy sigh, rubs his temples, and mutters, "Egg, you little lunk, we were supposed to be keeping a low profile."'
+        '## The Scenario: A Dusty Crossroads Inn\n' +
+        'Kaelen stands frozen in a crowded tavern yard, his massive frame blocking the doorway as a group of hostile, drunk local guards close in around him. Valen, a travel-worn youth in muddy boots, steps out from behind Kaelen\'s massive legs, crossing his arms and boldly flashing a heavy Sovereign Seal. The tavern falls completely silent as the guards instantly drop to their knees in terror. Kaelen lets out a heavy sigh, rubs his temples, and mutters, "Valen, you fool, we were supposed to be keeping a low profile."'
     })
     .withMeta({
       recordState: 'committed',
@@ -173,7 +182,7 @@ export const seedNodes: GraphNodeMap = {
     .withData({
       group: 'weave',
       title: 'Turn #77',
-      content: "Aeogon's gaze lingers on the ledger layout...",
+      content: "Valen's gaze lingers on the ledger layout...",
       timestamp: 1774432920000
     })
     .withMeta({

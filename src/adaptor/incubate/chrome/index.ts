@@ -9,7 +9,9 @@ import { seedNodes } from './records'
 export class ChromeIncubate implements WorkflowProvider {
   async execute(context: WorkflowContext, intent: Intent): Promise<void> {
     if (intent.kind === 'init') {
-      console.log('Configure: the Chrome Incubate...')
+      console.log(
+        'Loom Throne: Stabilizing the System Frame. Please keep your hands and feet inside the viewport...'
+      )
       Object.values(seedNodes).forEach((node) => context.addNode(node))
     }
   }

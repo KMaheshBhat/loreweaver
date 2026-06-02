@@ -1,4 +1,4 @@
-import { ASOIAFIncubate } from '@adaptor/incubate/asoiaf'
+import { GrittyLowFantasyIncubate } from '@adaptor/incubate/gritty-low-fantasy'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { Ledger } from '@engine/domain/ledger'
 import { GraphNode } from '@engine/model/base'
@@ -8,7 +8,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 import { ChromeIncubate } from '@adaptor/incubate/chrome'
-import { WWIncubate } from '@adaptor/incubate/ww'
+import { HighMagicAcademyIncubate } from '@adaptor/incubate/high-magic-academy'
 
 function createWindow(): BrowserWindow {
   // Create the browser window.
@@ -77,15 +77,15 @@ app.whenReady().then(async () => {
   // 3. On-Start Lifecycle: Trigger Genesis
   // At this stage, we instantiate our chosen 'Incubate' adapter and run the init workflow.
   const chrome = new ChromeIncubate()
-  const asoiaf = new ASOIAFIncubate()
+  const glf = new GrittyLowFantasyIncubate()
   const choice = 1
-  const ww = new WWIncubate()
+  const hma = new HighMagicAcademyIncubate()
   const initIntent: Intent = { id: 'init-0', kind: 'init', nodes: [], meta: {} }
   await ledger.runWorkflow(chrome, initIntent)
   if (choice === 1) {
-    await ledger.runWorkflow(asoiaf, initIntent)
+    await ledger.runWorkflow(glf, initIntent)
   } else {
-    await ledger.runWorkflow(ww, initIntent)
+    await ledger.runWorkflow(hma, initIntent)
   }
 
   // IPC test
