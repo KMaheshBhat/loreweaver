@@ -10,6 +10,7 @@ import { EventEmitter } from 'events'
  */
 export class Ledger extends EventEmitter {
   private nodes: GraphNodeMap = {}
+  private participants: WorkflowProvider[] = []
 
   constructor() {
     super()
@@ -24,19 +25,26 @@ export class Ledger extends EventEmitter {
     return Object.values(this.nodes)
   }
 
-  async runWorkflow(
-    workflow: WorkflowProvider,
-    intent: Intent,
-    options?: Record<string, unknown>
-  ): Promise<void> {
+  public registerWorkflowProvider(participant: WorkflowProvider): void {
+    if (!this.participants.find((p) => p.id === participant.id)) {
+      this.participants.push(participant)
+      console.log(`Ledger: Registered participant [${participant.id}]`)
+    }
+  }
+
+  async runWorkflow(intent: Intent, options?: Record<string, unknown>): Promise<void> {
     const context: WorkflowContext = {
-      // Mapping clean context names to private mechanical realizations
       addNode: (node) => this.add(node),
       updateNode: (id, data, meta) => this.update(id, data, meta),
       removeNode: (id) => this.remove(id),
       commitBatch: (ids) => this.commit(ids)
     }
-    await workflow.execute(context, intent, options)
+    console.log(`Ledger: Running workflow [${intent.id}] from ${intent.meta.source}`)
+    for (const participant of this.participants) {
+      if (participant.supportedKinds.includes(intent.kind)) {
+        await participant.execute(context, intent, options)
+      }
+    }
   }
 
   private add(node: GraphNode): void {

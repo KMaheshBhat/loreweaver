@@ -67,7 +67,15 @@ app.whenReady().then(async () => {
 
   // 1. Initialize the Deterministic Vessel (Empty)
   const ledger = new Ledger()
+  const chrome = new ChromeIncubate()
   const weaver = new WeaverIncubate() // The operational adaptor
+  const glf = new GrittyLowFantasyIncubate()
+  const hma = new HighMagicAcademyIncubate()
+  const choice = 1
+
+  ledger.registerWorkflowProvider(chrome)
+  choice == 1 ? ledger.registerWorkflowProvider(glf) : ledger.registerWorkflowProvider(hma)
+  ledger.registerWorkflowProvider(weaver)
 
   // 2. The Reactive Bridge (Forwarding Ledger events to UI) [8]
   const forward = (win: BrowserWindow): void => {
@@ -78,17 +86,8 @@ app.whenReady().then(async () => {
 
   // 3. On-Start Lifecycle: Trigger Genesis
   // At this stage, we instantiate our chosen 'Incubate' adapter and run the init workflow.
-  const chrome = new ChromeIncubate()
-  const glf = new GrittyLowFantasyIncubate()
-  const choice = 1
-  const hma = new HighMagicAcademyIncubate()
-  const initIntent: Intent = { id: 'init-0', kind: 'init', nodes: [], meta: {} }
-  await ledger.runWorkflow(chrome, initIntent)
-  if (choice === 1) {
-    await ledger.runWorkflow(glf, initIntent)
-  } else {
-    await ledger.runWorkflow(hma, initIntent)
-  }
+  const initIntent: Intent = { id: 'init-0', kind: 'init', nodes: [], meta: { source: 'system' } }
+  await ledger.runWorkflow(initIntent)
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
@@ -110,10 +109,10 @@ app.whenReady().then(async () => {
       id: `intent-submit-${Date.now()}`,
       kind: 'submit-turn',
       nodes: nodes, // Now correctly typed as GraphNode[]
-      meta: {}
+      meta: { source: 'client' }
     }
     // ledger.runWorkflow dispatches the intent to our Weaver adaptor
-    await ledger.runWorkflow(weaver, submitIntent)
+    await ledger.runWorkflow(submitIntent)
   })
 
   ipcMain.on('engine:chrome:exit', () => {

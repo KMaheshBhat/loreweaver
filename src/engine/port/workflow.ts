@@ -18,7 +18,16 @@ export interface WorkflowContext {
 }
 
 export interface WorkflowProvider {
+  /** A unique identifier for the participant (e.g., 'causality-accounting') */
+  id: string
+
   /**
+   * The list of intent kinds this participant reflects/participates in.
+   * e.g., ['submit-turn', 'init']
+   */
+  supportedKinds: string[]
+  /**
+
    * Executes a deterministic sequence against the engine state.
    * @param context The Ledger-provided capabilities for state mutation.
    * @param intent The client input intent payload injected into the pipeline conduit.

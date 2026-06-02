@@ -7,6 +7,10 @@ import { seedNodes } from './records'
  * Orchestrates the configuration of Chrome the into the Ledger.
  */
 export class ChromeIncubate implements WorkflowProvider {
+  public readonly id = 'chrome:incubate'
+
+  public readonly supportedKinds = ['init']
+
   async execute(context: WorkflowContext, intent: Intent): Promise<void> {
     if (intent.kind === 'init') {
       console.log(

@@ -7,6 +7,10 @@ import { seedNodes } from './records'
  * Orchestrates the "Inking" of the world into the Ledger.
  */
 export class HighMagicAcademyIncubate implements WorkflowProvider {
+  public readonly id = 'high-magic-academy:incubate'
+
+  public readonly supportedKinds = ['init']
+
   async execute(context: WorkflowContext, intent: Intent): Promise<void> {
     if (intent.kind === 'init') {
       console.log(

@@ -7,6 +7,10 @@ import { seedNodes } from './records'
  * Orchestrates the "Inking" of the world into the Ledger.
  */
 export class GrittyLowFantasyIncubate implements WorkflowProvider {
+  public readonly id = 'gritty-low-fantasy:incubate'
+
+  public readonly supportedKinds = ['init']
+
   async execute(context: WorkflowContext, intent: Intent): Promise<void> {
     if (intent.kind === 'init') {
       console.log(
