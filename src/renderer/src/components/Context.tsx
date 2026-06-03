@@ -13,28 +13,36 @@ function Context(): React.JSX.Element {
       const sidebarNodes = await window.api.engine.chrome.sidebarNodes()
       const allNodes = await window.api.engine.weaver.nodes()
       const weaverConfig = sidebarNodes.find((node) => node.id === 'weaver')
+
       const tTitle = weaverConfig?.data?.context?.['title'] ?? ''
       const tIcon = weaverConfig?.data?.context?.['icon'] ?? ''
       const tSubtitle = weaverConfig?.data?.context?.['subTitle'] ?? ''
+
       const tNode = createChromeNode('context')
         .withTitle(tTitle)
         .withIcon(tIcon)
         .withData({ subTitle: tSubtitle })
         .build()
+
       setTitleNode(tNode)
+
       const targetPrefixes: string[] = weaverConfig?.data?.context?.['prefixes'] ?? []
       const filtered = allNodes.filter((node) =>
         targetPrefixes.some((prefix) => node.id.startsWith(prefix))
       )
-      console.log(filtered)
       setNodes(filtered)
     }
     hydrateColumnData()
   }, [])
 
   return (
-    <div className="w-1/4 flex flex-col border-r border-transparent layout-t2-see-through overflow-y-auto custom-terminal-scroll">
-      <div className="sticky top-0 z-10 bg-surface-t1 px-4 pt-4 pb-3 border-b border-surface-t2-border/70 custom-header">
+    <div className="w-full h-full flex flex-col overflow-hidden">
+      {/*
+        1. Fixed Header:
+        Uses 'shrink-0' to stay locked at the top of the column.
+        Removed 'sticky' as the flex-layout now manages the lock.
+      */}
+      <div className="shrink-0 bg-surface-t1 px-4 pt-4 pb-3 border-b border-surface-tier2-border/70 custom-header">
         {titleNode ? (
           <Title
             node={titleNode}
@@ -47,9 +55,15 @@ function Context(): React.JSX.Element {
           <div className="animate-pulse bg-surface-t2-border/20 h-10 rounded" />
         )}
       </div>
-      <div className="flex-1 p-4 pt-3">
-        {nodes.map((node, index) => {
-          const isFocused = index % 4 >= 2
+
+      {/*
+        2. Scrollable Card List:
+        Uses 'flex-1' to take all remaining height.
+        Uses 'overflow-y-auto' to enable internal scrolling.
+        Uses 'custom-terminal-scroll' for the themed scrollbar.
+      */}
+      <div className="flex-1 overflow-y-auto custom-terminal-scroll p-4 pt-3">
+        {nodes.map((node) => {
           return (
             <Card
               key={node.id}
@@ -57,7 +71,7 @@ function Context(): React.JSX.Element {
               titleKey="title"
               iconKey="icon"
               contentKey="content"
-              isFocused={isFocused}
+              column="context"
             />
           )
         })}

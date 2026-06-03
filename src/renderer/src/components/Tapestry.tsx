@@ -3,8 +3,10 @@ import { createChromeNode } from '@engine/model/chrome'
 import { useEffect, useState, useRef } from 'react'
 import Card from './Card'
 import Title from './Title'
+import { useUI } from '@renderer/context/UIContext'
 
 function Tapestry(): React.JSX.Element {
+  const { setFocusedColumn } = useUI()
   const [nodes, setNodes] = useState<BaseNode[]>([])
   const [titleNode, setTitleNode] = useState<BaseNode>()
   const [draft, setDraft] = useState('')
@@ -65,11 +67,14 @@ function Tapestry(): React.JSX.Element {
     await window.api.engine.weaver.submitTurn(proposedNode)
     setDraft('')
   }
-
   return (
-    <div className="w-1/2 h-full flex flex-col border-r border-transparent layout-t2-see-through overflow-hidden">
-      {/* Locked Header */}
-      <div className="sticky top-0 z-10 bg-surface-t1 px-4 pt-4 pb-3 border-b border-surface-t2-border/70 custom-header">
+    <div className="w-full h-full flex flex-col overflow-hidden">
+      {/*
+          1. Fixed Header:
+          Uses 'shrink-0' to stay locked. Removed 'sticky' as the
+          flex-col parent ensures it stays anchored at the top [Conversation History].
+        */}
+      <div className="shrink-0 bg-surface-t1 px-4 pt-4 pb-3 border-b border-surface-tier2-border/70 custom-header">
         {titleNode ? (
           <Title
             node={titleNode}
@@ -82,9 +87,14 @@ function Tapestry(): React.JSX.Element {
           <div className="animate-pulse bg-surface-t2-border/20 h-10 rounded" />
         )}
       </div>
-      <div className="flex-1 p-4 pt-3 overflow-y-auto custom-terminal-scroll">
-        {nodes.map((node, index) => {
-          const isFocused = index % 4 >= 2
+
+      {/*
+          2. Scrollable Prose Canvas:
+          Uses 'flex-1' and 'overflow-y-auto' to claim all vertical real estate
+          between the Header and the Forge [3, 4].
+        */}
+      <div className="flex-1 overflow-y-auto custom-terminal-scroll p-4 pt-3">
+        {nodes.map((node) => {
           return (
             <Card
               key={node.id}
@@ -92,12 +102,21 @@ function Tapestry(): React.JSX.Element {
               titleKey="title"
               iconKey="icon"
               contentKey="content"
-              isFocused={isFocused}
+              column="tapestry"
             />
           )
         })}
       </div>
-      <div className="flex flex-col gap-2 p-4 bg-surface-t1 border-t border-surface-t2-border/40 layout-t2-see-through shrink-0">
+
+      {/*
+          3. The Forge (Input Deck):
+          Uses 'shrink-0' to stay firmly anchored to the bottom,
+          ensuring the command levers are always accessible [2, 4].
+        */}
+      <div
+        className="flex flex-col gap-2 p-4 bg-surface-t1 border-t border-surface-tier2-border/40 shrink-0"
+        onClick={() => setFocusedColumn('tapestry')}
+      >
         <textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}

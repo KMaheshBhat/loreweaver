@@ -61,7 +61,7 @@ function Sidebar(): React.JSX.Element {
         </div>
 
         {/* Lower Core Control Anchor */}
-        <div className="border-t border-surface-t2-border/10 pt-4">
+        <div className="border-t border-surface-tier2-border/70 pt-4 hover:decorator-epsilon-active-focus">
           <NavItem
             key={exitNode.id}
             node={exitNode}

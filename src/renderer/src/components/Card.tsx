@@ -1,4 +1,5 @@
 import { BaseNode } from '@engine/model/base'
+import { useUI } from '@renderer/context/UIContext'
 import { useEffect, useState } from 'react'
 
 interface CardItemprops {
@@ -6,7 +7,7 @@ interface CardItemprops {
   titleKey?: string
   contentKey?: string
   iconKey?: string
-  isFocused: boolean
+  column: string
 }
 
 function Card({
@@ -14,31 +15,31 @@ function Card({
   titleKey = 'title',
   iconKey = 'icon',
   contentKey,
-  isFocused = false
+  column
 }: CardItemprops): React.JSX.Element {
-  const title = String(node.data[titleKey] ?? node.data.id ?? 'UNKNOWN')
-  const icon = String(node.data[iconKey] ?? '󰋘')
-  const baseStyle = 'p-3 mb-2 bg-surface-t3 rounded transition-all duration-300'
-  let description = ''
-  contentKey && (description = String(node.data[contentKey] ?? ''))
-  const [desc, setDesc] = useState(description)
-  const [decStyle, setDecStyle] = useState(resolveDecoratorStyle(node, isFocused))
+  const { setFocus, focusedNodeId } = useUI()
+  const [liveNode, setLiveNode] = useState<BaseNode>(node)
+  const isFocused = liveNode.id === focusedNodeId
+  const decStyle = resolveDecoratorStyle(liveNode, isFocused)
+  const title = String(liveNode.data[titleKey] ?? liveNode.id ?? 'UNKNOWN')
+  const icon = String(liveNode.data[iconKey] ?? '󰋘')
+  const baseStyle = 'p-3 mb-2 bg-surface-t3 rounded transition-all duration-100 cursor-pointer'
+  const desc = contentKey ? String(liveNode.data[contentKey] ?? '') : ''
+
   useEffect(() => {
     const removeListener = window.electron.ipcRenderer.on(
       'node:updated',
       (_event, updatedNode: BaseNode) => {
         if (updatedNode.id === node.id) {
-          contentKey && setDesc(String(updatedNode.data[contentKey] ?? ''))
-          setDecStyle(resolveDecoratorStyle(updatedNode, isFocused))
+          setLiveNode(updatedNode)
         }
       }
     )
-    return () => {
-      removeListener()
-    }
-  }, [contentKey, node.id, isFocused])
+    return () => removeListener()
+  }, [node.id])
+
   return (
-    <div className={`${baseStyle} ${decStyle}`}>
+    <div className={`${baseStyle} ${decStyle}`} onClick={() => setFocus(liveNode.id, column)}>
       <div className="text-t3 mb-1 flex items-center gap-2">
         <span>{icon}</span>
         <span>{title}</span>
@@ -47,7 +48,6 @@ function Card({
     </div>
   )
 }
-
 function resolveDecoratorStyle(node: BaseNode, isFocused: boolean): string {
   const recordState = String(node.meta?.recordState ?? 'invalid')
   const engagementState = String(node.meta?.engagementState ?? 'inactive')

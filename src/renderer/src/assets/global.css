@@ -7,6 +7,7 @@
   /* --- Design System Layer 1 Theme Variables --- */
   --surface-tier1: var(--theme-surface-tier1);
   --surface-tier2-panel: var(--theme-surface-tier2-panel);
+  --color-surface-tier2-border: var(--theme-surface-tier2-border);
   --surface-tier2-border: var(--theme-surface-tier2-border);
   --surface-tier3: var(--theme-surface-tier3);
   --surface-tier4: var(--theme-surface-tier4);

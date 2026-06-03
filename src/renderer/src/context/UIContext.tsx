@@ -5,6 +5,10 @@ export type AppMode = 'weaver' | 'keeper' | 'settings'
 export interface UIContextType {
   currentMode: AppMode
   setCurrentMode: (mode: AppMode) => void
+  focusedNodeId?: string
+  focusedColumn?: string
+  setFocusedColumn: (column: string) => void
+  setFocus: (nodeId: string, column?: string) => void
 }
 
 export const UIContext = createContext<UIContextType | undefined>(undefined)
