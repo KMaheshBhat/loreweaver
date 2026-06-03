@@ -1,5 +1,5 @@
 import { GraphNode } from '@engine/model/base'
-import { Intent } from '@engine/model/intent'
+import { Intent } from '@engine/model/hami'
 
 /**
  * A chunk of text generated during streaming synthesis.

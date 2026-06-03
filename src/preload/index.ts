@@ -2,6 +2,8 @@ import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { GraphNode } from '@engine/model/base'
 
+ipcRenderer.setMaxListeners(1000)
+
 // Custom APIs for renderer
 const api = {
   engine: {

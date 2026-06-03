@@ -1,14 +1,14 @@
 import { Context, getModel, Message, stream } from '@earendil-works/pi-ai'
 import { GraphNode } from '@engine/model/base'
-import { Intent } from '@engine/model/intent'
+import { Intent } from '@engine/model/hami'
 import { TextSynthesisChunk, TextToTextSynthesisProvider } from '@engine/port/synthesis'
 
 export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
   public readonly id = 'pi-ai-synthesis:incubate'
 
   async *generateStream(
-    _intent: Intent,
-    context: GraphNode[],
+    intent: Intent,
+    _context: GraphNode[],
     options?: Record<string, unknown>
   ): AsyncIterable<TextSynthesisChunk> {
     const modelId = 'openrouter/free'
@@ -18,7 +18,7 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
     // Convert GraphNode[] context to pi-ai Context format
     const piContext: Context = {
       systemPrompt: (options?.systemPrompt as string) || 'You are a helpful assistant.',
-      messages: context.map((node) => {
+      messages: intent.nodes.map((node) => {
         const message: Message = {
           role: 'user',
           content: node.data.content as string,

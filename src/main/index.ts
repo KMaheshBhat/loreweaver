@@ -1,16 +1,16 @@
+import { ChromeIncubate } from '@adaptor/incubate/chrome'
 import { GrittyLowFantasyIncubate } from '@adaptor/incubate/gritty-low-fantasy'
+import { HighMagicAcademyIncubate } from '@adaptor/incubate/high-magic-academy'
+import { PiAiSynthesisProvider } from '@adaptor/incubate/pi-ai'
+import { WeaverIncubate } from '@adaptor/incubate/weaver'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { Ledger } from '@engine/domain/ledger'
 import { GraphNode } from '@engine/model/base'
 import { ChromeNode, isSidebarNode } from '@engine/model/chrome'
-import { Intent } from '@engine/model/intent'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
-import { ChromeIncubate } from '@adaptor/incubate/chrome'
-import { HighMagicAcademyIncubate } from '@adaptor/incubate/high-magic-academy'
-import { WeaverIncubate } from '@adaptor/incubate/weaver'
-import { PiAiSynthesisProvider } from '@adaptor/incubate/pi-ai'
+import { Intent } from '@engine/model/hami'
 
 /**
  * Creates the main application window with Electron configuration.
@@ -18,7 +18,7 @@ import { PiAiSynthesisProvider } from '@adaptor/incubate/pi-ai'
  * @returns The configured BrowserWindow instance.
  */
 function createWindow(): BrowserWindow {
-  const enableDevToolOnStart = true
+  const enableDevToolOnStart = false
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -81,13 +81,11 @@ app.whenReady().then(async () => {
   const glf = new GrittyLowFantasyIncubate()
   const hma = new HighMagicAcademyIncubate()
   const choice = 1
-
-  ledger.registerWorkflowProvider(chrome)
-  choice % 2 == 1 ? ledger.registerWorkflowProvider(glf) : ledger.registerWorkflowProvider(hma)
-  ledger.registerWorkflowProvider(weaver)
-
-  const pa = new PiAiSynthesisProvider()
-  ledger.registerSynthesisProvider(pa)
+  ledger.addFlow(chrome)
+  choice % 2 == 1 ? ledger.addFlow(glf) : ledger.addFlow(hma)
+  ledger.addFlow(weaver)
+  const pa = ledger.createSynthesisFlow(new PiAiSynthesisProvider(), [])
+  ledger.addFlow(pa)
 
   // The Reactive Bridge (Forwarding Ledger events to UI) [8]
   const forward = (win: BrowserWindow): void => {
@@ -98,19 +96,24 @@ app.whenReady().then(async () => {
 
   // On-Start Lifecycle: Trigger Genesis
   // At this stage, we instantiate our chosen 'Incubate' adapter and run the init workflow.
-  const initIntent: Intent = { id: 'init-0', kind: 'init', nodes: [], meta: { source: 'system' } }
-  await ledger.runWorkflow(initIntent)
+  const initIntent: Intent = {
+    id: 'init-0',
+    kind: 'init',
+    nodes: [],
+    options: { source: 'system' }
+  }
+  ledger.runFlow(initIntent)
 
   ipcMain.handle('client:node', async (): Promise<GraphNode | undefined> => {
     return ledger.getNode('client')
   })
 
   ipcMain.handle('chrome:nodes:sidebar', async (): Promise<ChromeNode[]> => {
-    return ledger.getNodes().filter(isSidebarNode)
+    return ledger.getGraphNodes().filter(isSidebarNode)
   })
 
   ipcMain.handle('weaver:nodes', async (): Promise<GraphNode[]> => {
-    return ledger.getNodes().filter((node) => node.data.group === 'weave')
+    return ledger.getGraphNodes().filter((node) => node.data.group === 'weave')
   })
 
   ipcMain.handle('weaver:submit', async (_event, nodes: GraphNode[]): Promise<void> => {
@@ -118,9 +121,9 @@ app.whenReady().then(async () => {
       id: `intent-submit-${Date.now()}`,
       kind: 'submit-turn',
       nodes: nodes,
-      meta: { source: 'client' }
+      options: { source: 'client' }
     }
-    await ledger.runWorkflow(submitIntent)
+    await ledger.runFlow(submitIntent)
   })
 
   ipcMain.on('engine:chrome:exit', () => {

@@ -1,0 +1,2821 @@
+Directory structure:
+└── loreweaver/
+    ├── README.md
+    ├── dev-app-update.yml
+    ├── electron-builder.yml
+    ├── electron.vite.config.ts
+    ├── eslint.config.mjs
+    ├── LICENSE
+    ├── package.json
+    ├── tsconfig.json
+    ├── tsconfig.node.json
+    ├── tsconfig.web.json
+    ├── .editorconfig
+    ├── .npmrc
+    ├── .prettierignore
+    ├── .prettierrc.yaml
+    └── src/
+        ├── adaptor/
+        │   └── incubate/
+        │       ├── chrome/
+        │       │   ├── index.ts
+        │       │   └── records.ts
+        │       ├── gritty-low-fantasy/
+        │       │   ├── index.ts
+        │       │   └── records.ts
+        │       ├── high-magic-academy/
+        │       │   ├── index.ts
+        │       │   └── records.ts
+        │       ├── pi-ai/
+        │       │   └── index.ts
+        │       └── weaver/
+        │           └── index.ts
+        ├── engine/
+        │   ├── domain/
+        │   │   ├── hami.ts
+        │   │   └── ledger.ts
+        │   ├── model/
+        │   │   ├── base.ts
+        │   │   ├── chrome.ts
+        │   │   └── hami.ts
+        │   └── port/
+        │       ├── record.ts
+        │       └── synthesis.ts
+        ├── main/
+        │   └── index.ts
+        ├── preload/
+        │   ├── index.d.ts
+        │   └── index.ts
+        └── renderer/
+            ├── index.html
+            └── src/
+                ├── env.d.ts
+                ├── main.tsx
+                ├── assets/
+                │   └── global.css
+                ├── components/
+                │   ├── Accounting.tsx
+                │   ├── Card.tsx
+                │   ├── Chrome.tsx
+                │   ├── Context.tsx
+                │   ├── NavItem.tsx
+                │   ├── Sidebar.tsx
+                │   ├── Tapestry.tsx
+                │   └── Title.tsx
+                └── context/
+                    ├── UIContext.tsx
+                    └── UIProvider.tsx
+
+================================================
+FILE: README.md
+================================================
+Error reading file with 'cp1252': 'charmap' codec can't decode byte 0x8f in position 1612: character maps to <undefined>
+
+
+================================================
+FILE: dev-app-update.yml
+================================================
+provider: generic
+url: https://example.com/auto-updates
+updaterCacheDirName: loreweaver-updater
+
+
+
+================================================
+FILE: electron-builder.yml
+================================================
+appId: com.electron.app
+productName: loreweaver
+directories:
+  buildResources: build
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+asarUnpack:
+  - resources/**
+win:
+  executableName: loreweaver
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: always
+mac:
+  entitlementsInherit: build/entitlements.mac.plist
+  extendInfo:
+    - NSCameraUsageDescription: Application requests access to the device's camera.
+    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
+    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
+    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+  notarize: false
+dmg:
+  artifactName: ${name}-${version}.${ext}
+linux:
+  target:
+    - AppImage
+    - snap
+    - deb
+  maintainer: electronjs.org
+  category: Utility
+appImage:
+  artifactName: ${name}-${version}.${ext}
+npmRebuild: false
+publish:
+  provider: generic
+  url: https://example.com/auto-updates
+electronDownload:
+  mirror: https://npmmirror.com/mirrors/electron/
+
+
+
+================================================
+FILE: electron.vite.config.ts
+================================================
+import { resolve } from 'path'
+import { defineConfig } from 'electron-vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  main: {
+    resolve: {
+      alias: {
+        '@engine': resolve('src/engine'),
+        '@adaptor': resolve('src/adaptor'),
+        '@earendil-works/pi-ai': resolve('node_modules/@earendil-works/pi-ai/dist/index.js')
+      }
+    },
+    build: {
+      externalizeDeps: {
+        exclude: ['@earendil-works/pi-ai']
+      }
+    }
+  },
+  preload: {
+    build: {
+      externalizeDeps: true
+    }
+  },
+  renderer: {
+    resolve: {
+      alias: {
+        '@renderer': resolve('src/renderer/src'),
+        '@engine': resolve('src/engine'),
+        '@adaptor': resolve('src/adaptor')
+      }
+    },
+    plugins: [tailwindcss(), react()]
+  }
+})
+
+
+
+================================================
+FILE: eslint.config.mjs
+================================================
+import { defineConfig } from 'eslint/config'
+import tseslint from '@electron-toolkit/eslint-config-ts'
+import eslintConfigPrettier from '@electron-toolkit/eslint-config-prettier'
+import eslintPluginReact from 'eslint-plugin-react'
+import eslintPluginReactHooks from 'eslint-plugin-react-hooks'
+import eslintPluginReactRefresh from 'eslint-plugin-react-refresh'
+
+export default defineConfig(
+  { ignores: ['**/node_modules', '**/dist', '**/out'] },
+  tseslint.configs.recommended,
+  eslintPluginReact.configs.flat.recommended,
+  eslintPluginReact.configs.flat['jsx-runtime'],
+  {
+    settings: {
+      react: {
+        version: 'detect'
+      }
+    }
+  },
+  {
+    files: ['**/*.{ts,tsx}'],
+    plugins: {
+      'react-hooks': eslintPluginReactHooks,
+      'react-refresh': eslintPluginReactRefresh
+    },
+    rules: {
+      ...eslintPluginReactHooks.configs.recommended.rules,
+      ...eslintPluginReactRefresh.configs.vite.rules
+    }
+  },
+  eslintConfigPrettier
+)
+
+
+
+================================================
+FILE: LICENSE
+================================================
+MIT License
+
+Copyright (c) 2026 Mahesh K Bhat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+
+================================================
+FILE: package.json
+================================================
+{
+  "name": "loreweaver",
+  "version": "0.1.0",
+  "description": "An Electron application with React and TypeScript",
+  "main": "./out/main/index.js",
+  "author": "example.com",
+  "homepage": "https://electron-vite.org",
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint --cache .",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "start": "electron-vite preview",
+    "dev": "electron-vite dev --watch",
+    "build": "npm run typecheck && electron-vite build",
+    "postinstall": "electron-builder install-app-deps",
+    "build:unpack": "npm run build && electron-builder --dir",
+    "build:win": "npm run build && electron-builder --win",
+    "build:mac": "electron-vite build && electron-builder --mac",
+    "build:linux": "electron-vite build && electron-builder --linux"
+  },
+  "dependencies": {
+    "@earendil-works/pi-ai": "^0.78.0",
+    "@electron-toolkit/preload": "^3.0.2",
+    "@electron-toolkit/utils": "^4.0.0",
+    "@tailwindcss/vite": "^4.3.0",
+    "electron-updater": "^6.3.9",
+    "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "@electron-toolkit/eslint-config-prettier": "^3.0.0",
+    "@electron-toolkit/eslint-config-ts": "^3.1.0",
+    "@electron-toolkit/tsconfig": "^2.0.0",
+    "@types/node": "^22.19.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "electron": "^39.2.6",
+    "electron-builder": "^26.0.12",
+    "electron-vite": "^5.0.0",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "prettier": "^3.7.4",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.6"
+  }
+}
+
+
+
+================================================
+FILE: tsconfig.json
+================================================
+{
+  "files": [],
+  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }]
+}
+
+
+
+================================================
+FILE: tsconfig.node.json
+================================================
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
+  "include": ["electron.vite.config.*", "src/main/**/*", "src/preload/**/*", "src/engine/**/*", "src/adaptor/**/*"],
+  "compilerOptions": {
+    "composite": true,
+    "types": ["electron-vite/node"],
+    "paths": {
+      "@engine/*": [
+        "./src/engine/*"
+      ],
+      "@adaptor/*": [
+        "./src/adaptor/*"
+      ]
+    }
+  }
+}
+
+
+
+================================================
+FILE: tsconfig.web.json
+================================================
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
+  "include": [
+    "src/renderer/src/env.d.ts",
+    "src/renderer/src/**/*",
+    "src/renderer/src/**/*.tsx",
+    "src/preload/*.d.ts",
+    "src/engine/**/*",
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "jsx": "react-jsx",
+    "paths": {
+      "@renderer/*": [
+        "./src/renderer/src/*"
+      ],
+      "@engine/*": [
+        "./src/engine/*"
+      ]
+    }
+  }
+}
+
+
+
+================================================
+FILE: .editorconfig
+================================================
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+
+================================================
+FILE: .npmrc
+================================================
+electron_mirror=https://npmmirror.com/mirrors/electron/
+electron_builder_binaries_mirror=https://npmmirror.com/mirrors/electron-builder-binaries/
+
+
+
+================================================
+FILE: .prettierignore
+================================================
+out
+dist
+pnpm-lock.yaml
+LICENSE.md
+tsconfig.json
+tsconfig.*.json
+
+
+
+================================================
+FILE: .prettierrc.yaml
+================================================
+singleQuote: true
+semi: false
+printWidth: 100
+trailingComma: none
+
+
+
+================================================
+FILE: src/adaptor/incubate/chrome/index.ts
+================================================
+import { Intent } from '@engine/model/hami'
+import { seedNodes } from './records'
+import { PayloadAccessor, PayloadFlow } from '@engine/domain/hami'
+
+/**
+ * The Chrome Genesis Adaptor.
+ * Orchestrates the "Inking" of the application chrome into the Ledger.
+ * Responsible for seeding the initial application shell nodes (Weaver, Keeper, Settings).
+ */
+export class ChromeIncubate implements PayloadFlow {
+  public readonly id = 'chrome:incubate'
+
+  public readonly kind = 'records'
+
+  public readonly supportedIntents = ['init']
+
+  /**
+   * Executes the chrome initialization workflow.
+   * Seeds the ledger with application shell nodes when an 'init' intent is received.
+   *
+   * @param context The workflow context for state mutation.
+   * @param intent The intent triggering this workflow.
+   */
+  async execute(accessor: PayloadAccessor, intent: Intent): Promise<void> {
+    if (intent.kind === 'init') {
+      console.log(
+        'Loom Throne: Stabilizing the System Frame. Please keep your hands and feet inside the viewport...'
+      )
+      Object.values(seedNodes).forEach((node) => accessor.addNode(node))
+    }
+  }
+}
+
+
+
+================================================
+FILE: src/adaptor/incubate/chrome/records.ts
+================================================
+import { createGraphNode, GraphNodeMap } from '@engine/model/base'
+import { createChromeNode } from '@engine/model/chrome'
+
+export const seedNodes: GraphNodeMap = {
+  client: createGraphNode('client')
+    .withData({
+      icon: 'îƒŒ',
+      title: 'LoreWeaver',
+      version: process.env.npm_package_version,
+      name: process.env.npm_package_name
+    })
+    .build(),
+  weaver: createChromeNode('weaver')
+    .withTitle('Weaver')
+    .withIcon('ó°‹˜')
+    .withMenuVisibility(true)
+    .withData({
+      context: {
+        icon: 'ó°›¡',
+        title: 'Context',
+        subTitle: 'The Precursor',
+        prefixes: ['weave:instructions', 'weave:char', 'weave:summary', 'weave:scenario']
+      },
+      tapestry: {
+        icon: 'ó°›¡',
+        title: 'Tapestry',
+        subTitle: 'The Weave',
+        prefixes: ['weave:turn']
+      },
+      accounting: {
+        icon: 'ó°›¡',
+        title: 'Accounting',
+        subTitle: 'The Causality',
+        prefixes: ['engine:result']
+      }
+    })
+    .build(),
+  keeper: createChromeNode('keeper')
+    .withTitle('Keeper')
+    .withIcon('ó°‹˜')
+    .withMenuVisibility(true)
+    .build(),
+  settings: createChromeNode('settings')
+    .withTitle('Settings')
+    .withIcon('ó°’“')
+    .withMenuVisibility(true)
+    .build()
+}
+
+
+
+================================================
+FILE: src/adaptor/incubate/gritty-low-fantasy/index.ts
+================================================
+import { Intent } from '@engine/model/hami'
+import { seedNodes } from './records'
+import { PayloadAccessor, PayloadFlow } from '@engine/domain/hami'
+
+/**
+ * The Gritty Low Fantasy Genesis Adaptor.
+ * Orchestrates the "Inking" of the gritty low fantasy world into the Ledger.
+ * Responsible for seeding the narrative state, characters, and scenario nodes.
+ */
+export class GrittyLowFantasyIncubate implements PayloadFlow {
+  public readonly id = 'gritty-low-fantasy:incubate'
+
+  public readonly kind = 'records'
+
+  public readonly supportedIntents = ['init']
+
+  /**
+   * Executes the gritty low fantasy initialization workflow.
+   * Seeds the ledger with narrative nodes when an 'init' intent is received.
+   *
+   * @param context The workflow context for state mutation.
+   * @param intent The intent triggering this workflow.
+   */
+  async execute(accessor: PayloadAccessor, intent: Intent): Promise<void> {
+    if (intent.kind === 'init') {
+      console.log(
+        'Sovereign Seal: Inking a world of grit, mud, and royals who think a hooded cloak counts as a disguise...'
+      )
+      Object.values(seedNodes).forEach((node) => accessor.addNode(node))
+    }
+  }
+}
+
+
+
+================================================
+FILE: src/adaptor/incubate/gritty-low-fantasy/records.ts
+================================================
+import { createGraphNode, GraphNodeMap } from '@engine/model/base'
+
+export const seedNodes: GraphNodeMap = {
+  weaveInstructions: createGraphNode('weave:instructions')
+    .withData({
+      group: 'weave',
+      title: 'System Instructions',
+      content: 'You are an expert story teller.  Continue the story given the following details.'
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+  character1: createGraphNode('weave:char:valen')
+    .withData({
+      group: 'weave',
+      title: 'Valen "The Unseen"',
+      isUser: true,
+      content:
+        'Name: Valen "The Unseen"\n' +
+        'Title: The Incognito Scion / The Gilded Exile\n' +
+        'Origins: The Iron Spires (Capital of a decaying empire)\n' +
+        'Aliases: Val (his traveling identity), The Disinherited\n' +
+        'Primary Weapon: A razor-sharp wit, a hidden Sovereign Seal, and the dangerous weight of a lineage he is trying to outrun.'
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+  character2: createGraphNode('weave:char:kaelen')
+    .withData({
+      group: 'weave',
+      title: 'Kaelen "The Bound"',
+      isUser: true,
+      content:
+        'Name: Kaelen "The Bound"\n' +
+        'Title: The Disgraced Guardian / The Wayward Sword\n' +
+        'Origins: The Sinking Slums (A nameless gutter beneath the Iron Spires)\n' +
+        'Aliases: Kael the Wall, The Unbroken\n' +
+        'Primary Weapon: A scarred claymore, a notched heavy shield, and a massive physical frame built from years of desperate survival.'
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+  summary1: createGraphNode('weave:summary:1')
+    .withData({
+      group: 'weave',
+      title: 'The Tournament of the Marches',
+      isUser: true,
+      content:
+        "Kaelen is a wandering sword traveling alone until he reluctantly takes on Valenâ€”a disguised, runaway noble scionâ€”as his ward. When Kaelen strikes a high-born lord to protect a helpless traveler, his life is forfeit until Valen reveals his hidden Sovereign Seal and triggers a legendary Judicial Combat. Though Kaelen survives the brutal trial, the High Lord's heir is tragically slain, prompting Valen's father to let the youth continue traveling incognito with Kaelen to learn the ways of the common folk before he ever takes his place among the elite."
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'inactive'
+    })
+    .build(),
+  summary2: createGraphNode('weave:summary:2')
+    .withData({
+      group: 'weave',
+      title: 'The Spires Sedition',
+      isUser: true,
+      content:
+        'Looking for work, the duo arrives at a remote keep for what is advertised as a peaceful wedding feast, only for Kaelen to slowly realize they have walked into a nest of Seditionist traitors plotting a rebellion against the Iron Spires. Valen is captured trying to use his hidden identity to stop the uprising, forcing a heavily wounded Kaelen to bluff his way past bloodthirsty lords and rescue his ward before the Imperial Guard arrives to crush the treasonous plot. The pair narrowly slips away into the countryside before the chaos can expose them, leaving them paranoid, exhausted, and desperately trying to keep a lower profile at any local inn.'
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+  scenario: createGraphNode('weave:scenario')
+    .withData({
+      group: 'weave',
+      title: 'A Dusty Crossroads Inn',
+      content:
+        '## The Scenario: A Dusty Crossroads Inn\n' +
+        'Kaelen stands frozen in a crowded tavern yard, his massive frame blocking the doorway as a group of hostile, drunk local guards close in around him. Valen, a travel-worn youth in muddy boots, steps out from behind Kaelen\'s massive legs, crossing his arms and boldly flashing a heavy Sovereign Seal. The tavern falls completely silent as the guards instantly drop to their knees in terror. Kaelen lets out a heavy sigh, rubs his temples, and mutters, "Valen, you fool, we were supposed to be keeping a low profile."'
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+  turn75: createGraphNode('weave:turn:75')
+    .withData({
+      group: 'weave',
+      title: 'Turn #75',
+      content: 'The narrative begins to unfold...',
+      timestamp: 1774432800000
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+  result75_1: createGraphNode('engine:result:75-1')
+    .withData({
+      group: 'weave',
+      title: 'Result #75-1',
+      kind: 'causality',
+      metrics: {
+        promptTokens: 1420,
+        completionTokens: 312,
+        inferenceTimeMs: 840
+      },
+      content:
+        'SUCCESS: Ledger synchronization committed. State delta evaluated clean against schema verification rules.'
+    })
+    .withEdge({
+      kind: 'causality-target',
+      toNodeId: 'weave:turn:75',
+      data: {}
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'inactive'
+    })
+    .build(),
+  turn76: createGraphNode('weave:turn:76')
+    .withData({
+      group: 'weave',
+      title: 'Turn #76',
+      content: 'Tension rises as events escalate.',
+      timestamp: 1774432860000
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+  result76_1: createGraphNode('engine:result:76-1')
+    .withData({
+      group: 'weave',
+      title: 'Result #76-1',
+      kind: 'causality',
+      metrics: {
+        promptTokens: 1850,
+        completionTokens: 420,
+        inferenceTimeMs: 1100
+      },
+      content:
+        'SUCCESS: Context window shifted. Eviction pipeline cleared 2 stale beta-tier transient nodes.'
+    })
+    .withEdge({
+      kind: 'causality-target',
+      toNodeId: 'weave:turn:76',
+      data: {}
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'inactive'
+    })
+    .build(),
+  result76_2: createGraphNode('engine:result:76-2')
+    .withData({
+      group: 'weave',
+      title: 'Result #76-2',
+      kind: 'introspection',
+      metrics: {
+        criticPromptTokens: 440,
+        criticCompletionTokens: 5,
+        verdict: 'CLEAN'
+      },
+      content:
+        'VALIDATION: David-model checked prose boundaries. Zero conversational handshakes or clichÃ©s discovered.'
+    })
+    .withEdge({
+      kind: 'introspection-target',
+      toNodeId: 'weave:turn:76',
+      data: {}
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'inactive'
+    })
+    .build(),
+  turn77: createGraphNode('weave:turn:77')
+    .withData({
+      group: 'weave',
+      title: 'Turn #77',
+      content: "Valen's gaze lingers on the ledger layout...",
+      timestamp: 1774432920000
+    })
+    .withMeta({
+      recordState: 'hooga-booga',
+      engagementState: 'active'
+    })
+    .build(),
+  result77_1: createGraphNode('engine:result:77-1')
+    .withData({
+      group: 'weave',
+      title: 'Result #77-1',
+      kind: 'causality',
+      metrics: {
+        promptTokens: 2100,
+        completionTokens: 18,
+        inferenceTimeMs: 220
+      },
+      content:
+        'BEEP! TRY AGAIN! Introspection loop intercepted a conversational handshake cliche ("Your move"). Re-rolling inference execution branch.'
+    })
+    .withEdge({
+      kind: 'introspection-target',
+      toNodeId: 'weave:turn:77',
+      data: {}
+    })
+    .withMeta({
+      recordState: 'proposed',
+      engagementState: 'active'
+    })
+    .build()
+}
+
+
+
+================================================
+FILE: src/adaptor/incubate/high-magic-academy/index.ts
+================================================
+import { Intent } from '@engine/model/hami'
+import { seedNodes } from './records'
+import { PayloadAccessor, PayloadFlow } from '@engine/domain/hami'
+
+/**
+ * The High Magic Academy Genesis Adaptor.
+ * Orchestrates the "Inking" of the high magic academy world into the Ledger.
+ * Responsible for seeding the narrative state, characters, and scenario nodes.
+ */
+export class HighMagicAcademyIncubate implements PayloadFlow {
+  public readonly id = 'high-magic-academy:incubate'
+
+  public readonly kind = 'records'
+
+  public readonly supportedIntents = ['init']
+
+  /**
+   * Executes the high magic academy initialization workflow.
+   * Seeds the ledger with narrative nodes when an 'init' intent is received.
+   *
+   * @param context The workflow context for state mutation.
+   * @param intent The intent triggering this workflow.
+   */
+  async execute(accessor: PayloadAccessor, intent: Intent): Promise<void> {
+    if (intent.kind === 'init') {
+      console.log(
+        'Arcane Vault: Lighting the lanterns. Try not to shatter any memories or unauthorized spells today...'
+      )
+      Object.values(seedNodes).forEach((node) => accessor.addNode(node))
+    }
+  }
+}
+
+
+
+================================================
+FILE: src/adaptor/incubate/high-magic-academy/records.ts
+================================================
+import { createGraphNode, GraphNodeMap } from '@engine/model/base'
+
+export const seedNodes: GraphNodeMap = {
+  weaveInstructions: createGraphNode('weave:instructions')
+    .withData({
+      group: 'weave',
+      title: 'System Instructions',
+      content:
+        'You are an expert fantasy storyteller. Continue the story given the following details.'
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+
+  character1: createGraphNode('weave:char:elara')
+    .withData({
+      group: 'weave',
+      title: 'Elara Finch',
+      isUser: true,
+      content:
+        'Name: Elara Finch\nTitle: Apprentice Arcanist\nOrigins: Brindlemere, a foggy lake town known for glassblowers and potion herb gardens\nAliases: Finch\nPrimary Focus: Charms, magical cartography, and uncovering forgotten magical pathways.'
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+
+  character2: createGraphNode('weave:char:corwin')
+    .withData({
+      group: 'weave',
+      title: 'Corwin Thorne',
+      isUser: true,
+      content:
+        'Name: Corwin Thorne\nTitle: Apprentice Magizoologist\nOrigins: High Barrow, a windswept settlement near the northern moors\nAliases: Thorn\nPrimary Focus: Magical creatures, defensive enchantments, and getting into trouble while attempting to help.'
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+
+  summary1: createGraphNode('weave:summary:1')
+    .withData({
+      group: 'weave',
+      title: 'The Moonroot Expedition',
+      isUser: true,
+      content:
+        'Elara and Corwin were sent to recover a rare patch of moonroot growing inside a forgotten network of crystal caverns. What began as a simple field assignment became a race against a band of rogue relic hunters seeking an enchanted compass hidden deep within the caves. The apprentices recovered the compass, escaped a collapsing cavern chamber, and earned unexpected praise from their professors.'
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'inactive'
+    })
+    .build(),
+
+  summary2: createGraphNode('weave:summary:2')
+    .withData({
+      group: 'weave',
+      title: 'The Clocktower Disturbance',
+      isUser: true,
+      content:
+        'While assisting with maintenance of the academy clocktower, the pair discovered a dormant timekeeping spirit that had awakened after centuries of silence. The spirit began shifting objects and people several minutes out of sync with reality. After a chaotic night of duplicated schedules and temporal confusion, Elara and Corwin restored the tower mechanism and persuaded the spirit to return to its post.'
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+
+  scenario: createGraphNode('weave:scenario')
+    .withData({
+      group: 'weave',
+      title: 'The Lantern Vault',
+      content:
+        '## The Scenario: The Lantern Vault\nDeep beneath the Academy of Arcane Arts lies the Lantern Vault, a chamber lined with thousands of suspended glass lanterns. Each lantern contains a captured memory donated by generations of wizards and witches. During a routine cataloging assignment, one lantern suddenly shatters. A silver stream of memory escapes and begins drifting through the chamber, causing nearby lanterns to flicker awake. Strange voices echo through the darkness as forgotten moments begin leaking into the present. Elara tightens her grip on her wand while Corwin stares upward at the growing storm of glowing memories. Somewhere in the vault, something has awakened.'
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+
+  turn75: createGraphNode('weave:turn:75')
+    .withData({
+      group: 'weave',
+      title: 'Turn #75',
+      content: 'The silver memory-stream coils between the lanterns.',
+      timestamp: 1774432800000
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+
+  result75_1: createGraphNode('engine:result:75-1')
+    .withData({
+      group: 'weave',
+      title: 'Result #75-1',
+      kind: 'causality',
+      metrics: {
+        promptTokens: 1420,
+        completionTokens: 312,
+        inferenceTimeMs: 840
+      },
+      content:
+        'SUCCESS: Narrative continuity maintained. Character motivations aligned with established scenario constraints.'
+    })
+    .withEdge({
+      kind: 'causality-target',
+      toNodeId: 'weave:turn:75',
+      data: {}
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'inactive'
+    })
+    .build(),
+
+  turn76: createGraphNode('weave:turn:76')
+    .withData({
+      group: 'weave',
+      title: 'Turn #76',
+      content:
+        'A lantern near the ceiling bursts, releasing a memory of a duel fought generations ago.',
+      timestamp: 1774432860000
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'active'
+    })
+    .build(),
+
+  result76_1: createGraphNode('engine:result:76-1')
+    .withData({
+      group: 'weave',
+      title: 'Result #76-1',
+      kind: 'causality',
+      metrics: {
+        promptTokens: 1850,
+        completionTokens: 420,
+        inferenceTimeMs: 1100
+      },
+      content:
+        'SUCCESS: Context graph expanded. Memory-fragment interactions resolved without continuity conflicts.'
+    })
+    .withEdge({
+      kind: 'causality-target',
+      toNodeId: 'weave:turn:76',
+      data: {}
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'inactive'
+    })
+    .build(),
+
+  result76_2: createGraphNode('engine:result:76-2')
+    .withData({
+      group: 'weave',
+      title: 'Result #76-2',
+      kind: 'introspection',
+      metrics: {
+        criticPromptTokens: 440,
+        criticCompletionTokens: 5,
+        verdict: 'CLEAN'
+      },
+      content:
+        'VALIDATION: Tone inspection completed. Setting consistency and magical-world assumptions preserved.'
+    })
+    .withEdge({
+      kind: 'introspection-target',
+      toNodeId: 'weave:turn:76',
+      data: {}
+    })
+    .withMeta({
+      recordState: 'committed',
+      engagementState: 'inactive'
+    })
+    .build(),
+
+  turn77: createGraphNode('weave:turn:77')
+    .withData({
+      group: 'weave',
+      title: 'Turn #77',
+      content: 'Elara notices that several lanterns now display the same unknown crest...',
+      timestamp: 1774432920000
+    })
+    .withMeta({
+      recordState: 'hooga-booga',
+      engagementState: 'active'
+    })
+    .build(),
+
+  result77_1: createGraphNode('engine:result:77-1')
+    .withData({
+      group: 'weave',
+      title: 'Result #77-1',
+      kind: 'causality',
+      metrics: {
+        promptTokens: 2100,
+        completionTokens: 18,
+        inferenceTimeMs: 220
+      },
+      content:
+        'BEEP! TRY AGAIN! Narrative validator detected an unresolved artifact reference. Rebuilding inference branch.'
+    })
+    .withEdge({
+      kind: 'introspection-target',
+      toNodeId: 'weave:turn:77',
+      data: {}
+    })
+    .withMeta({
+      recordState: 'proposed',
+      engagementState: 'active'
+    })
+    .build()
+}
+
+
+
+================================================
+FILE: src/adaptor/incubate/pi-ai/index.ts
+================================================
+import { Context, getModel, Message, stream } from '@earendil-works/pi-ai'
+import { GraphNode } from '@engine/model/base'
+import { Intent } from '@engine/model/hami'
+import { TextSynthesisChunk, TextToTextSynthesisProvider } from '@engine/port/synthesis'
+
+export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
+  public readonly id = 'pi-ai-synthesis:incubate'
+
+  async *generateStream(
+    intent: Intent,
+    _context: GraphNode[],
+    options?: Record<string, unknown>
+  ): AsyncIterable<TextSynthesisChunk> {
+    const modelId = 'openrouter/free'
+    const piModel = getModel('openrouter', modelId)
+    console.log(`PiAiSynthesisProvider: model`, piModel)
+
+    // Convert GraphNode[] context to pi-ai Context format
+    const piContext: Context = {
+      systemPrompt: (options?.systemPrompt as string) || 'You are a helpful assistant.',
+      messages: intent.nodes.map((node) => {
+        const message: Message = {
+          role: 'user',
+          content: node.data.content as string,
+          timestamp: Date.now()
+        }
+        if (node.data.timestamp) {
+          message.timestamp = node.data.timestamp as number
+        }
+        return message
+      })
+    }
+    // Create a streaming response
+    const s = stream(piModel, piContext)
+
+    try {
+      for await (const event of s) {
+        // Convert pi-ai event to TextSynthesisChunk
+        switch (event.type) {
+          case 'text_delta':
+            yield {
+              delta: event.delta,
+              meta: {
+                type: 'text_delta',
+                model: modelId
+              }
+            }
+            break
+
+          case 'thinking_delta':
+            yield {
+              delta: event.delta,
+              meta: {
+                type: 'thinking_delta',
+                model: modelId
+              }
+            }
+            break
+
+          case 'done':
+            yield {
+              meta: {
+                type: 'done',
+                reason: event.reason,
+                model: modelId,
+                ...(event.message?.usage && {
+                  usage: event.message.usage
+                })
+              }
+            }
+            break
+
+          case 'error':
+            yield {
+              meta: {
+                type: 'error',
+                error: event.error,
+                model: modelId
+              }
+            }
+            break
+        }
+      }
+    } catch (error) {
+      yield {
+        meta: {
+          type: 'error',
+          error: error instanceof Error ? error.message : String(error),
+          model: modelId
+        }
+      }
+    }
+  }
+}
+
+
+
+================================================
+FILE: src/adaptor/incubate/weaver/index.ts
+================================================
+import { Intent } from '@engine/model/hami'
+import { PayloadAccessor, PayloadFlow } from '@engine/domain/hami'
+import { createGraphNode } from '@engine/model/base'
+
+/**
+ * The Weaver Operational Adaptor.
+ * Handles active narrative turn submissions and orchestrates
+ * the transition from proposed to resolving states.
+ */
+export class WeaverIncubate implements PayloadFlow {
+  public readonly id = 'weaver:incubate'
+
+  public readonly kind = 'workflow'
+
+  public readonly supportedIntents = ['submit-turn']
+
+  /**
+   * Executes the narrative turn submission workflow.
+   * Processes all nodes carried by the intent and adds them to the ledger.
+   *
+   * @param context The workflow context for state mutation.
+   * @param intent The intent containing the narrative turn nodes to process.
+   */
+  async execute(accessor: PayloadAccessor, intent: Intent): Promise<void> {
+    const ttt = accessor.getFlow('flow:synthesis:pi-ai-synthesis:incubate')
+    if (intent.kind === 'submit-turn') {
+      // Loop through all nodes carried by the intent (Proposed + Updates)
+      intent.nodes.forEach((node) => {
+        accessor.addNode(node)
+        console.log(`Weaver: node`, node)
+      })
+      const proposedNode = createGraphNode(`weave:turn:${Date.now()}-gen`)
+        .withData({
+          group: 'weave',
+          title: 'TTTSynth response',
+          content: '',
+          timestamp: Date.now()
+        })
+        .withMeta({
+          recordState: 'draft',
+          engagementState: 'active'
+        })
+        .build()
+      accessor.addNode(proposedNode)
+      await ttt?.execute(accessor, intent, { proposedNodeId: proposedNode.id })
+
+      console.log(`Weaver: Ingested ${intent.nodes.length} nodes for [Go! Go! Go!] sequence.`)
+    }
+  }
+}
+
+
+
+================================================
+FILE: src/engine/domain/hami.ts
+================================================
+import { DataNode, DataNodeMap, Intent } from '@engine/model/hami'
+import EventEmitter from 'events'
+
+export interface PayloadAccessor {
+  getNode(id: string): DataNode | undefined
+  getNodes(): DataNodeMap
+  addNode: (node: DataNode) => void
+  updateNode: (
+    id: string,
+    data: Partial<Record<string, unknown>>,
+    meta: Partial<Record<string, unknown>>
+  ) => void
+  removeNode: (id: string) => void
+  getFlow(id: string): PayloadFlow | undefined
+}
+
+export interface PayloadFlow {
+  id: string
+  kind: string
+  supportedIntents: string[]
+  execute: (
+    accessor: PayloadAccessor,
+    intent: Intent,
+    options?: Record<string, unknown>
+  ) => Promise<void>
+}
+
+export type PayloadFlowMap = Record<string, PayloadFlow>
+
+export class Payload extends EventEmitter {
+  private nodes: DataNodeMap = {}
+  private flows: PayloadFlowMap = {}
+  private accessors: PayloadAccessor = {
+    getNode: (id: string) => this.getNode(id),
+    getNodes: () => this.getNodes(),
+    addNode: (node: DataNode) => this.addNode(node),
+    updateNode: (
+      id: string,
+      data: Partial<Record<string, unknown>>,
+      meta: Partial<Record<string, unknown>>
+    ) => this.updateNode(id, data, meta),
+    removeNode: (id: string) => this.removeNode(id),
+    getFlow: (id: string): PayloadFlow | undefined => {
+      return this.flows[id]
+    }
+  }
+
+  constructor() {
+    super()
+    this.setMaxListeners(1000)
+  }
+
+  getNode(id: string): DataNode | undefined {
+    return this.nodes[id]
+  }
+
+  getNodes(): DataNodeMap {
+    return this.nodes
+  }
+
+  private addNode(node: DataNode): void {
+    this.nodes[node.id] = node
+    this.nNotify(node.id, 'created')
+  }
+
+  private updateNode(
+    id: string,
+    data: Partial<Record<string, unknown>>,
+    meta: Partial<Record<string, unknown>>
+  ): void {
+    const node = this.nodes[id]
+    if (!node) return
+    data && (node.data = { ...node.data, ...data })
+    meta && (node.meta = { ...node.meta, ...meta })
+    this.nNotify(id, 'updated')
+  }
+
+  private removeNode(id: string): void {
+    const node = this.nodes[id]
+    if (node) {
+      delete this.nodes[id]
+      this.nNotify(id, 'removed')
+    }
+  }
+
+  addFlow(flow: PayloadFlow): void {
+    this.flows[flow.id] = flow
+    this.fNotify(flow.id, 'added')
+  }
+
+  removeFlow(id: string): void {
+    delete this.flows[id]
+    this.fNotify(id, 'removed')
+  }
+
+  async runFlow(intent: Intent, options?: Record<string, unknown>): Promise<void> {
+    for (const flow of Object.values(this.flows)) {
+      if (flow.supportedIntents.includes(intent.kind)) {
+        flow.execute(this.accessors, intent, options)
+      }
+    }
+  }
+
+  private nNotify(id: string, type: 'created' | 'updated' | 'removed'): void {
+    const node = this.nodes[id]
+    this.emit(`node:${type}`, node || { id })
+    if (type === 'updated' && node) {
+      this.emit(`node:updated:${id}`, node)
+    }
+  }
+
+  private fNotify(id: string, type: 'added' | 'removed'): void {
+    const flow = this.flows[id]
+    this.emit(`flow:${type}`, id, flow)
+  }
+}
+
+
+
+================================================
+FILE: src/engine/domain/ledger.ts
+================================================
+import { GraphNode } from '@engine/model/base'
+import { Intent } from '@engine/model/hami'
+import { TextToTextSynthesisProvider } from '@engine/port/synthesis'
+import { Payload, PayloadAccessor, PayloadFlow } from './hami'
+
+export class Ledger extends Payload {
+  public override getNode(id: string): GraphNode | undefined {
+    return super.getNode(id) as GraphNode
+  }
+
+  public getGraphNodes(): GraphNode[] {
+    return Object.values(this.getNodes()) as GraphNode[]
+  }
+
+  public createSynthesisFlow(
+    provider: TextToTextSynthesisProvider,
+    targetIntents: string[]
+  ): PayloadFlow {
+    return {
+      id: `flow:synthesis:${provider.id}`,
+      kind: 'synthesis',
+      supportedIntents: targetIntents,
+      execute: async (
+        accessor: PayloadAccessor,
+        intent: Intent,
+        options?: Record<string, unknown>
+      ): Promise<void> => {
+        const contextNodes = Object.values(accessor.getNodes()) as GraphNode[]
+
+        const responseNodeId = String(options?.proposedNodeId)
+        if (!responseNodeId) return
+
+        const stream = provider.generateStream(intent, contextNodes, options)
+        console.log('Synthesis stream aligned...')
+
+        let accumulatedProse = ''
+        for await (const chunk of stream) {
+          console.log('Synthesis chunk received:', chunk)
+          if (chunk.delta) {
+            accumulatedProse += chunk.delta
+            accessor.updateNode(
+              responseNodeId,
+              { content: accumulatedProse },
+              { recordState: 'resolving' }
+            )
+          }
+        }
+        accessor.updateNode(responseNodeId, {}, { recordState: 'proposed' })
+      }
+    }
+  }
+}
+
+
+
+================================================
+FILE: src/engine/model/base.ts
+================================================
+/**
+ * Represents a directed relationship from one graph node to another.
+ * Edges carry a discriminant `kind` and an opaque `data` payload, allowing
+ * the engine to model typed relationships (e.g., causality-target,
+ * introspection-target) without coupling the core model to any single domain.
+ */
+export interface GraphEdge {
+  toNodeId: string
+  kind: string
+  data: Record<string, unknown>
+}
+
+/**
+ * The atomic unit of the Temporal Loom.
+ * A `GraphNode` is a versioned, addressable record whose `data` holds the
+ * domain-specific payload and whose `meta` carries engine bookkeeping
+ * (e.g., `recordState`, `engagementState`).
+ */
+export interface GraphNode {
+  id: string
+  kind: string
+  data: Record<string, unknown>
+  edges: Array<GraphEdge>
+  meta: Record<string, unknown>
+}
+
+/** Lookup table mapping node ids to their corresponding `GraphNode` instances. */
+export type GraphNodeMap = Record<string, GraphNode>
+
+/**
+ * Fluent builder API for constructing `GraphNode` instances.
+ * Provides a chainable, type-safe surface for assembling nodes with
+ * kind, data, edges, and meta payloads.
+ */
+export interface GraphNodeBuilder {
+  withKind(kind: string): this
+  withData(data: Record<string, unknown>): this
+  withEdge(edge: GraphEdge): this
+  withMeta(data: Record<string, unknown>): this
+  build(): GraphNode
+}
+
+/**
+ * Creates a fluent builder for assembling a `GraphNode` with the given id.
+ *
+ * @param id The stable identifier of the node being constructed.
+ * @returns A `GraphNodeBuilder` seeded with the provided id.
+ */
+export function createGraphNode(id: string): GraphNodeBuilder {
+  let kind = 'generic'
+  let data: Record<string, unknown> = {}
+  let meta: Record<string, unknown> = {}
+  const edges: GraphEdge[] = []
+  const builder: GraphNodeBuilder = {
+    withKind(k) {
+      kind = k
+      return this
+    },
+    withData(d) {
+      data = d
+      return this
+    },
+    withEdge(e) {
+      edges.push(e)
+      return this
+    },
+    withMeta(m) {
+      meta = m
+      return this
+    },
+    build() {
+      return { id, kind, data, edges, meta }
+    }
+  }
+  return builder
+}
+
+
+
+================================================
+FILE: src/engine/model/chrome.ts
+================================================
+import { createGraphNode, GraphNode, GraphNodeBuilder } from './base'
+
+/**
+ * Payload shape for a Chrome (application chrome) node.
+ * Describes a top-level application surface such as a primary mode
+ * (Weaver, Keeper, Settings) and its menu/visibility configuration.
+ */
+export interface ChromeNodeData {
+  title: string
+  routeMode: 'weaver' | 'keeper' | 'settings'
+  availableInMenu: boolean
+  icon: string
+  [key: string]: unknown
+}
+
+/**
+ * A `GraphNode` specialized to carry Chrome (application shell) metadata.
+ * Used by the System of Experience to render navigation and route state.
+ */
+export interface ChromeNode extends GraphNode {
+  kind: 'chrome'
+  data: ChromeNodeData
+}
+
+/**
+ * Fluent builder API for constructing `ChromeNode` instances.
+ * Mirrors `GraphNodeBuilder` while enforcing the chrome-specific data shape.
+ */
+export interface ChromeNodeBuilder extends GraphNodeBuilder {
+  withTitle(title: string): ChromeNodeBuilder
+  withRouteMode(routeMode: ChromeNodeData['routeMode']): ChromeNodeBuilder
+  withMenuVisibility(availableInMenu: boolean): ChromeNodeBuilder
+  withIcon(icon: string): ChromeNodeBuilder
+  build(): ChromeNode
+}
+
+/**
+ * Creates a fluent builder for assembling a `ChromeNode` with the given id.
+ *
+ * @param id The stable identifier of the chrome node being constructed.
+ * @returns A `ChromeNodeBuilder` seeded with the provided id.
+ */
+export function createChromeNode(id: string): ChromeNodeBuilder {
+  const base = createGraphNode(id).withKind('chrome')
+  let title = id
+  let routeMode = id
+  let availableInMenu = false
+  let icon = ''
+  const builder: ChromeNodeBuilder = {
+    withKind(k) {
+      base.withKind(k)
+      return this
+    },
+    withData(d) {
+      base.withData(d)
+      return this
+    },
+    withEdge(e) {
+      base.withEdge(e)
+      return this
+    },
+    withMeta(m) {
+      base.withMeta(m)
+      return this
+    },
+    withTitle(t) {
+      title = t
+      return this
+    },
+    withRouteMode(r) {
+      routeMode = r
+      return this
+    },
+    withMenuVisibility(a) {
+      availableInMenu = a
+      return this
+    },
+    withIcon(i) {
+      icon = i
+      return this
+    },
+    build(): ChromeNode {
+      const rawNode = base.build()
+      return {
+        ...rawNode,
+        data: {
+          ...rawNode.data,
+          title,
+          routeMode,
+          availableInMenu,
+          icon
+        }
+      } as ChromeNode
+    }
+  }
+  return builder
+}
+
+/**
+ * Type guard that determines whether a `GraphNode` is a `ChromeNode`.
+ *
+ * @param node The node to test.
+ * @returns True if the node carries chrome-typed data.
+ */
+export function isChromeNode(node: GraphNode): node is ChromeNode {
+  return node.kind === 'chrome' && typeof node.data === 'object' && node.data !== null
+}
+
+/**
+ * Type guard that determines whether a `GraphNode` represents a sidebar entry.
+ * Sidebar nodes are chrome nodes explicitly marked as visible in the navigation menu.
+ *
+ * @param node The node to test.
+ * @returns True if the node should appear in the sidebar.
+ */
+export function isSidebarNode(node: GraphNode): node is ChromeNode {
+  return isChromeNode(node) && node.data.availableInMenu === true
+}
+
+
+
+================================================
+FILE: src/engine/model/hami.ts
+================================================
+export interface DataEdge {
+  toNodeId: string
+  kind: string
+  data: Record<string, unknown>
+}
+
+export interface DataNode {
+  id: string
+  kind: string
+  data: Record<string, unknown>
+  edges: Array<DataEdge>
+  meta: Record<string, unknown>
+}
+
+export type DataNodeMap = Record<string, DataNode>
+
+export interface Intent {
+  id: string
+  kind: string
+  nodes: DataNode[]
+  options?: Record<string, unknown>
+}
+
+
+
+================================================
+FILE: src/engine/port/record.ts
+================================================
+import { GraphNode, GraphNodeMap } from '@engine/model/base'
+
+/**
+ * The persistence contract for the System of Record.
+ * Implementations of this interface are responsible for loading
+ * and committing graph nodes to/from storage.
+ */
+export interface RecordProvider {
+  /**
+   * Hydrates the authoritative in-memory graph map from storage during boot.
+   * @param options Transient runtime knobs (e.g., historical offset bounds, read-isolation levels).
+   */
+  loadGraph(options?: Record<string, unknown>): Promise<GraphNodeMap>
+
+  /**
+   * Commits a transactional batch of processed nodes to the ledger at the end of a turn.
+   * @param nodes The collection of dirty or newly committed nodes to write.
+   * @param options Transaction levers (e.g., atomic commit flags, bypass cache markers).
+   */
+  commitBatch(nodes: GraphNode[], options?: Record<string, unknown>): Promise<void>
+}
+
+
+
+================================================
+FILE: src/engine/port/synthesis.ts
+================================================
+import { GraphNode } from '@engine/model/base'
+import { Intent } from '@engine/model/hami'
+
+/**
+ * A chunk of text generated during streaming synthesis.
+ * Carries the actual text delta and optional metadata from the
+ * underlying text-generation provider.
+ */
+export interface TextSynthesisChunk {
+  /** The real-time text segment delta generated during the active loop turn. */
+  delta?: string
+
+  /**
+   * Open-ended metadata envelope populated dynamically by the active adapter chain.
+   * Keeps the core engine agnostic while allowing adapters to inject provider-specific
+   * metrics (e.g., tokens, stop reasons, or infrastructure statuses).
+   */
+  meta?: Record<string, unknown>
+}
+
+/**
+ * The text-generation contract for the System of Synthesis.
+ * Implementations of this interface are responsible for dispatching
+ * text-generation requests and streaming back structured chunks.
+ */
+export interface TextToTextSynthesisProvider {
+  id: string
+
+  /**
+   * Dispatches an isolated text-generation frame to an abstract inference engine.
+   * Returns a native async iterable stream that yields structured output chunks.
+   *
+   * @param intent The triggering engine intent governing the generation parameters.
+   * @param context The computed context array matching layout and KV-cache constraints.
+   * @param options Dynamic generation levers (e.g., custom temperature, top_p, engine overrides).
+   */
+  generateStream(
+    intent: Intent,
+    context: GraphNode[],
+    options?: Record<string, unknown>
+  ): AsyncIterable<TextSynthesisChunk>
+}
+
+
+
+================================================
+FILE: src/main/index.ts
+================================================
+import { ChromeIncubate } from '@adaptor/incubate/chrome'
+import { GrittyLowFantasyIncubate } from '@adaptor/incubate/gritty-low-fantasy'
+import { HighMagicAcademyIncubate } from '@adaptor/incubate/high-magic-academy'
+import { PiAiSynthesisProvider } from '@adaptor/incubate/pi-ai'
+import { WeaverIncubate } from '@adaptor/incubate/weaver'
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+import { Ledger } from '@engine/domain/ledger'
+import { GraphNode } from '@engine/model/base'
+import { ChromeNode, isSidebarNode } from '@engine/model/chrome'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { join } from 'path'
+import icon from '../../resources/icon.png?asset'
+import { Intent } from '@engine/model/hami'
+
+/**
+ * Creates the main application window with Electron configuration.
+ *
+ * @returns The configured BrowserWindow instance.
+ */
+function createWindow(): BrowserWindow {
+  const enableDevToolOnStart = false
+
+  // Create the browser window.
+  const mainWindow = new BrowserWindow({
+    width: 1280,
+    height: 800,
+    show: false,
+    autoHideMenuBar: true,
+    titleBarStyle: 'hidden',
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false
+    }
+  })
+
+  mainWindow.on('ready-to-show', () => {
+    mainWindow.show()
+  })
+
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }
+  })
+
+  // HMR for renderer base on electron-vite cli.
+  // Load the remote URL for development or the local html file for production.
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  } else {
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
+
+  // For DevTools on Start
+  enableDevToolOnStart &&
+    mainWindow.webContents.openDevTools({
+      mode: 'detach'
+    })
+
+  return mainWindow
+}
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.whenReady().then(async () => {
+  // Set app user model id for windows
+  electronApp.setAppUserModelId('com.electron')
+
+  // Default open or close DevTools by F12 in development
+  // and ignore CommandOrControl + R in production.
+  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
+  app.on('browser-window-created', (_, window) => {
+    optimizer.watchWindowShortcuts(window)
+  })
+
+  // Initialize the Deterministic Vessel (Empty)
+  const ledger = new Ledger()
+  const chrome = new ChromeIncubate()
+  const weaver = new WeaverIncubate() // The operational adaptor
+  const glf = new GrittyLowFantasyIncubate()
+  const hma = new HighMagicAcademyIncubate()
+  const choice = 1
+
+  // ledger.registerWorkflowProvider(chrome)
+  // choice % 2 == 1 ? ledger.registerWorkflowProvider(glf) : ledger.registerWorkflowProvider(hma)
+  // ledger.registerWorkflowProvider(weaver)
+  // const pa = new PiAiSynthesisProvider()
+  // ledger.registerSynthesisProvider(pa)
+  //
+  ledger.addFlow(chrome)
+  choice % 2 == 1 ? ledger.addFlow(glf) : ledger.addFlow(hma)
+  ledger.addFlow(weaver)
+  const pa = ledger.createSynthesisFlow(new PiAiSynthesisProvider(), [])
+  ledger.addFlow(pa)
+
+  // The Reactive Bridge (Forwarding Ledger events to UI) [8]
+  const forward = (win: BrowserWindow): void => {
+    ledger.on('node:created', (n) => win.webContents.send('node:created', n))
+    ledger.on('node:updated', (n) => win.webContents.send('node:updated', n))
+    ledger.on('node:removed', (n) => win.webContents.send('node:removed', n))
+  }
+
+  // On-Start Lifecycle: Trigger Genesis
+  // At this stage, we instantiate our chosen 'Incubate' adapter and run the init workflow.
+  const initIntent: Intent = {
+    id: 'init-0',
+    kind: 'init',
+    nodes: [],
+    options: { source: 'system' }
+  }
+  ledger.runFlow(initIntent)
+
+  ipcMain.handle('client:node', async (): Promise<GraphNode | undefined> => {
+    return ledger.getNode('client')
+  })
+
+  ipcMain.handle('chrome:nodes:sidebar', async (): Promise<ChromeNode[]> => {
+    return ledger.getGraphNodes().filter(isSidebarNode)
+  })
+
+  ipcMain.handle('weaver:nodes', async (): Promise<GraphNode[]> => {
+    return ledger.getGraphNodes().filter((node) => node.data.group === 'weave')
+  })
+
+  ipcMain.handle('weaver:submit', async (_event, nodes: GraphNode[]): Promise<void> => {
+    const submitIntent: Intent = {
+      id: `intent-submit-${Date.now()}`,
+      kind: 'submit-turn',
+      nodes: nodes,
+      options: { source: 'client' }
+    }
+    await ledger.runFlow(submitIntent)
+  })
+
+  ipcMain.on('engine:chrome:exit', () => {
+    app.quit()
+  })
+
+  const mainWindow = createWindow()
+  forward(mainWindow)
+
+  app.on('activate', function () {
+    // On macOS, re-create a window when the dock icon is clicked
+    // and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) {
+      const newWindow = createWindow()
+      forward(newWindow)
+    }
+  })
+})
+
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
+// In this file you can include the rest of your app's specific main process
+// code. You can also put them in separate files and require them here.
+
+
+
+================================================
+FILE: src/preload/index.d.ts
+================================================
+import { ElectronAPI } from '@electron-toolkit/preload'
+import { ChromeNode } from '@engine/types/chrome'
+
+declare global {
+  interface Window {
+    electron: ElectronAPI
+    api: {
+      engine: {
+        client: () => Promise<GraphNode>
+        chrome: {
+          sidebarNodes: () => Promise<ChromeNode[]>
+          exitApp: () => void
+        }
+        weaver: {
+          nodes(): Promise<GraphNode[]>
+          /**
+           * Dispatches a proposed narrative turn (GraphNodes) to the engine
+           * for ingestion and synthesis resolution.
+           */
+          submitTurn(node: GraphNode | GraphNode[]): Promise<void>
+        }
+      }
+    }
+  }
+}
+
+
+
+================================================
+FILE: src/preload/index.ts
+================================================
+import { contextBridge, ipcRenderer } from 'electron'
+import { electronAPI } from '@electron-toolkit/preload'
+import { GraphNode } from '@engine/model/base'
+
+ipcRenderer.setMaxListeners(1000)
+
+// Custom APIs for renderer
+const api = {
+  engine: {
+    client: () => ipcRenderer.invoke('client:node'),
+    chrome: {
+      sidebarNodes: () => ipcRenderer.invoke('chrome:nodes:sidebar'),
+      exitApp: () => ipcRenderer.send('engine:chrome:exit')
+    },
+    weaver: {
+      nodes: () => ipcRenderer.invoke('weaver:nodes'),
+      /**
+       * Dispatches one or more nodes to the engine.
+       * If a single node is passed, it is wrapped in an array for the Intent.
+       */
+      submitTurn: (payload: GraphNode | GraphNode[]) => {
+        const nodes = Array.isArray(payload) ? payload : [payload]
+        return ipcRenderer.invoke('weaver:submit', nodes)
+      }
+    }
+  }
+}
+
+// Use `contextBridge` APIs to expose Electron APIs to
+// renderer only if context isolation is enabled, otherwise
+// just add to the DOM global.
+if (process.contextIsolated) {
+  try {
+    contextBridge.exposeInMainWorld('electron', electronAPI)
+    contextBridge.exposeInMainWorld('api', api)
+  } catch (error) {
+    console.error(error)
+  }
+} else {
+  // @ts-ignore (define in dts)
+  window.electron = electronAPI
+  // @ts-ignore (define in dts)
+  window.api = api
+}
+
+
+
+================================================
+FILE: src/renderer/index.html
+================================================
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Electron</title>
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:"
+    />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+
+
+================================================
+FILE: src/renderer/src/env.d.ts
+================================================
+/// <reference types="vite/client" />
+
+
+
+================================================
+FILE: src/renderer/src/main.tsx
+================================================
+import './assets/global.css'
+
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import Chrome from './components/Chrome'
+import { UIProvider } from './context/UIProvider'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <UIProvider>
+      <Chrome />
+    </UIProvider>
+  </StrictMode>
+)
+
+
+
+================================================
+FILE: src/renderer/src/assets/global.css
+================================================
+@import 'tailwindcss';
+
+@theme {
+  /* --- Typography Base --- */
+  --font-sans: 'JetBrainsMono Nerd Font', monospace;
+
+  /* --- Design System Layer 1 Theme Variables --- */
+  --surface-tier1: var(--theme-surface-tier1);
+  --surface-tier2-panel: var(--theme-surface-tier2-panel);
+  --surface-tier2-border: var(--theme-surface-tier2-border);
+  --surface-tier3: var(--theme-surface-tier3);
+  --surface-tier4: var(--theme-surface-tier4);
+
+  --text-tier1: var(--theme-text-tier1);
+  --text-tier2: var(--theme-text-tier2);
+  --text-tier3: var(--theme-text-tier3);
+  --text-tier4: var(--theme-text-tier4);
+}
+
+/* -------------------------------------------------------------
+   DEFAULT THEME ASSIGNMENTS (Cyberpunk Ledger Base Configuration)
+   ------------------------------------------------------------- */
+:root {
+  --theme-surface-tier1: rgb(18, 17, 26);
+  --theme-surface-tier2-panel: rgb(29, 27, 38);
+  --theme-surface-tier2-border: rgb(38, 36, 51);
+  --theme-surface-tier3: rgb(29, 27, 38);
+  --theme-surface-tier4: rgb(38, 36, 51);
+
+  --theme-text-tier1: rgb(255, 255, 255);
+  --theme-text-tier2: rgb(255, 255, 255);
+  --theme-text-tier3: rgba(255, 255, 255, 0.9);
+  --theme-text-tier4: rgba(255, 255, 255, 0.4);
+
+  --theme-decorator-alpha-focus-bg: rgba(255, 165, 0, 0.12);
+  --theme-decorator-alpha-focus-text: rgb(255, 191, 0);
+  --theme-decorator-alpha-focus-border: rgb(255, 140, 0);
+  --theme-decorator-alpha-blur-bg: rgba(204, 119, 0, 0.05);
+  --theme-decorator-alpha-blur-text: rgb(204, 136, 0);
+  --theme-decorator-alpha-blur-border: rgb(138, 79, 0);
+
+  --theme-decorator-beta-focus-border: rgb(0, 229, 255);
+  --theme-decorator-beta-focus-glow: 0 0 12px rgba(0, 229, 255, 0.6);
+  --theme-decorator-beta-blur-border: rgb(0, 102, 115);
+
+  --theme-decorator-gamma-focus-border: rgb(189, 0, 255);
+  --theme-decorator-gamma-focus-glow: 0 0 12px rgba(189, 0, 255, 0.6);
+  --theme-decorator-gamma-blur-border: rgb(89, 0, 122);
+
+  --theme-decorator-delta-focus-border: rgb(0, 255, 102);
+  --theme-decorator-delta-focus-glow: 0 0 12px rgba(0, 255, 102, 0.6);
+  --theme-decorator-delta-blur-border: rgb(0, 102, 41);
+
+  --theme-decorator-epsilon-focus-border: rgb(255, 0, 85);
+  --theme-decorator-epsilon-focus-glow: 0 0 12px rgba(255, 0, 85, 0.6);
+  --theme-decorator-epsilon-blur-border: rgb(128, 0, 42);
+}
+
+/* -------------------------------------------------------------
+   DESIGN SYSTEM LAYER 1 UTILITIES
+   ------------------------------------------------------------- */
+
+/* Surface Hierarchy Utilities */
+@utility bg-surface-t1 {
+  background-color: var(--surface-tier1);
+}
+@utility bg-surface-t2-panel {
+  background-color: var(--surface-tier2-panel);
+}
+@utility layout-t2-see-through {
+  border-right: 1px solid var(--surface-tier2-border);
+}
+@utility bg-surface-t3 {
+  background-color: var(--surface-tier3);
+}
+@utility bg-surface-t4 {
+  background-color: var(--surface-tier4);
+}
+
+/* Typography Hierarchy Utilities */
+@utility text-t1 {
+  color: var(--text-tier1);
+  font-weight: 100;
+  font-size: 1.3rem;
+}
+@utility text-t2 {
+  color: var(--text-tier2);
+  font-weight: 100;
+  font-size: 1.1rem;
+}
+@utility text-t3 {
+  color: var(--text-tier3);
+  font-weight: 100;
+  line-height: 1.5;
+}
+@utility text-t4 {
+  color: var(--text-tier4);
+  font-weight: 100;
+  font-size: 0.75rem;
+  letter-spacing: -0.01em;
+}
+
+/* Abstract Multi-Dimensional Decorator State Utilities */
+
+/* --- CATEGORY ALPHA: FALLBACK / INVALID SYSTEM LAYER --- */
+@utility decorator-alpha-active-focus {
+  background-color: var(--theme-decorator-alpha-focus-bg);
+  color: var(--theme-decorator-alpha-focus-text);
+  border: 1px solid var(--theme-decorator-alpha-focus-border);
+}
+@utility decorator-alpha-active-blur {
+  background-color: var(--theme-decorator-alpha-blur-bg);
+  color: var(--theme-decorator-alpha-blur-text);
+  border: 1px solid var(--theme-decorator-alpha-blur-border);
+}
+@utility decorator-alpha-inactive-focus {
+  background-color: var(--theme-decorator-alpha-focus-bg);
+  color: var(--theme-decorator-alpha-focus-text);
+  border: 1px dashed var(--theme-decorator-alpha-focus-border);
+  opacity: 0.7;
+}
+@utility decorator-alpha-inactive-blur {
+  background-color: var(--theme-decorator-alpha-blur-bg);
+  color: var(--theme-decorator-alpha-blur-text);
+  border: 1px dotted var(--theme-decorator-alpha-blur-border);
+  opacity: 0.5;
+}
+
+/* --- CATEGORY BETA: COMMITTED HISTORICAL TRUTH --- */
+@utility decorator-beta-active-focus {
+  border: 1px solid var(--theme-decorator-beta-focus-border);
+  box-shadow: var(--theme-decorator-beta-focus-glow);
+  font-weight: 500;
+}
+@utility decorator-beta-active-blur {
+  border: 1px solid var(--theme-decorator-beta-blur-border);
+}
+@utility decorator-beta-inactive-focus {
+  border: 1px dashed var(--theme-decorator-beta-focus-border);
+  box-shadow: var(--theme-decorator-beta-focus-glow);
+  opacity: 0.7;
+}
+@utility decorator-beta-inactive-blur {
+  border: 1px dotted var(--theme-decorator-beta-blur-border);
+  opacity: 0.5;
+}
+
+/* --- CATEGORY GAMMA: PROPOSED STATE CANDIDATES --- */
+@utility decorator-gamma-active-focus {
+  border: 1px solid var(--theme-decorator-gamma-focus-border);
+  box-shadow: var(--theme-decorator-gamma-focus-glow);
+  font-weight: 500;
+}
+@utility decorator-gamma-active-blur {
+  border: 1px solid var(--theme-decorator-gamma-blur-border);
+  font-weight: 500;
+}
+@utility decorator-gamma-inactive-focus {
+  border: 1px dashed var(--theme-decorator-gamma-focus-border);
+  box-shadow: var(--theme-decorator-gamma-focus-glow);
+  opacity: 0.7;
+}
+@utility decorator-gamma-inactive-blur {
+  border: 1px dotted var(--theme-decorator-gamma-blur-border);
+  opacity: 0.5;
+}
+
+/* --- CATEGORY DELTA: ACTIVE TRANSIENT WORKSPACE DRAFTS --- */
+@utility decorator-delta-active-focus {
+  border: 1px solid var(--theme-decorator-delta-focus-border);
+  box-shadow: var(--theme-decorator-delta-focus-glow);
+  font-weight: 500;
+}
+@utility decorator-delta-active-blur {
+  border: 1px solid var(--theme-decorator-delta-blur-border);
+}
+@utility decorator-delta-inactive-focus {
+  border: 1px dashed var(--theme-decorator-delta-focus-border);
+  box-shadow: var(--theme-decorator-delta-focus-glow);
+  opacity: 0.7;
+}
+@utility decorator-delta-inactive-blur {
+  border: 1px dotted var(--theme-decorator-delta-blur-border);
+  opacity: 0.5;
+}
+
+/* --- CATEGORY EPSILON: PIPELINE EXCEPTION HALTS --- */
+@utility decorator-epsilon-active-focus {
+  border: 1px solid var(--theme-decorator-epsilon-focus-border);
+  box-shadow: var(--theme-decorator-epsilon-focus-glow);
+  font-weight: 500;
+}
+@utility decorator-epsilon-active-blur {
+  border: 1px solid var(--theme-decorator-epsilon-blur-border);
+}
+@utility decorator-epsilon-inactive-focus {
+  border: 1px dashed var(--theme-decorator-epsilon-focus-border);
+  box-shadow: var(--theme-decorator-epsilon-focus-glow);
+  opacity: 0.7;
+}
+@utility decorator-epsilon-inactive-blur {
+  border: 1px dotted var(--theme-decorator-epsilon-blur-border);
+  opacity: 0.5;
+}
+
+/* Custom Window Utilities */
+@utility custom-header {
+  -webkit-app-region: drag;
+}
+
+/* Custom Terminal Scrollbar Utilities */
+@utility custom-terminal-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-tier2-border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--surface-tier2-border);
+    border-radius: 9999px;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: color-mix(
+      in srgb,
+      var(--theme-decorator-beta-focus-border) 40%,
+      var(--surface-tier2-border)
+    );
+  }
+}
+
+
+
+================================================
+FILE: src/renderer/src/components/Accounting.tsx
+================================================
+import { GraphNode } from '@engine/model/base'
+import { createChromeNode } from '@engine/model/chrome'
+import { useEffect, useState } from 'react'
+import Card from './Card'
+import Title from './Title'
+
+function Accounting(): React.JSX.Element {
+  const [nodes, setNodes] = useState<GraphNode[]>([])
+  const [titleNode, setTitleNode] = useState<GraphNode>()
+
+  useEffect(() => {
+    const hydrateColumnData = async (): Promise<void> => {
+      const sidebarNodes = await window.api.engine.chrome.sidebarNodes()
+      const allNodes = await window.api.engine.weaver.nodes()
+      const weaverConfig = sidebarNodes.find((node) => node.id === 'weaver')
+      const tTitle = weaverConfig?.data?.accounting?.['title'] ?? ''
+      const tIcon = weaverConfig?.data?.accounting?.['icon'] ?? ''
+      const tSubtitle = weaverConfig?.data?.accounting?.['subTitle'] ?? ''
+      const tNode = createChromeNode('accounting')
+        .withTitle(tTitle)
+        .withIcon(tIcon)
+        .withData({ subTitle: tSubtitle })
+        .build()
+      setTitleNode(tNode)
+      const targetPrefixes: string[] = weaverConfig?.data?.accounting?.['prefixes'] ?? []
+      const filtered = allNodes.filter((node) =>
+        targetPrefixes.some((prefix) => node.id.startsWith(prefix))
+      )
+      setNodes(filtered)
+    }
+    hydrateColumnData()
+  }, [])
+
+  return (
+    <div className="w-1/4 flex flex-col border-r border-transparent layout-t2-see-through overflow-y-auto custom-terminal-scroll">
+      <div className="sticky top-0 z-10 bg-surface-t1 px-4 pt-4 pb-3 border-b border-surface-t2-border/70 custom-header">
+        {titleNode ? (
+          <Title
+            node={titleNode}
+            variant="h2"
+            titleKey="title"
+            iconKey="icon"
+            subTitleKey="subTitle"
+          />
+        ) : (
+          <div className="animate-pulse bg-surface-t2-border/20 h-10 rounded" />
+        )}
+      </div>
+      <div className="flex-1 p-4 pt-3">
+        {nodes.map((node, index) => {
+          const isFocused = index % 4 >= 2
+          return (
+            <Card
+              key={node.id}
+              node={node}
+              titleKey="title"
+              iconKey="icon"
+              contentKey="content"
+              isFocused={isFocused}
+            />
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+export default Accounting
+
+
+
+================================================
+FILE: src/renderer/src/components/Card.tsx
+================================================
+import { GraphNode } from '@engine/model/base'
+import { useEffect, useState } from 'react'
+
+interface CardItemprops {
+  node: GraphNode
+  titleKey?: string
+  contentKey?: string
+  iconKey?: string
+  isFocused: boolean
+}
+
+function Card({
+  node,
+  titleKey = 'title',
+  iconKey = 'icon',
+  contentKey,
+  isFocused = false
+}: CardItemprops): React.JSX.Element {
+  const title = String(node.data[titleKey] ?? node.data.id ?? 'UNKNOWN')
+  const icon = String(node.data[iconKey] ?? 'ó°‹˜')
+  const baseStyle = 'p-3 mb-2 bg-surface-t3 rounded transition-all duration-300'
+  let description = ''
+  contentKey && (description = String(node.data[contentKey] ?? ''))
+  const [desc, setDesc] = useState(description)
+  const [decStyle, setDecStyle] = useState(resolveDecoratorStyle(node, isFocused))
+  useEffect(() => {
+    const removeListener = window.electron.ipcRenderer.on(
+      'node:updated',
+      (_event, updatedNode: GraphNode) => {
+        if (updatedNode.id === node.id) {
+          contentKey && setDesc(String(updatedNode.data[contentKey] ?? ''))
+          setDecStyle(resolveDecoratorStyle(updatedNode, isFocused))
+        }
+      }
+    )
+    return () => {
+      removeListener()
+    }
+  }, [contentKey, node.id, isFocused])
+  return (
+    <div className={`${baseStyle} ${decStyle}`}>
+      <div className="text-t3 mb-1 flex items-center gap-2">
+        <span>{icon}</span>
+        <span>{title}</span>
+      </div>
+      {desc && <div className="text-t4 whitespace-pre-wrap">{desc}</div>}
+    </div>
+  )
+}
+
+function resolveDecoratorStyle(node: GraphNode, isFocused: boolean): string {
+  const recordState = String(node.meta?.recordState ?? 'invalid')
+  const engagementState = String(node.meta?.engagementState ?? 'inactive')
+  const tierMap: Record<string, Record<string, { focus: string; blur: string }>> = {
+    invalid: {
+      active: { focus: 'decorator-alpha-active-focus', blur: 'decorator-alpha-active-blur' },
+      inactive: { focus: 'decorator-alpha-inactive-focus', blur: 'decorator-alpha-inactive-blur' }
+    },
+    committed: {
+      active: { focus: 'decorator-beta-active-focus', blur: 'decorator-beta-active-blur' },
+      inactive: { focus: 'decorator-beta-inactive-focus', blur: 'decorator-beta-inactive-blur' }
+    },
+    proposed: {
+      active: { focus: 'decorator-gamma-active-focus', blur: 'decorator-gamma-active-blur' },
+      inactive: { focus: 'decorator-gamma-inactive-focus', blur: 'decorator-gamma-inactive-blur' }
+    },
+    draft: {
+      active: { focus: 'decorator-delta-active-focus', blur: 'decorator-delta-active-blur' },
+      inactive: { focus: 'decorator-delta-inactive-focus', blur: 'decorator-delta-inactive-blur' }
+    },
+    failed: {
+      active: { focus: 'decorator-epsilon-active-focus', blur: 'decorator-epsilon-active-blur' },
+      inactive: {
+        focus: 'decorator-epsilon-inactive-focus',
+        blur: 'decorator-epsilon-inactive-blur'
+      }
+    }
+  }
+  const targetTier = tierMap[recordState] ?? tierMap['invalid']
+  const targetEngagement = targetTier[engagementState] ?? targetTier['inactive']
+  return isFocused ? targetEngagement.focus : targetEngagement.blur
+}
+
+export default Card
+
+
+
+================================================
+FILE: src/renderer/src/components/Chrome.tsx
+================================================
+import Accounting from './Accounting'
+import Context from './Context'
+import Sidebar from './Sidebar'
+import Tapestry from './Tapestry'
+
+function Chrome(): React.JSX.Element {
+  return (
+    <>
+      {/* Root Container: Full dark chrome canvas background & base layout sizing */}
+      <div className="flex h-screen w-screen bg-surface-t1 font-sans overflow-hidden select-none">
+        <Sidebar />
+        {/* Main Work Area: Multi-column view tethered with raw vertical rules */}
+        <div className="flex-1 flex flex-row min-w-[600px]">
+          {/* Left Column (25% width proportional) */}
+          <Context />
+          {/* Middle Column / Workspace (50% width proportional) */}
+          <Tapestry />
+          {/* Right Column (25% width proportional) */}
+          <Accounting />
+        </div>
+      </div>
+    </>
+  )
+}
+
+export default Chrome
+
+
+
+================================================
+FILE: src/renderer/src/components/Context.tsx
+================================================
+import { GraphNode } from '@engine/model/base'
+import { createChromeNode } from '@engine/model/chrome'
+import { useEffect, useState } from 'react'
+import Card from './Card'
+import Title from './Title'
+
+function Context(): React.JSX.Element {
+  const [nodes, setNodes] = useState<GraphNode[]>([])
+  const [titleNode, setTitleNode] = useState<GraphNode>()
+
+  useEffect(() => {
+    const hydrateColumnData = async (): Promise<void> => {
+      const sidebarNodes = await window.api.engine.chrome.sidebarNodes()
+      const allNodes = await window.api.engine.weaver.nodes()
+      const weaverConfig = sidebarNodes.find((node) => node.id === 'weaver')
+      const tTitle = weaverConfig?.data?.context?.['title'] ?? ''
+      const tIcon = weaverConfig?.data?.context?.['icon'] ?? ''
+      const tSubtitle = weaverConfig?.data?.context?.['subTitle'] ?? ''
+      const tNode = createChromeNode('context')
+        .withTitle(tTitle)
+        .withIcon(tIcon)
+        .withData({ subTitle: tSubtitle })
+        .build()
+      setTitleNode(tNode)
+      const targetPrefixes: string[] = weaverConfig?.data?.context?.['prefixes'] ?? []
+      const filtered = allNodes.filter((node) =>
+        targetPrefixes.some((prefix) => node.id.startsWith(prefix))
+      )
+      console.log(filtered)
+      setNodes(filtered)
+    }
+    hydrateColumnData()
+  }, [])
+
+  return (
+    <div className="w-1/4 flex flex-col border-r border-transparent layout-t2-see-through overflow-y-auto custom-terminal-scroll">
+      <div className="sticky top-0 z-10 bg-surface-t1 px-4 pt-4 pb-3 border-b border-surface-t2-border/70 custom-header">
+        {titleNode ? (
+          <Title
+            node={titleNode}
+            variant="h2"
+            titleKey="title"
+            iconKey="icon"
+            subTitleKey="subTitle"
+          />
+        ) : (
+          <div className="animate-pulse bg-surface-t2-border/20 h-10 rounded" />
+        )}
+      </div>
+      <div className="flex-1 p-4 pt-3">
+        {nodes.map((node, index) => {
+          const isFocused = index % 4 >= 2
+          return (
+            <Card
+              key={node.id}
+              node={node}
+              titleKey="title"
+              iconKey="icon"
+              contentKey="content"
+              isFocused={isFocused}
+            />
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+export default Context
+
+
+
+================================================
+FILE: src/renderer/src/components/NavItem.tsx
+================================================
+import { ChromeNode } from '@engine/model/chrome'
+import { AppMode } from '../context/UIContext'
+
+interface NavItemProps {
+  node: ChromeNode
+  titleKey?: string
+  iconKey?: string
+  isActive: boolean
+  onClick: (mode: AppMode) => void
+}
+
+function NavItem({
+  node,
+  titleKey = 'title',
+  iconKey = 'icon',
+  isActive = false,
+  onClick
+}: NavItemProps): React.JSX.Element {
+  const title = String(node.data[titleKey] ?? node.data.id ?? 'UNKNOWN')
+  const icon = String(node.data[iconKey] ?? 'ó°‹˜')
+  const routeMode = node.data.routeMode
+  const baseStyle =
+    'block py-2 px-6 transition-all duration-150 text-t3 hover:bg-surface-t1/50 hover:text-t2'
+  const activeStyle = 'decorator-beta-active-focus text-t2'
+
+  return (
+    <a
+      href="#"
+      className={`${baseStyle} ${isActive ? activeStyle : ''}`}
+      onClick={(e) => {
+        e.preventDefault()
+        onClick(routeMode)
+      }}
+    >
+      {icon} {title}
+    </a>
+  )
+}
+
+export default NavItem
+
+
+
+================================================
+FILE: src/renderer/src/components/Sidebar.tsx
+================================================
+import { GraphNode } from '@engine/model/base'
+import { ChromeNode, createChromeNode } from '@engine/model/chrome'
+import { useEffect, useMemo, useState } from 'react'
+import { useUI } from '../context/UIContext'
+import NavItem from './NavItem'
+import Title from './Title'
+
+function Sidebar(): React.JSX.Element {
+  const { currentMode, setCurrentMode } = useUI()
+  const [appNode, setAppNode] = useState<GraphNode>()
+  const [sidebarNodes, setSidebarNodes] = useState<ChromeNode[]>([])
+
+  // Stabilize structural leaf node to prevent re-instantiation thrashing
+  const exitNode = useMemo(
+    () => createChromeNode('exit').withTitle('Exit').withIcon('ó°¿…').build(),
+    []
+  )
+
+  useEffect(() => {
+    const hydrateSidebarData = async (): Promise<void> => {
+      const [rawAppNode, rawSidebarNodes] = await Promise.all([
+        window.api.engine.client(),
+        window.api.engine.chrome.sidebarNodes()
+      ])
+      setAppNode(rawAppNode)
+      setSidebarNodes(rawSidebarNodes)
+    }
+
+    hydrateSidebarData()
+  }, [])
+
+  return (
+    <aside className="w-50 bg-surface-t2-panel flex-shrink-0 flex flex-col border-r border-transparent layout-t2-see-through h-full">
+      {/* Draggable Zone Header */}
+      <div className="px-6 pt-6 min-h-[88px] custom-header select-none">
+        {appNode ? (
+          <Title
+            node={appNode}
+            variant="h1"
+            titleKey="title"
+            iconKey="icon"
+            subTitleKey="version"
+          />
+        ) : (
+          <div className="animate-pulse bg-surface-t2-border/20 h-12 rounded w-4/5" />
+        )}
+      </div>
+
+      {/* Nav Splitter: Flex-col pushes exit button cleanly to the baseline */}
+      <nav className="mt-4 flex-1 flex flex-col justify-between pb-4">
+        {/* Upper Navigation Block */}
+        <div className="flex flex-col space-y-1">
+          {sidebarNodes.map((node) => (
+            <NavItem
+              key={node.id}
+              node={node}
+              isActive={currentMode === node.data.routeMode}
+              onClick={setCurrentMode}
+            />
+          ))}
+        </div>
+
+        {/* Lower Core Control Anchor */}
+        <div className="border-t border-surface-t2-border/10 pt-4">
+          <NavItem
+            key={exitNode.id}
+            node={exitNode}
+            isActive={false}
+            onClick={() => {
+              if (confirm('Are you sure you want to close the narrative engine?')) {
+                window.api.engine.chrome.exitApp()
+              }
+            }}
+          />
+        </div>
+      </nav>
+    </aside>
+  )
+}
+
+export default Sidebar
+
+
+
+================================================
+FILE: src/renderer/src/components/Tapestry.tsx
+================================================
+import { createGraphNode, GraphNode } from '@engine/model/base'
+import { createChromeNode } from '@engine/model/chrome'
+import { useEffect, useState, useRef } from 'react'
+import Card from './Card'
+import Title from './Title'
+
+function Tapestry(): React.JSX.Element {
+  const [nodes, setNodes] = useState<GraphNode[]>([])
+  const [titleNode, setTitleNode] = useState<GraphNode>()
+  const [draft, setDraft] = useState('')
+  const prefixesRef = useRef<string[]>([])
+
+  useEffect(() => {
+    const hydrateColumnData = async (): Promise<void> => {
+      const sidebarNodes = await window.api.engine.chrome.sidebarNodes()
+      const allNodes = await window.api.engine.weaver.nodes()
+      const weaverConfig = sidebarNodes.find((node) => node.id === 'weaver')
+      const tTitle = weaverConfig?.data?.tapestry?.['title'] ?? ''
+      const tIcon = weaverConfig?.data?.tapestry?.['icon'] ?? ''
+      const tSubtitle = weaverConfig?.data?.tapestry?.['subTitle'] ?? ''
+      const tNode = createChromeNode('tapestry')
+        .withTitle(tTitle)
+        .withIcon(tIcon)
+        .withData({ subTitle: tSubtitle })
+        .build()
+      setTitleNode(tNode)
+      const targetPrefixes: string[] = weaverConfig?.data?.tapestry?.['prefixes'] ?? []
+      prefixesRef.current = targetPrefixes
+      const filtered = allNodes.filter((node) =>
+        targetPrefixes.some((prefix) => node.id.startsWith(prefix))
+      )
+      setNodes(filtered)
+    }
+    hydrateColumnData()
+    const removeListener = window.electron.ipcRenderer.on(
+      'node:created',
+      (_event, newNode: GraphNode) => {
+        if (prefixesRef.current.some((prefix) => newNode.id.startsWith(prefix))) {
+          setNodes((prev) => {
+            if (prev.find((n) => n.id === newNode.id)) return prev // Prevent duplicates
+            return [...prev, newNode]
+          })
+        }
+      }
+    )
+    return () => {
+      removeListener()
+    }
+  }, [])
+
+  const handleIntent = async (): Promise<void> => {
+    if (!draft.trim()) return
+    const proposedNode = createGraphNode(`weave:turn:${Date.now()}`)
+      .withData({
+        group: 'weave',
+        title: `Turn #${nodes.length + 1}`,
+        content: draft,
+        timestamp: Date.now()
+      })
+      .withMeta({
+        recordState: 'proposed',
+        engagementState: 'active'
+      })
+      .build()
+    await window.api.engine.weaver.submitTurn(proposedNode)
+    setDraft('')
+  }
+
+  return (
+    <div className="w-1/2 h-full flex flex-col border-r border-transparent layout-t2-see-through overflow-hidden">
+      {/* Locked Header */}
+      <div className="sticky top-0 z-10 bg-surface-t1 px-4 pt-4 pb-3 border-b border-surface-t2-border/70 custom-header">
+        {titleNode ? (
+          <Title
+            node={titleNode}
+            variant="h2"
+            titleKey="title"
+            iconKey="icon"
+            subTitleKey="subTitle"
+          />
+        ) : (
+          <div className="animate-pulse bg-surface-t2-border/20 h-10 rounded" />
+        )}
+      </div>
+      <div className="flex-1 p-4 pt-3 overflow-y-auto custom-terminal-scroll">
+        {nodes.map((node, index) => {
+          const isFocused = index % 4 >= 2
+          return (
+            <Card
+              key={node.id}
+              node={node}
+              titleKey="title"
+              iconKey="icon"
+              contentKey="content"
+              isFocused={isFocused}
+            />
+          )
+        })}
+      </div>
+      <div className="flex flex-col gap-2 p-4 bg-surface-t1 border-t border-surface-t2-border/40 layout-t2-see-through shrink-0">
+        <textarea
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          className="w-full min-h-22.5 p-3 text-t3 bg-surface-t2-panel rounded-none outline-none resize-none transition-all duration-150 decorator-delta-active-blur focus:decorator-delta-active-focus"
+          placeholder="Draft your turn ..."
+        />
+        <button
+          onClick={handleIntent}
+          type="button"
+          className="w-full py-2.5 text-center font-bold tracking-wider uppercase cursor-pointer rounded-none outline-none transition-all duration-150 bg-surface-t2-panel text-t1 border border-transparent hover:decorator-delta-active-focus active:scale-[0.99]"
+        >
+          ó°‹™ Go! Go! Go!
+        </button>
+      </div>
+    </div>
+  )
+}
+
+export default Tapestry
+
+
+
+================================================
+FILE: src/renderer/src/components/Title.tsx
+================================================
+import { GraphNode } from '@engine/model/base'
+
+interface TitleProps {
+  node: GraphNode
+  variant?: 'h1' | 'h2'
+  titleKey?: string
+  iconKey?: string
+  subTitleKey?: string
+}
+
+function Title({
+  node,
+  variant = 'h2',
+  titleKey = 'title',
+  iconKey,
+  subTitleKey
+}: TitleProps): React.JSX.Element {
+  const nodeData = node.data as Record<string, unknown>
+  const title = String(nodeData[titleKey] ?? 'UNKNOWN')
+  const icon = nodeData[iconKey ?? 'icon']
+  const subTitle = nodeData[subTitleKey ?? 'subTitle']
+  const variantMap = {
+    h1: 'text-t1',
+    h2: 'text-t2'
+  }
+  let fullTitle = ''
+  if (icon) {
+    fullTitle = `${icon} ${title}`
+  } else {
+    fullTitle = title
+  }
+
+  return (
+    <>
+      <div className={`${variantMap[variant]} text-t1`}>{fullTitle}</div>
+      {subTitle && <div className="text-t4 text-accent">{String(subTitle)}</div>}
+    </>
+  )
+}
+
+export default Title
+
+
+
+================================================
+FILE: src/renderer/src/context/UIContext.tsx
+================================================
+import { createContext, useContext } from 'react'
+
+export type AppMode = 'weaver' | 'keeper' | 'settings'
+
+export interface UIContextType {
+  currentMode: AppMode
+  setCurrentMode: (mode: AppMode) => void
+}
+
+export const UIContext = createContext<UIContextType | undefined>(undefined)
+
+export const useUI = (): UIContextType => {
+  const context = useContext(UIContext)
+  if (!context) {
+    throw new Error('useUI must be used within a UIProvider')
+  }
+  return context
+}
+
+
+
+================================================
+FILE: src/renderer/src/context/UIProvider.tsx
+================================================
+import { ReactNode, ReactElement, useState } from 'react'
+import { UIContext, AppMode } from './UIContext'
+
+export const UIProvider = ({ children }: { children: ReactNode }): ReactElement => {
+  const [currentMode, setCurrentMode] = useState<AppMode>('weaver')
+
+  return <UIContext.Provider value={{ currentMode, setCurrentMode }}>{children}</UIContext.Provider>
+}
+
+
