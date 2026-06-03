@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { GraphNode } from '@engine/model/base'
+import { BaseNode } from '@engine/model/base'
 
 ipcRenderer.setMaxListeners(1000)
 
@@ -18,7 +18,7 @@ const api = {
        * Dispatches one or more nodes to the engine.
        * If a single node is passed, it is wrapped in an array for the Intent.
        */
-      submitTurn: (payload: GraphNode | GraphNode[]) => {
+      submitTurn: (payload: BaseNode | BaseNode[]) => {
         const nodes = Array.isArray(payload) ? payload : [payload]
         return ipcRenderer.invoke('weaver:submit', nodes)
       }

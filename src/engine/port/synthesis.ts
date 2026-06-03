@@ -1,4 +1,4 @@
-import { GraphNode } from '@engine/model/base'
+import { BaseNode } from '@engine/model/base'
 import { Intent } from '@engine/model/hami'
 
 /**
@@ -36,7 +36,7 @@ export interface TextToTextSynthesisProvider {
    */
   generateStream(
     intent: Intent,
-    context: GraphNode[],
+    context: BaseNode[],
     options?: Record<string, unknown>
   ): AsyncIterable<TextSynthesisChunk>
 }

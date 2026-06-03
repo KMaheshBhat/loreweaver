@@ -1,12 +1,12 @@
-import { GraphNode } from '@engine/model/base'
+import { BaseNode } from '@engine/model/base'
 import { createChromeNode } from '@engine/model/chrome'
 import { useEffect, useState } from 'react'
 import Card from './Card'
 import Title from './Title'
 
 function Context(): React.JSX.Element {
-  const [nodes, setNodes] = useState<GraphNode[]>([])
-  const [titleNode, setTitleNode] = useState<GraphNode>()
+  const [nodes, setNodes] = useState<BaseNode[]>([])
+  const [titleNode, setTitleNode] = useState<BaseNode>()
 
   useEffect(() => {
     const hydrateColumnData = async (): Promise<void> => {

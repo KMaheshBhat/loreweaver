@@ -1,5 +1,5 @@
 import { Context, getModel, Message, stream } from '@earendil-works/pi-ai'
-import { GraphNode } from '@engine/model/base'
+import { BaseNode } from '@engine/model/base'
 import { Intent } from '@engine/model/hami'
 import { TextSynthesisChunk, TextToTextSynthesisProvider } from '@engine/port/synthesis'
 
@@ -8,7 +8,7 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
 
   async *generateStream(
     intent: Intent,
-    _context: GraphNode[],
+    _context: BaseNode[],
     options?: Record<string, unknown>
   ): AsyncIterable<TextSynthesisChunk> {
     const modelId = 'openrouter/free'

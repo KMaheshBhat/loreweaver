@@ -1,12 +1,12 @@
-import { createGraphNode, GraphNode } from '@engine/model/base'
+import { createBaseNode, BaseNode } from '@engine/model/base'
 import { createChromeNode } from '@engine/model/chrome'
 import { useEffect, useState, useRef } from 'react'
 import Card from './Card'
 import Title from './Title'
 
 function Tapestry(): React.JSX.Element {
-  const [nodes, setNodes] = useState<GraphNode[]>([])
-  const [titleNode, setTitleNode] = useState<GraphNode>()
+  const [nodes, setNodes] = useState<BaseNode[]>([])
+  const [titleNode, setTitleNode] = useState<BaseNode>()
   const [draft, setDraft] = useState('')
   const prefixesRef = useRef<string[]>([])
 
@@ -34,7 +34,7 @@ function Tapestry(): React.JSX.Element {
     hydrateColumnData()
     const removeListener = window.electron.ipcRenderer.on(
       'node:created',
-      (_event, newNode: GraphNode) => {
+      (_event, newNode: BaseNode) => {
         if (prefixesRef.current.some((prefix) => newNode.id.startsWith(prefix))) {
           setNodes((prev) => {
             if (prev.find((n) => n.id === newNode.id)) return prev // Prevent duplicates
@@ -50,7 +50,7 @@ function Tapestry(): React.JSX.Element {
 
   const handleIntent = async (): Promise<void> => {
     if (!draft.trim()) return
-    const proposedNode = createGraphNode(`weave:turn:${Date.now()}`)
+    const proposedNode = createBaseNode(`weave:turn:${Date.now()}`)
       .withData({
         group: 'weave',
         title: `Turn #${nodes.length + 1}`,

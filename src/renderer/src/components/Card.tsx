@@ -1,8 +1,8 @@
-import { GraphNode } from '@engine/model/base'
+import { BaseNode } from '@engine/model/base'
 import { useEffect, useState } from 'react'
 
 interface CardItemprops {
-  node: GraphNode
+  node: BaseNode
   titleKey?: string
   contentKey?: string
   iconKey?: string
@@ -26,7 +26,7 @@ function Card({
   useEffect(() => {
     const removeListener = window.electron.ipcRenderer.on(
       'node:updated',
-      (_event, updatedNode: GraphNode) => {
+      (_event, updatedNode: BaseNode) => {
         if (updatedNode.id === node.id) {
           contentKey && setDesc(String(updatedNode.data[contentKey] ?? ''))
           setDecStyle(resolveDecoratorStyle(updatedNode, isFocused))
@@ -48,7 +48,7 @@ function Card({
   )
 }
 
-function resolveDecoratorStyle(node: GraphNode, isFocused: boolean): string {
+function resolveDecoratorStyle(node: BaseNode, isFocused: boolean): string {
   const recordState = String(node.meta?.recordState ?? 'invalid')
   const engagementState = String(node.meta?.engagementState ?? 'inactive')
   const tierMap: Record<string, Record<string, { focus: string; blur: string }>> = {

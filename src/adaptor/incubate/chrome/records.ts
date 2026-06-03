@@ -1,8 +1,8 @@
-import { createGraphNode, GraphNodeMap } from '@engine/model/base'
+import { createBaseNode, BaseNodeMap } from '@engine/model/base'
 import { createChromeNode } from '@engine/model/chrome'
 
-export const seedNodes: GraphNodeMap = {
-  client: createGraphNode('client')
+export const seedNodes: BaseNodeMap = {
+  client: createBaseNode('client')
     .withData({
       icon: '',
       title: 'LoreWeaver',

@@ -1,7 +1,7 @@
-import { GraphNode } from '@engine/model/base'
+import { BaseNode } from '@engine/model/base'
 
 interface TitleProps {
-  node: GraphNode
+  node: BaseNode
   variant?: 'h1' | 'h2'
   titleKey?: string
   iconKey?: string

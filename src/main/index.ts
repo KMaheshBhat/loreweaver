@@ -5,7 +5,7 @@ import { PiAiSynthesisProvider } from '@adaptor/incubate/pi-ai'
 import { WeaverIncubate } from '@adaptor/incubate/weaver'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { Ledger } from '@engine/domain/ledger'
-import { GraphNode } from '@engine/model/base'
+import { BaseNode } from '@engine/model/base'
 import { ChromeNode, isSidebarNode } from '@engine/model/chrome'
 import { Intent } from '@engine/model/hami'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
@@ -84,8 +84,7 @@ app.whenReady().then(async () => {
   ledger.addFlow(chrome)
   choice % 2 == 1 ? ledger.addFlow(glf) : ledger.addFlow(hma)
   ledger.addFlow(weaver)
-  const pa = ledger.createSynthesisFlow(new PiAiSynthesisProvider(), [])
-  ledger.addFlow(pa)
+  ledger.addFlow(ledger.createSynthesisFlow(new PiAiSynthesisProvider(), []))
 
   // The Reactive Bridge (Forwarding Ledger events to UI) [8]
   const forward = (win: BrowserWindow): void => {
@@ -104,7 +103,7 @@ app.whenReady().then(async () => {
   }
   ledger.runFlow(initIntent)
 
-  ipcMain.handle('client:node', async (): Promise<GraphNode | undefined> => {
+  ipcMain.handle('client:node', async (): Promise<BaseNode | undefined> => {
     return ledger.getNode('client')
   })
 
@@ -112,11 +111,11 @@ app.whenReady().then(async () => {
     return ledger.getGraphNodes().filter(isSidebarNode)
   })
 
-  ipcMain.handle('weaver:nodes', async (): Promise<GraphNode[]> => {
+  ipcMain.handle('weaver:nodes', async (): Promise<BaseNode[]> => {
     return ledger.getGraphNodes().filter((node) => node.data.group === 'weave')
   })
 
-  ipcMain.handle('weaver:submit', async (_event, nodes: GraphNode[]): Promise<void> => {
+  ipcMain.handle('weaver:submit', async (_event, nodes: BaseNode[]): Promise<void> => {
     const submitIntent: Intent = {
       id: `intent-submit-${Date.now()}`,
       kind: 'submit-turn',

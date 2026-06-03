@@ -1,4 +1,4 @@
-import { createGraphNode, GraphNode, GraphNodeBuilder } from './base'
+import { createBaseNode, BaseNode, BaseNodeBuilder } from './base'
 
 /**
  * Payload shape for a Chrome (application chrome) node.
@@ -17,8 +17,8 @@ export interface ChromeNodeData {
  * A `GraphNode` specialized to carry Chrome (application shell) metadata.
  * Used by the System of Experience to render navigation and route state.
  */
-export interface ChromeNode extends GraphNode {
-  kind: 'chrome'
+export interface ChromeNode extends BaseNode {
+  kind: 'loreweaver:chrome'
   data: ChromeNodeData
 }
 
@@ -26,7 +26,7 @@ export interface ChromeNode extends GraphNode {
  * Fluent builder API for constructing `ChromeNode` instances.
  * Mirrors `GraphNodeBuilder` while enforcing the chrome-specific data shape.
  */
-export interface ChromeNodeBuilder extends GraphNodeBuilder {
+export interface ChromeNodeBuilder extends BaseNodeBuilder {
   withTitle(title: string): ChromeNodeBuilder
   withRouteMode(routeMode: ChromeNodeData['routeMode']): ChromeNodeBuilder
   withMenuVisibility(availableInMenu: boolean): ChromeNodeBuilder
@@ -41,14 +41,18 @@ export interface ChromeNodeBuilder extends GraphNodeBuilder {
  * @returns A `ChromeNodeBuilder` seeded with the provided id.
  */
 export function createChromeNode(id: string): ChromeNodeBuilder {
-  const base = createGraphNode(id).withKind('chrome')
+  const base = createBaseNode(id).withKind('loreweaver:chrome:generic')
   let title = id
   let routeMode = id
   let availableInMenu = false
   let icon = ''
   const builder: ChromeNodeBuilder = {
     withKind(k) {
-      base.withKind(k)
+      if (k.startsWith('loreweaver:chrome:')) {
+        base.withKind(k)
+      } else {
+        base.withKind(`loreweaver:${k}`)
+      }
       return this
     },
     withData(d) {
@@ -102,8 +106,10 @@ export function createChromeNode(id: string): ChromeNodeBuilder {
  * @param node The node to test.
  * @returns True if the node carries chrome-typed data.
  */
-export function isChromeNode(node: GraphNode): node is ChromeNode {
-  return node.kind === 'chrome' && typeof node.data === 'object' && node.data !== null
+export function isChromeNode(node: BaseNode): node is ChromeNode {
+  return (
+    node.kind.startsWith('loreweaver:chrome') && typeof node.data === 'object' && node.data !== null
+  )
 }
 
 /**
@@ -113,6 +119,6 @@ export function isChromeNode(node: GraphNode): node is ChromeNode {
  * @param node The node to test.
  * @returns True if the node should appear in the sidebar.
  */
-export function isSidebarNode(node: GraphNode): node is ChromeNode {
+export function isSidebarNode(node: BaseNode): node is ChromeNode {
   return isChromeNode(node) && node.data.availableInMenu === true
 }

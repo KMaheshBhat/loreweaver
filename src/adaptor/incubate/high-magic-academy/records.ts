@@ -1,7 +1,7 @@
-import { createGraphNode, GraphNodeMap } from '@engine/model/base'
+import { createBaseNode, BaseNodeMap } from '@engine/model/base'
 
-export const seedNodes: GraphNodeMap = {
-  weaveInstructions: createGraphNode('weave:instructions')
+export const seedNodes: BaseNodeMap = {
+  weaveInstructions: createBaseNode('weave:instructions')
     .withData({
       group: 'weave',
       title: 'System Instructions',
@@ -14,7 +14,7 @@ export const seedNodes: GraphNodeMap = {
     })
     .build(),
 
-  character1: createGraphNode('weave:char:elara')
+  character1: createBaseNode('weave:char:elara')
     .withData({
       group: 'weave',
       title: 'Elara Finch',
@@ -28,7 +28,7 @@ export const seedNodes: GraphNodeMap = {
     })
     .build(),
 
-  character2: createGraphNode('weave:char:corwin')
+  character2: createBaseNode('weave:char:corwin')
     .withData({
       group: 'weave',
       title: 'Corwin Thorne',
@@ -42,7 +42,7 @@ export const seedNodes: GraphNodeMap = {
     })
     .build(),
 
-  summary1: createGraphNode('weave:summary:1')
+  summary1: createBaseNode('weave:summary:1')
     .withData({
       group: 'weave',
       title: 'The Moonroot Expedition',
@@ -56,7 +56,7 @@ export const seedNodes: GraphNodeMap = {
     })
     .build(),
 
-  summary2: createGraphNode('weave:summary:2')
+  summary2: createBaseNode('weave:summary:2')
     .withData({
       group: 'weave',
       title: 'The Clocktower Disturbance',
@@ -70,7 +70,7 @@ export const seedNodes: GraphNodeMap = {
     })
     .build(),
 
-  scenario: createGraphNode('weave:scenario')
+  scenario: createBaseNode('weave:scenario')
     .withData({
       group: 'weave',
       title: 'The Lantern Vault',
@@ -83,7 +83,7 @@ export const seedNodes: GraphNodeMap = {
     })
     .build(),
 
-  turn75: createGraphNode('weave:turn:75')
+  turn75: createBaseNode('weave:turn:75')
     .withData({
       group: 'weave',
       title: 'Turn #75',
@@ -96,7 +96,7 @@ export const seedNodes: GraphNodeMap = {
     })
     .build(),
 
-  result75_1: createGraphNode('engine:result:75-1')
+  result75_1: createBaseNode('engine:result:75-1')
     .withData({
       group: 'weave',
       title: 'Result #75-1',
@@ -120,7 +120,7 @@ export const seedNodes: GraphNodeMap = {
     })
     .build(),
 
-  turn76: createGraphNode('weave:turn:76')
+  turn76: createBaseNode('weave:turn:76')
     .withData({
       group: 'weave',
       title: 'Turn #76',
@@ -134,7 +134,7 @@ export const seedNodes: GraphNodeMap = {
     })
     .build(),
 
-  result76_1: createGraphNode('engine:result:76-1')
+  result76_1: createBaseNode('engine:result:76-1')
     .withData({
       group: 'weave',
       title: 'Result #76-1',
@@ -158,7 +158,7 @@ export const seedNodes: GraphNodeMap = {
     })
     .build(),
 
-  result76_2: createGraphNode('engine:result:76-2')
+  result76_2: createBaseNode('engine:result:76-2')
     .withData({
       group: 'weave',
       title: 'Result #76-2',
@@ -182,7 +182,7 @@ export const seedNodes: GraphNodeMap = {
     })
     .build(),
 
-  turn77: createGraphNode('weave:turn:77')
+  turn77: createBaseNode('weave:turn:77')
     .withData({
       group: 'weave',
       title: 'Turn #77',
@@ -195,7 +195,7 @@ export const seedNodes: GraphNodeMap = {
     })
     .build(),
 
-  result77_1: createGraphNode('engine:result:77-1')
+  result77_1: createBaseNode('engine:result:77-1')
     .withData({
       group: 'weave',
       title: 'Result #77-1',

@@ -1,7 +1,15 @@
 import { Payload, PayloadFlow, PayloadAccessor } from '@engine/domain/hami'
 import { TextToTextSynthesisProvider } from '@engine/port/synthesis'
 import { Intent } from '@engine/model/hami'
-import { GraphNode } from '@engine/model/base'
+import { BaseNode } from '@engine/model/base'
+
+/**
+ * Explicit interface for the capability added by this mixin.
+ * This satisfies the "Missing return type" and "Private property" issues.
+ */
+export interface SynthesisFlowCapability {
+  createSynthesisFlow(provider: TextToTextSynthesisProvider, targetIntents: string[]): PayloadFlow
+}
 
 // TS Requirement: args MUST be any[] for Mixin compatibility
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -11,7 +19,9 @@ export type GConstructor<T = object> = new (...args: any[]) => T
  * The Synthesis Capability Mixin.
  * Bridges "Stochastic Fuel" (LLMs) into "Deterministic Gears" (Flows).
  */
-export function WithSynthesisFlow<TBase extends GConstructor<Payload>>(Base: TBase): TBase {
+export function WithSynthesisFlow<TBase extends GConstructor<Payload>>(
+  Base: TBase
+): TBase & GConstructor<SynthesisFlowCapability> {
   return class extends Base {
     // TS Requirement: A mixin class must have this specific constructor signature
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,7 +47,7 @@ export function WithSynthesisFlow<TBase extends GConstructor<Payload>>(Base: TBa
           options?: Record<string, unknown>
         ): Promise<void> => {
           // Narrowing nodes to domain GraphNodes for context
-          const contextNodes = Object.values(accessor.getNodes()) as GraphNode[]
+          const contextNodes = Object.values(accessor.getNodes()) as BaseNode[]
 
           // Identification of the target "Neo State" node
           const responseNodeId = options?.proposedNodeId as string

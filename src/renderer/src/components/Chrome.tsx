@@ -10,7 +10,7 @@ function Chrome(): React.JSX.Element {
       <div className="flex h-screen w-screen bg-surface-t1 font-sans overflow-hidden select-none">
         <Sidebar />
         {/* Main Work Area: Multi-column view tethered with raw vertical rules */}
-        <div className="flex-1 flex flex-row min-w-[600px]">
+        <div className="flex-1 flex flex-row min-w-150">
           {/* Left Column (25% width proportional) */}
           <Context />
           {/* Middle Column / Workspace (50% width proportional) */}

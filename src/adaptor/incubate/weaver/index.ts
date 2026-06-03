@@ -1,6 +1,6 @@
 import { Intent } from '@engine/model/hami'
 import { PayloadAccessor, PayloadFlow } from '@engine/domain/hami'
-import { createGraphNode } from '@engine/model/base'
+import { createBaseNode } from '@engine/model/base'
 
 /**
  * The Weaver Operational Adaptor.
@@ -29,7 +29,7 @@ export class WeaverIncubate implements PayloadFlow {
         accessor.addNode(node)
         console.log(`Weaver: node`, node)
       })
-      const proposedNode = createGraphNode(`weave:turn:${Date.now()}-gen`)
+      const proposedNode = createBaseNode(`weave:turn:${Date.now()}-gen`)
         .withData({
           group: 'weave',
           title: 'TTTSynth response',

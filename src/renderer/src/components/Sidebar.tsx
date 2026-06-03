@@ -1,4 +1,4 @@
-import { GraphNode } from '@engine/model/base'
+import { BaseNode } from '@engine/model/base'
 import { ChromeNode, createChromeNode } from '@engine/model/chrome'
 import { useEffect, useMemo, useState } from 'react'
 import { useUI } from '../context/UIContext'
@@ -7,7 +7,7 @@ import Title from './Title'
 
 function Sidebar(): React.JSX.Element {
   const { currentMode, setCurrentMode } = useUI()
-  const [appNode, setAppNode] = useState<GraphNode>()
+  const [appNode, setAppNode] = useState<BaseNode>()
   const [sidebarNodes, setSidebarNodes] = useState<ChromeNode[]>([])
 
   // Stabilize structural leaf node to prevent re-instantiation thrashing
@@ -30,9 +30,9 @@ function Sidebar(): React.JSX.Element {
   }, [])
 
   return (
-    <aside className="w-50 bg-surface-t2-panel flex-shrink-0 flex flex-col border-r border-transparent layout-t2-see-through h-full">
+    <aside className="w-50 bg-surface-t2-panel shrink-0 flex flex-col border-r border-transparent layout-t2-see-through h-full">
       {/* Draggable Zone Header */}
-      <div className="px-6 pt-6 min-h-[88px] custom-header select-none">
+      <div className="px-6 pt-6 min-h-22 custom-header select-none">
         {appNode ? (
           <Title
             node={appNode}
