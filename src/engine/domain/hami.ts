@@ -30,20 +30,6 @@ export type PayloadFlowMap = Record<string, PayloadFlow>
 export class Payload extends EventEmitter {
   private nodes: DataNodeMap = {}
   private flows: PayloadFlowMap = {}
-  private accessors: PayloadAccessor = {
-    getNode: (id: string) => this.getNode(id),
-    getNodes: () => this.getNodes(),
-    addNode: (node: DataNode) => this.addNode(node),
-    updateNode: (
-      id: string,
-      data: Partial<Record<string, unknown>>,
-      meta: Partial<Record<string, unknown>>
-    ) => this.updateNode(id, data, meta),
-    removeNode: (id: string) => this.removeNode(id),
-    getFlow: (id: string): PayloadFlow | undefined => {
-      return this.flows[id]
-    }
-  }
 
   constructor() {
     super()
@@ -94,9 +80,23 @@ export class Payload extends EventEmitter {
   }
 
   async runFlow(intent: Intent, options?: Record<string, unknown>): Promise<void> {
+    const accessors: PayloadAccessor = {
+      getNode: (id: string) => this.getNode(id),
+      getNodes: () => this.getNodes(),
+      addNode: (node: DataNode) => this.addNode(node),
+      updateNode: (
+        id: string,
+        data: Partial<Record<string, unknown>>,
+        meta: Partial<Record<string, unknown>>
+      ) => this.updateNode(id, data, meta),
+      removeNode: (id: string) => this.removeNode(id),
+      getFlow: (id: string): PayloadFlow | undefined => {
+        return this.flows[id]
+      }
+    }
     for (const flow of Object.values(this.flows)) {
       if (flow.supportedIntents.includes(intent.kind)) {
-        flow.execute(this.accessors, intent, options)
+        flow.execute(accessors, intent, options)
       }
     }
   }
