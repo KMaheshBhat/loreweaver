@@ -7,10 +7,10 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { Ledger } from '@engine/domain/ledger'
 import { GraphNode } from '@engine/model/base'
 import { ChromeNode, isSidebarNode } from '@engine/model/chrome'
+import { Intent } from '@engine/model/hami'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
-import { Intent } from '@engine/model/hami'
 
 /**
  * Creates the main application window with Electron configuration.
