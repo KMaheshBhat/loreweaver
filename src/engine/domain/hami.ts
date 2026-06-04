@@ -80,6 +80,7 @@ export class Payload extends EventEmitter {
   }
 
   async runFlow(intent: Intent, options?: Record<string, unknown>): Promise<void> {
+    console.log(Object.keys(this.flows))
     const accessors: PayloadAccessor = {
       getNode: (id: string) => this.getNode(id),
       getNodes: () => this.getNodes(),

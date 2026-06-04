@@ -84,7 +84,15 @@ app.whenReady().then(async () => {
   ledger.addFlow(chrome)
   choice % 2 == 1 ? ledger.addFlow(glf) : ledger.addFlow(hma)
   ledger.addFlow(weaver)
-  ledger.addFlow(ledger.createSynthesisFlow(new PiAiSynthesisProvider(), []))
+  ledger.addFlow(
+    ledger.createSynthesisFlow(new PiAiSynthesisProvider(), [], {
+      id: 'openrouter-free',
+      options: {
+        provider: 'openrouter',
+        modelId: 'openrouter/free'
+      }
+    })
+  )
 
   // The Reactive Bridge (Forwarding Ledger events to UI) [8]
   const forward = (win: BrowserWindow): void => {

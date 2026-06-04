@@ -22,7 +22,8 @@ export class WeaverIncubate implements PayloadFlow {
    * @param intent The intent containing the narrative turn nodes to process.
    */
   async execute(accessor: PayloadAccessor, intent: Intent): Promise<void> {
-    const ttt = accessor.getFlow('flow:synthesis:pi-ai-synthesis:incubate')
+    const ttt = accessor.getFlow('flow:synthesis:pi-ai-synthesis:incubate:openrouter-free')
+    console.log(ttt)
     if (intent.kind === 'submit-turn') {
       // Loop through all nodes carried by the intent (Proposed + Updates)
       intent.nodes.forEach((node) => {
@@ -42,7 +43,11 @@ export class WeaverIncubate implements PayloadFlow {
         })
         .build()
       accessor.addNode(proposedNode)
-      await ttt?.execute(accessor, intent, { proposedNodeId: proposedNode.id })
+      try {
+        await ttt?.execute(accessor, intent, { proposedNodeId: proposedNode.id })
+      } catch (e) {
+        console.error(`Weaver: Failed to execute TTT synthesis flow:`, e)
+      }
 
       console.log(`Weaver: Ingested ${intent.nodes.length} nodes for [Go! Go! Go!] sequence.`)
     }

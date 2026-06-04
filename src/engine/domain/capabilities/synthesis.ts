@@ -3,12 +3,21 @@ import { TextToTextSynthesisProvider } from '@engine/port/synthesis'
 import { Intent } from '@engine/model/hami'
 import { BaseNode } from '@engine/model/base'
 
+export interface SynthesisFlowCapabilityOptions {
+  id: string
+  options?: Record<string, unknown>
+}
+
 /**
  * Explicit interface for the capability added by this mixin.
  * This satisfies the "Missing return type" and "Private property" issues.
  */
 export interface SynthesisFlowCapability {
-  createSynthesisFlow(provider: TextToTextSynthesisProvider, targetIntents: string[]): PayloadFlow
+  createSynthesisFlow(
+    provider: TextToTextSynthesisProvider,
+    targetIntents: string[],
+    options: SynthesisFlowCapabilityOptions
+  ): PayloadFlow
 }
 
 // TS Requirement: args MUST be any[] for Mixin compatibility
@@ -35,10 +44,13 @@ export function WithSynthesisFlow<TBase extends GConstructor<Payload>>(
      */
     public createSynthesisFlow(
       provider: TextToTextSynthesisProvider,
-      targetIntents: string[]
+      targetIntents: string[],
+      options: SynthesisFlowCapabilityOptions
     ): PayloadFlow {
+      const flowId = `flow:synthesis:${provider.id}:${options.id}`
+      const baseOptions = options.options ?? {}
       return {
-        id: `flow:synthesis:${provider.id}`,
+        id: flowId,
         kind: 'synthesis',
         supportedIntents: targetIntents,
         execute: async (
@@ -56,7 +68,8 @@ export function WithSynthesisFlow<TBase extends GConstructor<Payload>>(
             return
           }
 
-          const stream = provider.generateStream(intent, contextNodes, options)
+          const flowOptions = { ...baseOptions, ...options }
+          const stream = provider.generateStream(intent, contextNodes, flowOptions)
           console.log(`Synthesis stream aligned for node [${responseNodeId}]...`)
 
           let accumulatedProse = ''

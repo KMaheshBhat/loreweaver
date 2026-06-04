@@ -1,4 +1,11 @@
-import { Context, getModel, Message, stream } from '@earendil-works/pi-ai'
+import {
+  Context,
+  getModels,
+  getProviders,
+  KnownProvider,
+  Message,
+  stream
+} from '@earendil-works/pi-ai'
 import { BaseNode } from '@engine/model/base'
 import { Intent } from '@engine/model/hami'
 import { TextSynthesisChunk, TextToTextSynthesisProvider } from '@engine/port/synthesis'
@@ -11,9 +18,17 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
     _context: BaseNode[],
     options?: Record<string, unknown>
   ): AsyncIterable<TextSynthesisChunk> {
-    const modelId = 'openrouter/free'
-    const piModel = getModel('openrouter', modelId)
-    console.log(`PiAiSynthesisProvider: model`, piModel)
+    const rawProvider = (options?.provider as string) || 'openrouter'
+    if (!isValidKnownProvider(rawProvider)) {
+      throw new Error(`Unknown provider: ${rawProvider}`)
+    }
+    const provider = rawProvider as KnownProvider
+    const rawModelId = (options?.modelId as string) || 'openrouter/free'
+    const model = getModels(provider).find((model) => model.id === rawModelId)
+    if (!model) {
+      throw new Error(`Unknown model: ${rawModelId} for provider: ${provider}`)
+    }
+    console.log(`PiAiSynthesisProvider: model`, model)
 
     // Convert GraphNode[] context to pi-ai Context format
     const piContext: Context = {
@@ -31,7 +46,7 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
       })
     }
     // Create a streaming response
-    const s = stream(piModel, piContext)
+    const s = stream(model, piContext)
 
     try {
       for await (const event of s) {
@@ -42,7 +57,7 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
               delta: event.delta,
               meta: {
                 type: 'text_delta',
-                model: modelId
+                model: rawModelId
               }
             }
             break
@@ -52,7 +67,7 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
               delta: event.delta,
               meta: {
                 type: 'thinking_delta',
-                model: modelId
+                model: rawModelId
               }
             }
             break
@@ -62,7 +77,7 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
               meta: {
                 type: 'done',
                 reason: event.reason,
-                model: modelId,
+                model: rawModelId,
                 ...(event.message?.usage && {
                   usage: event.message.usage
                 })
@@ -75,7 +90,7 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
               meta: {
                 type: 'error',
                 error: event.error,
-                model: modelId
+                model: rawModelId
               }
             }
             break
@@ -86,9 +101,13 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
         meta: {
           type: 'error',
           error: error instanceof Error ? error.message : String(error),
-          model: modelId
+          model: rawModelId
         }
       }
     }
   }
+}
+
+function isValidKnownProvider(provider: string): provider is KnownProvider {
+  return (getProviders() as string[]).includes(provider)
 }
