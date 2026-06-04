@@ -97,7 +97,11 @@ export class Payload extends EventEmitter {
     }
     for (const flow of Object.values(this.flows)) {
       if (flow.supportedIntents.includes(intent.kind)) {
-        flow.execute(accessors, intent, options)
+        try {
+          flow.execute(accessors, intent, options)
+        } catch (error) {
+          console.error(`Flow execution error:`, error)
+        }
       }
     }
   }

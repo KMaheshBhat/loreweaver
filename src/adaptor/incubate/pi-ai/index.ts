@@ -1,11 +1,4 @@
-import {
-  Context,
-  getModels,
-  getProviders,
-  KnownProvider,
-  Message,
-  stream
-} from '@earendil-works/pi-ai'
+import { Context, getModels, getProviders, KnownProvider, stream } from '@earendil-works/pi-ai'
 import { BaseNode } from '@engine/model/base'
 import { Intent } from '@engine/model/hami'
 import { TextSynthesisChunk, TextToTextSynthesisProvider } from '@engine/port/synthesis'
@@ -30,21 +23,18 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
     }
     console.log(`PiAiSynthesisProvider: model`, model)
 
-    // Convert GraphNode[] context to pi-ai Context format
     const piContext: Context = {
-      systemPrompt: (options?.systemPrompt as string) || 'You are a helpful assistant.',
-      messages: intent.nodes.map((node) => {
-        const message: Message = {
+      systemPrompt:
+        (intent.options?.systemInstructoins as string) || 'You are a helpful assistant.',
+      messages: [
+        {
           role: 'user',
-          content: node.data.content as string,
+          content: (intent.options?.userPrompt as string) || 'Continue the story.',
           timestamp: Date.now()
         }
-        if (node.data.timestamp) {
-          message.timestamp = node.data.timestamp as number
-        }
-        return message
-      })
+      ]
     }
+    console.log(`PiAiSynthesisProvider: piContext`, piContext)
     // Create a streaming response
     const s = stream(model, piContext)
 

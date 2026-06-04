@@ -22,18 +22,49 @@ export class WeaverIncubate implements PayloadFlow {
    * @param intent The intent containing the narrative turn nodes to process.
    */
   async execute(accessor: PayloadAccessor, intent: Intent): Promise<void> {
-    const ttt = accessor.getFlow('flow:synthesis:pi-ai-synthesis:incubate:openrouter-free')
-    console.log(ttt)
+    const allNodes = accessor.getNodes()
+    const sidebarNodes = Object.values(allNodes).filter((node) =>
+      node.kind.startsWith('loreweaver:chrome')
+    )
+    const weaverConfig = sidebarNodes.find((node) => node.id === 'weaver')
     if (intent.kind === 'submit-turn') {
+      const tttSynthesizer = weaverConfig?.data?.submitTurn?.['tttSynthesizer']
+      if (!tttSynthesizer) {
+        throw new Error('tttSynthesizer not configured')
+      }
+      const ttt = accessor.getFlow(`flow:synthesis:${tttSynthesizer}`)
+      if (!ttt) {
+        throw new Error(`ttt flow not found for tttSynthesizer: 'flow:synthesis:${tttSynthesizer}'`)
+      }
+      const weaveNodes = Object.values(allNodes).filter((node) => node.data.group === 'weave')
+      console.log(
+        'Weaver: weaveNodes.id',
+        weaveNodes.map((node) => node.id)
+      )
+      const siNodes = weaveNodes
+        .filter((node) => node.id.startsWith('weave:instructions'))
+        .sort((a, b) => a.id.localeCompare(b.id))
+      const charNodes = weaveNodes
+        .filter((node) => node.id.startsWith('weave:char'))
+        .sort((a, b) => a.id.localeCompare(b.id))
+      const summaryNodes = weaveNodes
+        .filter((node) => node.id.startsWith('weave:summary'))
+        .sort((a, b) => a.id.localeCompare(b.id))
+      const scenarioNodes = weaveNodes
+        .filter((node) => node.id.startsWith('weave:scenario'))
+        .sort((a, b) => a.id.localeCompare(b.id))
+      const turnNodes = weaveNodes
+        .filter((node) => node.id.startsWith('weave:turn'))
+        .sort((a, b) => a.id.localeCompare(b.id))
       // Loop through all nodes carried by the intent (Proposed + Updates)
       intent.nodes.forEach((node) => {
         accessor.addNode(node)
-        console.log(`Weaver: node`, node)
       })
-      const proposedNode = createBaseNode(`weave:turn:${Date.now()}-gen`)
+      const turnId = `synth:${Date.now()}`
+      const proposedNode = createBaseNode(`weave:turn:${turnId}`)
         .withData({
           group: 'weave',
-          title: 'TTTSynth response',
+          title: `Turn ${turnId}`,
           content: '',
           timestamp: Date.now()
         })
@@ -43,8 +74,39 @@ export class WeaverIncubate implements PayloadFlow {
         })
         .build()
       accessor.addNode(proposedNode)
+      let systemInstructions = ''
+      let userPrompt = ''
+      for (const node of siNodes) {
+        systemInstructions += node.data.content + '\n'
+      }
+      for (const node of charNodes) {
+        userPrompt += `## Character - ${node.data?.title}\n` + node.data?.content + '\n'
+      }
+      for (const node of summaryNodes) {
+        userPrompt += `## Previously - ${node.data?.title}\n` + node.data?.content + '\n'
+      }
+      for (const node of scenarioNodes) {
+        userPrompt += `## Scenario - ${node.data?.title}\n` + node.data?.content + '\n'
+      }
+      for (const node of turnNodes) {
+        userPrompt += `## ${node.data?.title}\n` + node.data?.content + '\n'
+      }
+      userPrompt += `## ${proposedNode.data?.title}\n` + '\n[prose]\n'
+      // TODO hardcoding for now - need to do character turn management
+      const currentChar = charNodes[0]
+      userPrompt += `\n---\nProvide ${currentChar.data?.title} roleplay, not more than two or three small paragraphs. Keep in third person. No meta commentary.  Just the prose which can replace [prose] above.`
+      const synthIntent: Intent = {
+        id: `synth:${Date.now()}`,
+        kind: 'synthesis',
+        nodes: [],
+        options: {
+          systemInstructions,
+          userPrompt
+        }
+      }
+
       try {
-        await ttt?.execute(accessor, intent, { proposedNodeId: proposedNode.id })
+        await ttt?.execute(accessor, synthIntent, { proposedNodeId: proposedNode.id })
       } catch (e) {
         console.error(`Weaver: Failed to execute TTT synthesis flow:`, e)
       }

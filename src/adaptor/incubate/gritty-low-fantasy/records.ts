@@ -78,7 +78,7 @@ export const seedNodes: BaseNodeMap = {
       title: 'A Dusty Crossroads Inn',
       content:
         '## The Scenario: A Dusty Crossroads Inn\n' +
-        'Kaelen stands frozen in a crowded tavern yard, his massive frame blocking the doorway as a group of hostile, drunk local guards close in around him. Valen, a travel-worn youth in muddy boots, steps out from behind Kaelen\'s massive legs, crossing his arms and boldly flashing a heavy Sovereign Seal. The tavern falls completely silent as the guards instantly drop to their knees in terror. Kaelen lets out a heavy sigh, rubs his temples, and mutters, "Valen, you fool, we were supposed to be keeping a low profile."'
+        'Kaelen stands frozen in a crowded tavern yard, his massive frame blocking the doorway as a group of hostile, drunk local guards close in around him. Valen, a travel-worn youth in muddy boots, steps out from behind Kaelen\'s massive legs, crossing his arms and boldly flashing a heavy Sovereign Seal. The tavern falls completely silent as the guards instantly drop to their knees in terror."'
     })
     .withMeta({
       recordState: 'committed',
@@ -88,8 +88,9 @@ export const seedNodes: BaseNodeMap = {
   turn75: createBaseNode('weave:turn:75')
     .withData({
       group: 'weave',
-      title: 'Turn #75',
-      content: 'The narrative begins to unfold...',
+      title: 'Turn #0',
+      content:
+        'Kaelen lets out a heavy sigh, rubs his temples, and mutters, "Valen, you fool, we were supposed to be keeping a low profile.',
       timestamp: 1774432800000
     })
     .withMeta({
@@ -118,18 +119,6 @@ export const seedNodes: BaseNodeMap = {
     .withMeta({
       recordState: 'committed',
       engagementState: 'inactive'
-    })
-    .build(),
-  turn76: createBaseNode('weave:turn:76')
-    .withData({
-      group: 'weave',
-      title: 'Turn #76',
-      content: 'Tension rises as events escalate.',
-      timestamp: 1774432860000
-    })
-    .withMeta({
-      recordState: 'committed',
-      engagementState: 'active'
     })
     .build(),
   result76_1: createBaseNode('engine:result:76-1')
@@ -176,18 +165,6 @@ export const seedNodes: BaseNodeMap = {
     .withMeta({
       recordState: 'committed',
       engagementState: 'inactive'
-    })
-    .build(),
-  turn77: createBaseNode('weave:turn:77')
-    .withData({
-      group: 'weave',
-      title: 'Turn #77',
-      content: "Valen's gaze lingers on the ledger layout...",
-      timestamp: 1774432920000
-    })
-    .withMeta({
-      recordState: 'hooga-booga',
-      engagementState: 'active'
     })
     .build(),
   result77_1: createBaseNode('engine:result:77-1')

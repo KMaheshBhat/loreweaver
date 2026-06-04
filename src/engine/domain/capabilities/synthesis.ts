@@ -77,11 +77,7 @@ export function WithSynthesisFlow<TBase extends GConstructor<Payload>>(
             if (chunk.delta) {
               accumulatedProse += chunk.delta
               // Inking the 'resolving' state triggers targeted UI updates [1, 2]
-              accessor.updateNode(
-                responseNodeId,
-                { content: accumulatedProse },
-                { recordState: 'resolving' }
-              )
+              accessor.updateNode(responseNodeId, { content: accumulatedProse }, {})
             }
           }
 
