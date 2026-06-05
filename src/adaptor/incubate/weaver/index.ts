@@ -32,10 +32,6 @@ export class WeaverIncubate implements PayloadFlow {
       if (!tttSynthesizer) {
         throw new Error('tttSynthesizer not configured')
       }
-      const ttt = accessor.getFlow(`flow:synthesis:${tttSynthesizer}`)
-      if (!ttt) {
-        throw new Error(`ttt flow not found for tttSynthesizer: 'flow:synthesis:${tttSynthesizer}'`)
-      }
       const weaveNodes = Object.values(allNodes).filter((node) => node.data.group === 'weave')
       console.log(
         'Weaver: weaveNodes.id',
@@ -106,7 +102,10 @@ export class WeaverIncubate implements PayloadFlow {
       }
 
       try {
-        await ttt?.execute(accessor, synthIntent, { proposedNodeId: proposedNode.id })
+        const tttSynthesizerFlowId = `flow:synthesis:${tttSynthesizer}`
+        await accessor.runFlow(synthIntent, tttSynthesizerFlowId, {
+          proposedNodeId: proposedNode.id
+        })
       } catch (e) {
         console.error(`Weaver: Failed to execute TTT synthesis flow:`, e)
       }

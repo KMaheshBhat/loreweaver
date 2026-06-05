@@ -11,7 +11,8 @@ export interface PayloadAccessor {
     meta: Partial<Record<string, unknown>>
   ) => void
   removeNode: (id: string) => void
-  getFlow(id: string): PayloadFlow | undefined
+  // getFlow(id: string): PayloadFlow | undefined
+  runFlow: (intent: Intent, target?: string, options?: Record<string, unknown>) => Promise<void>
 }
 
 export interface PayloadFlow {
@@ -79,7 +80,7 @@ export class Payload extends EventEmitter {
     this.fNotify(id, 'removed')
   }
 
-  async runFlow(intent: Intent, options?: Record<string, unknown>): Promise<void> {
+  async runFlow(intent: Intent, target?: string, options?: Record<string, unknown>): Promise<void> {
     console.log(Object.keys(this.flows))
     const accessors: PayloadAccessor = {
       getNode: (id: string) => this.getNode(id),
@@ -91,14 +92,27 @@ export class Payload extends EventEmitter {
         meta: Partial<Record<string, unknown>>
       ) => this.updateNode(id, data, meta),
       removeNode: (id: string) => this.removeNode(id),
-      getFlow: (id: string): PayloadFlow | undefined => {
-        return this.flows[id]
+      // getFlow: (id: string): PayloadFlow | undefined => {
+      //   return this.flows[id]
+      // },
+      runFlow: (intent: Intent, target?: string, options?: Record<string, unknown>) =>
+        this.runFlow(intent, target, options)
+    }
+    if (target) {
+      const flow = this.flows[target]
+      if (flow) {
+        try {
+          await flow.execute(accessors, intent, options)
+        } catch (error) {
+          console.error(`Flow execution error:`, error)
+        }
       }
+      return
     }
     for (const flow of Object.values(this.flows)) {
       if (flow.supportedIntents.includes(intent.kind)) {
         try {
-          flow.execute(accessors, intent, options)
+          await flow.execute(accessors, intent, options)
         } catch (error) {
           console.error(`Flow execution error:`, error)
         }
