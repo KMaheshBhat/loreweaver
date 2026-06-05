@@ -16,7 +16,7 @@ export const seedNodes: BaseNodeMap = {
     .withMenuVisibility(true)
     .withData({
       submitTurn: {
-        tttSynthesizer: 'pi-ai-synthesis:incubate:openrouter-free'
+        tttSynthesizer: 'pi-ai-synthesis:incubate:llama.cpp'
       },
       context: {
         icon: '󰛡',

@@ -73,17 +73,35 @@ export function WithSynthesisFlow<TBase extends GConstructor<Payload>>(
           console.log(`Synthesis stream aligned for node [${responseNodeId}]...`)
 
           let accumulatedProse = ''
+          let accumulatedThought = ''
+
           for await (const chunk of stream) {
+            if (chunk.meta?.type === 'error') {
+              console.error('Synthesis error:', chunk.meta)
+              continue
+            }
+
             if (chunk.delta) {
-              accumulatedProse += chunk.delta
-              // Inking the 'resolving' state triggers targeted UI updates [1, 2]
-              accessor.updateNode(responseNodeId, { content: accumulatedProse }, {})
+              if (chunk.meta?.type === 'thinking_delta') {
+                accumulatedThought += chunk.delta
+                // You can stream the thought processing to a dedicated metadata block
+                accessor.updateNode(responseNodeId, {}, { transientThought: accumulatedThought })
+              } else if (chunk.meta?.type === 'text_delta') {
+                accumulatedProse += chunk.delta
+                // Keep the main content clean and strictly character-facing
+                accessor.updateNode(responseNodeId, { content: accumulatedProse }, {})
+              }
             }
           }
 
-          // Finalize: Transition the node to 'proposed' for the Weaver's review [3]
-          accessor.updateNode(responseNodeId, {}, { recordState: 'proposed' })
-          console.log(`Synthesis completed for node [${responseNodeId}].`)
+          // Finalize: Commit the final code-clean prose and permanently store the thought process
+          accessor.updateNode(
+            responseNodeId,
+            { content: accumulatedProse, thinkContent: accumulatedThought },
+            {
+              recordState: 'proposed'
+            }
+          )
         }
       }
     }

@@ -101,7 +101,7 @@ function Tapestry(): React.JSX.Element {
               node={node}
               titleKey="title"
               iconKey="icon"
-              contentKey="content"
+              contentKey={['thinkContent', 'content']}
               column="tapestry"
             />
           )

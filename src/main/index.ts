@@ -12,6 +12,8 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 
+const loreChoice = 1 // 0 - high-magic-academy 1 - grim-low-fantasy
+
 /**
  * Creates the main application window with Electron configuration.
  *
@@ -80,19 +82,25 @@ app.whenReady().then(async () => {
   const weaver = new WeaverIncubate() // The operational adaptor
   const glf = new GrittyLowFantasyIncubate()
   const hma = new HighMagicAcademyIncubate()
-  const choice = 1
   ledger.addFlow(chrome)
-  choice % 2 == 1 ? ledger.addFlow(glf) : ledger.addFlow(hma)
+  loreChoice % 2 == 1 ? ledger.addFlow(glf) : ledger.addFlow(hma)
   ledger.addFlow(weaver)
-  ledger.addFlow(
-    ledger.createSynthesisFlow(new PiAiSynthesisProvider(), [], {
-      id: 'openrouter-free',
-      options: {
-        provider: 'openrouter',
-        modelId: 'openrouter/free'
-      }
-    })
-  )
+  const openRouterFree = {
+    id: 'openrouter-free',
+    options: {
+      provider: 'openrouter',
+      modelId: 'openrouter/free'
+    }
+  }
+  const llamaCpp = {
+    id: 'llama.cpp',
+    options: {
+      provider: 'llama.cpp',
+      modelId: ''
+    }
+  }
+  ledger.addFlow(ledger.createSynthesisFlow(new PiAiSynthesisProvider(), [], openRouterFree))
+  ledger.addFlow(ledger.createSynthesisFlow(new PiAiSynthesisProvider(), [], llamaCpp))
 
   // The Reactive Bridge (Forwarding Ledger events to UI) [8]
   const forward = (win: BrowserWindow): void => {

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 interface CardItemprops {
   node: BaseNode
   titleKey?: string
-  contentKey?: string
+  contentKey?: string | string[]
   iconKey?: string
   column: string
 }
@@ -24,7 +24,14 @@ function Card({
   const title = String(liveNode.data[titleKey] ?? liveNode.id ?? 'UNKNOWN')
   const icon = String(liveNode.data[iconKey] ?? '󰋘')
   const baseStyle = 'p-3 mb-2 bg-surface-t3 rounded transition-all duration-100 cursor-pointer'
-  const desc = contentKey ? String(liveNode.data[contentKey] ?? '') : ''
+  const descElements = contentKey
+    ? (Array.isArray(contentKey) ? contentKey : [contentKey])
+        .map((key) => {
+          const value = liveNode.data[key] || liveNode.meta[key] // Fallback to check meta too
+          return value ? String(value) : null
+        })
+        .filter(Boolean)
+    : []
 
   useEffect(() => {
     const removeListener = window.electron.ipcRenderer.on(
@@ -44,7 +51,15 @@ function Card({
         <span>{icon}</span>
         <span>{title}</span>
       </div>
-      {desc && <div className="text-t4 whitespace-pre-wrap">{desc}</div>}
+      {descElements.length > 0 && (
+        <div className="flex flex-col gap-2 divide-y divide-surface-t1">
+          {descElements.map((text, idx) => (
+            <div key={idx} className="text-t4 whitespace-pre-wrap pt-2 first:pt-0">
+              {text}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

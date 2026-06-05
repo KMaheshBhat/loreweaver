@@ -1,4 +1,12 @@
-import { Context, getModels, getProviders, KnownProvider, stream } from '@earendil-works/pi-ai'
+import {
+  AssistantMessageEventStream,
+  Context,
+  getModels,
+  getProviders,
+  KnownProvider,
+  Model,
+  stream
+} from '@earendil-works/pi-ai'
 import { BaseNode } from '@engine/model/base'
 import { Intent } from '@engine/model/hami'
 import { TextSynthesisChunk, TextToTextSynthesisProvider } from '@engine/port/synthesis'
@@ -11,21 +19,9 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
     _context: BaseNode[],
     options?: Record<string, unknown>
   ): AsyncIterable<TextSynthesisChunk> {
-    const rawProvider = (options?.provider as string) || 'openrouter'
-    if (!isValidKnownProvider(rawProvider)) {
-      throw new Error(`Unknown provider: ${rawProvider}`)
-    }
-    const provider = rawProvider as KnownProvider
-    const rawModelId = (options?.modelId as string) || 'openrouter/free'
-    const model = getModels(provider).find((model) => model.id === rawModelId)
-    if (!model) {
-      throw new Error(`Unknown model: ${rawModelId} for provider: ${provider}`)
-    }
-    console.log(`PiAiSynthesisProvider: model`, model)
-
     const piContext: Context = {
       systemPrompt:
-        (intent.options?.systemInstructoins as string) || 'You are a helpful assistant.',
+        (intent.options?.systemInstructions as string) || 'You are a helpful assistant.',
       messages: [
         {
           role: 'user',
@@ -35,8 +31,41 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
       ]
     }
     console.log(`PiAiSynthesisProvider: piContext`, piContext)
+    let s: AssistantMessageEventStream
+    const rawProvider = (options?.provider as string) || 'openrouter'
+    const rawModelId = (options?.modelId as string) || 'local-model' // Dummy ID for llama.cpp
+    const baseUrl = (options?.baseUrl as string) || 'http://127.0.0.1:8033/v1' // Your local port
+    if (rawProvider == 'llama.cpp') {
+      const model = {
+        id: rawModelId,
+        name: 'Local Llama.cpp',
+        api: 'openai-completions', // SDK uses this for OAI-compatible backends [4, 5]
+        provider: 'llama.cpp',
+        baseUrl: baseUrl,
+        reasoning: false, // Local llama-server usually doesn't emit 'thinking' blocks yet
+        input: ['text'],
+        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+        contextWindow: 65536, // Match your server config [6]
+        maxTokens: 4096
+      } as Model<'openai-completions'>
+      console.log(`PiAiSynthesisProvider: model`, model)
+      s = stream(model, piContext, {
+        apiKey: 'dummy'
+      })
+    } else {
+      if (!isValidKnownProvider(rawProvider)) {
+        throw new Error(`Unknown provider: ${rawProvider}`)
+      }
+      const provider = rawProvider as KnownProvider
+      const model = getModels(provider).find((model) => model.id === rawModelId)
+      if (!model) {
+        throw new Error(`Unknown model: ${rawModelId} for provider: ${provider}`)
+      }
+      console.log(`PiAiSynthesisProvider: model`, model)
+      s = stream(model, piContext)
+    }
+
     // Create a streaming response
-    const s = stream(model, piContext)
 
     try {
       for await (const event of s) {
