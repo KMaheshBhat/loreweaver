@@ -24,7 +24,7 @@ export interface TextSynthesisChunk {
  * text-generation requests and streaming back structured chunks.
  */
 export interface TextToTextSynthesisProvider {
-  id: string
+  kind: string
 
   /**
    * Dispatches an isolated text-generation frame to an abstract inference engine.

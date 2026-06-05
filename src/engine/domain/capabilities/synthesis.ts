@@ -47,7 +47,7 @@ export function WithSynthesisFlow<TBase extends GConstructor<Payload>>(
       targetIntents: string[],
       options: SynthesisFlowCapabilityOptions
     ): PayloadFlow {
-      const flowId = `flow:synthesis:${provider.id}:${options.id}`
+      const flowId = `flow:synthesis:${provider.kind}:${options.id}`
       const baseOptions = options.options ?? {}
       return {
         id: flowId,

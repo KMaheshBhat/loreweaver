@@ -12,7 +12,7 @@ import { Intent } from '@engine/model/hami'
 import { TextSynthesisChunk, TextToTextSynthesisProvider } from '@engine/port/synthesis'
 
 export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
-  public readonly id = 'pi-ai-synthesis:incubate'
+  public readonly kind = 'pi-ai-synthesis:incubate'
 
   async *generateStream(
     intent: Intent,
