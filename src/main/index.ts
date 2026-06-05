@@ -14,7 +14,7 @@ import icon from '../../resources/icon.png?asset'
 import { ChronoIDMintProvider } from '@adaptor/incubate/id-mint'
 
 const loreChoice = 1 // 0 - high-magic-academy 1 - grim-low-fantasy
-const enableDevToolOnStart = true
+const enableDevToolOnStart = false
 
 /**
  * Creates the main application window with Electron configuration.

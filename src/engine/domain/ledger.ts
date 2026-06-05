@@ -1,9 +1,12 @@
 import { BaseNode } from '@engine/model/base'
-import { WithIdMinting } from './capabilities/mint'
-import { WithSynthesisFlow } from './capabilities/synthesis'
-import { applyMixins, Payload } from './hami'
+import { IDMintCapability, WithIdMinting } from './capabilities/mint'
+import { SynthesisFlowCapability, WithSynthesisFlow } from './capabilities/synthesis'
+import { applyMixins, GenericConstructor, Payload } from './hami'
 
-const CapabilitiesBase = applyMixins(Payload, [WithIdMinting, WithSynthesisFlow])
+const CapabilitiesBase = applyMixins(Payload, [
+  WithIdMinting,
+  WithSynthesisFlow
+]) as unknown as GenericConstructor<Payload & IDMintCapability & SynthesisFlowCapability>
 
 export class Ledger extends CapabilitiesBase {
   public override getNode(id: string): BaseNode | undefined {
