@@ -30,7 +30,6 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
         }
       ]
     }
-    console.log(`PiAiSynthesisProvider: piContext`, piContext)
     let s: AssistantMessageEventStream
     const rawProvider = (options?.provider as string) || 'openrouter'
     const rawModelId = (options?.modelId as string) || 'local-model' // Dummy ID for llama.cpp

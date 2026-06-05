@@ -11,6 +11,7 @@ import { Intent } from '@engine/model/hami'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
+import { ChronoIDMintProvider } from '@adaptor/incubate/id-mint'
 
 const loreChoice = 1 // 0 - high-magic-academy 1 - grim-low-fantasy
 
@@ -83,6 +84,7 @@ app.whenReady().then(async () => {
   const glf = new GrittyLowFantasyIncubate()
   const hma = new HighMagicAcademyIncubate()
   ledger.addFlow(chrome)
+  ledger.addFlow(ledger.createIdMintingFlow(new ChronoIDMintProvider(), [], { id: 'id-mint' }))
   loreChoice % 2 == 1 ? ledger.addFlow(glf) : ledger.addFlow(hma)
   ledger.addFlow(weaver)
   const openRouterFree = {

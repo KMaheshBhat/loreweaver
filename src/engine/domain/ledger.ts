@@ -1,8 +1,9 @@
 import { BaseNode } from '@engine/model/base'
 import { WithSynthesisFlow } from './capabilities/synthesis'
 import { Payload } from './hami'
+import { WithIdMinting } from './capabilities/mint'
 
-export class Ledger extends WithSynthesisFlow(Payload) {
+export class Ledger extends WithSynthesisFlow(WithIdMinting(Payload)) {
   public override getNode(id: string): BaseNode | undefined {
     return super.getNode(id) as BaseNode
   }

@@ -63,6 +63,10 @@ export function createChromeNode(id: string): ChromeNodeBuilder {
       base.withEdge(e)
       return this
     },
+    withEdges(e) {
+      base.withEdges(e)
+      return this
+    },
     withMeta(m) {
       base.withMeta(m)
       return this

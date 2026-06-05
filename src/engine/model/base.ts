@@ -38,6 +38,7 @@ export interface BaseNodeBuilder {
   withKind(kind: string): this
   withData(data: Record<string, unknown>): this
   withEdge(edge: BaseEdge): this
+  withEdges(edge: BaseEdge[]): this
   withMeta(data: Record<string, unknown>): this
   build(): BaseNode
 }
@@ -65,6 +66,10 @@ export function createBaseNode(id: string): BaseNodeBuilder {
     },
     withEdge(e) {
       dataNode.withEdge(e)
+      return this
+    },
+    withEdges(e) {
+      dataNode.withEdges(e)
       return this
     },
     withMeta(m) {

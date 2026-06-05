@@ -1,0 +1,19 @@
+import { Intent } from '@engine/model/hami'
+
+export interface MintOptions extends Record<string, unknown> {
+  type: string
+  count?: number
+  targetNodeId: string
+  targetDataKey: string
+  [key: string]: unknown
+}
+
+export interface MintIntent extends Intent {
+  kind: 'mint-ids'
+  options: MintOptions
+}
+
+export interface MintProvider {
+  readonly kind: string
+  mintIDs(intent: MintIntent, options?: Record<string, unknown>): Promise<string[]>
+}

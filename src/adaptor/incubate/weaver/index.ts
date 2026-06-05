@@ -1,6 +1,7 @@
 import { Intent } from '@engine/model/hami'
 import { PayloadAccessor, PayloadFlow } from '@engine/domain/hami'
 import { createBaseNode } from '@engine/model/base'
+import { MintIntent } from '@engine/port/mint'
 
 /**
  * The Weaver Operational Adaptor.
@@ -52,11 +53,41 @@ export class WeaverIncubate implements PayloadFlow {
       const turnNodes = weaveNodes
         .filter((node) => node.id.startsWith('weave:turn'))
         .sort((a, b) => a.id.localeCompare(b.id))
-      // Loop through all nodes carried by the intent (Proposed + Updates)
-      intent.nodes.forEach((node) => {
-        accessor.addNode(node)
+      const mintedNodeId = `loreweaver:submit-turn:${Date.now()}`
+      accessor.addNode(createBaseNode(mintedNodeId).build())
+      const idCount = intent.nodes.length + 1
+      const idMintFlowId = `flow:mint:chrono-id-mint:incubate:id-mint`
+      const idMintIntent: MintIntent = {
+        id: `${mintedNodeId}:intent`,
+        kind: 'mint-ids',
+        nodes: [],
+        options: {
+          type: 'tsid',
+          count: idCount,
+          targetNodeId: mintedNodeId,
+          targetDataKey: 'ids'
+        }
+      }
+      await accessor.runFlow(idMintIntent, idMintFlowId)
+      const mintedNode = accessor.getNode(mintedNodeId)
+      const ids: string[] = (mintedNode?.data?.['ids'] as string[]) || []
+      if (ids.length !== idCount) {
+        throw new Error(`Expected ${intent.nodes.length} ids, got ${ids.length}`)
+      }
+      intent.nodes.forEach((node, i) => {
+        const nodeWithChronoId = createBaseNode(`weave:turn:${ids[i]}`)
+          .withKind(node.kind)
+          .withData({
+            ...node.data,
+            title: `Turn ${ids[i]}`
+          })
+          .withEdges(node.edges)
+          .withMeta(node.meta)
+          .build()
+        turnNodes.push(nodeWithChronoId)
+        accessor.addNode(nodeWithChronoId)
       })
-      const turnId = `synth:${Date.now()}`
+      const turnId = `${ids[idCount - 1]}`
       const proposedNode = createBaseNode(`weave:turn:${turnId}`)
         .withData({
           group: 'weave',
@@ -73,20 +104,26 @@ export class WeaverIncubate implements PayloadFlow {
       let systemInstructions = ''
       let userPrompt = ''
       for (const node of siNodes) {
+        console.log(`Weave: Adding system instruction ${node.id}`)
         systemInstructions += node.data.content + '\n'
       }
       for (const node of charNodes) {
+        console.log(`Weave: Adding character ${node.id} - ${node.data?.title}`)
         userPrompt += `## Character - ${node.data?.title}\n` + node.data?.content + '\n'
       }
       for (const node of summaryNodes) {
+        console.log(`Weave: Adding summary ${node.id} - ${node.data?.title}`)
         userPrompt += `## Previously - ${node.data?.title}\n` + node.data?.content + '\n'
       }
       for (const node of scenarioNodes) {
+        console.log(`Weave: Adding scenario ${node.id} - ${node.data?.title}`)
         userPrompt += `## Scenario - ${node.data?.title}\n` + node.data?.content + '\n'
       }
       for (const node of turnNodes) {
+        console.log(`Weave: Adding turn ${node.id} - ${node.data?.title}`)
         userPrompt += `## ${node.data?.title}\n` + node.data?.content + '\n'
       }
+      console.log(`Weave: Adding proposed turn ${proposedNode.id} - ${proposedNode.data?.title}`)
       userPrompt += `## ${proposedNode.data?.title}\n` + '\n[prose]\n'
       // TODO hardcoding for now - need to do character turn management
       const currentChar = charNodes[0]

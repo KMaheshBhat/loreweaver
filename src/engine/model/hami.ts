@@ -18,6 +18,7 @@ export interface DataNodeBuilder {
   withKind(kind: string): this
   withData(data: Record<string, unknown>): this
   withEdge(edge: DataEdge): this
+  withEdges(edge: DataEdge[]): this
   withMeta(meta: Record<string, unknown>): this
   build(): DataNode
 }
@@ -38,6 +39,10 @@ export function createDataNode(id: string): DataNodeBuilder {
     },
     withEdge(e) {
       edges.push(e)
+      return this
+    },
+    withEdges(e) {
+      edges.push(...e)
       return this
     },
     withMeta(m) {

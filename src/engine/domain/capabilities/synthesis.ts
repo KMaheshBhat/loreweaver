@@ -2,16 +2,13 @@ import { Payload, PayloadFlow, PayloadAccessor } from '@engine/domain/hami'
 import { TextToTextSynthesisProvider } from '@engine/port/synthesis'
 import { Intent } from '@engine/model/hami'
 import { BaseNode } from '@engine/model/base'
+import { GConstructor } from './capability'
 
 export interface SynthesisFlowCapabilityOptions {
   id: string
   options?: Record<string, unknown>
 }
 
-/**
- * Explicit interface for the capability added by this mixin.
- * This satisfies the "Missing return type" and "Private property" issues.
- */
 export interface SynthesisFlowCapability {
   createSynthesisFlow(
     provider: TextToTextSynthesisProvider,
@@ -19,10 +16,6 @@ export interface SynthesisFlowCapability {
     options: SynthesisFlowCapabilityOptions
   ): PayloadFlow
 }
-
-// TS Requirement: args MUST be any[] for Mixin compatibility
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type GConstructor<T = object> = new (...args: any[]) => T
 
 /**
  * The Synthesis Capability Mixin.

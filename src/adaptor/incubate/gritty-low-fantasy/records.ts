@@ -85,7 +85,7 @@ export const seedNodes: BaseNodeMap = {
       engagementState: 'active'
     })
     .build(),
-  turn75: createBaseNode('weave:turn:75')
+  turn75: createBaseNode('weave:turn:20260605000000')
     .withData({
       group: 'weave',
       title: 'Turn #0',
