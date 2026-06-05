@@ -14,6 +14,7 @@ import icon from '../../resources/icon.png?asset'
 import { ChronoIDMintProvider } from '@adaptor/incubate/id-mint'
 
 const loreChoice = 1 // 0 - high-magic-academy 1 - grim-low-fantasy
+const enableDevToolOnStart = true
 
 /**
  * Creates the main application window with Electron configuration.
@@ -21,8 +22,6 @@ const loreChoice = 1 // 0 - high-magic-academy 1 - grim-low-fantasy
  * @returns The configured BrowserWindow instance.
  */
 function createWindow(): BrowserWindow {
-  const enableDevToolOnStart = false
-
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1280,

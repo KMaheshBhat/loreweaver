@@ -6,7 +6,7 @@ import Title from './Title'
 import { useUI } from '@renderer/context/UIContext'
 
 function Tapestry(): React.JSX.Element {
-  const { setFocusedColumn } = useUI()
+  const { setFocusedColumn, isBusy, setBusy } = useUI()
   const [nodes, setNodes] = useState<BaseNode[]>([])
   const [titleNode, setTitleNode] = useState<BaseNode>()
   const [draft, setDraft] = useState('')
@@ -51,8 +51,9 @@ function Tapestry(): React.JSX.Element {
   }, [])
 
   const handleIntent = async (): Promise<void> => {
-    if (!draft.trim()) return
-    const proposedNode = createBaseNode(`weave:turn:${Date.now()}`)
+    if (!draft.trim() || isBusy) return
+    const turnId = `req:${Date.now()}`
+    const proposedNode = createBaseNode(`weave:turn:${turnId}`)
       .withData({
         group: 'weave',
         title: `Turn #${nodes.length + 1}`,
@@ -64,6 +65,7 @@ function Tapestry(): React.JSX.Element {
         engagementState: 'active'
       })
       .build()
+    setBusy(true)
     await window.api.engine.weaver.submitTurn(proposedNode)
     setDraft('')
   }
@@ -119,16 +121,18 @@ function Tapestry(): React.JSX.Element {
       >
         <textarea
           value={draft}
+          disabled={isBusy}
           onChange={(e) => setDraft(e.target.value)}
           className="w-full min-h-22.5 p-3 text-t3 bg-surface-t2-panel rounded-none outline-none resize-none transition-all duration-150 decorator-delta-active-blur focus:decorator-delta-active-focus"
           placeholder="Draft your turn ..."
         />
         <button
           onClick={handleIntent}
+          disabled={isBusy || !draft.trim()}
           type="button"
           className="w-full py-2.5 text-center font-bold tracking-wider uppercase cursor-pointer rounded-none outline-none transition-all duration-150 bg-surface-t2-panel text-t1 border border-transparent hover:decorator-delta-active-focus active:scale-[0.99]"
         >
-          󰋙 Go! Go! Go!
+          {isBusy ? '󰫇 Weaving ...' : '󰋙 Go! Go! Go!'}
         </button>
       </div>
     </div>

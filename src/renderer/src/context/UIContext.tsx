@@ -9,6 +9,9 @@ export interface UIContextType {
   focusedColumn?: string
   setFocusedColumn: (column: string) => void
   setFocus: (nodeId: string, column?: string) => void
+  isBusy: boolean
+  busyNodeId?: string
+  setBusy: (busy: boolean, nodeId?: string) => void
 }
 
 export const UIContext = createContext<UIContextType | undefined>(undefined)
