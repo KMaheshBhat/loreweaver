@@ -77,7 +77,7 @@ export function WithSynthesisFlow<TBase extends GenericConstructor<Payload>>(
               if (chunk.meta?.type === 'thinking_delta') {
                 accumulatedThought += chunk.delta
                 // You can stream the thought processing to a dedicated metadata block
-                accessor.updateNode(responseNodeId, {}, { transientThought: accumulatedThought })
+                accessor.updateNode(responseNodeId, { thinkContent: accumulatedThought }, {})
               } else if (chunk.meta?.type === 'text_delta') {
                 accumulatedProse += chunk.delta
                 // Keep the main content clean and strictly character-facing

@@ -63,6 +63,7 @@ function Card({
     </div>
   )
 }
+
 function resolveDecoratorStyle(node: BaseNode, isFocused: boolean): string {
   const recordState = String(node.meta?.recordState ?? 'invalid')
   const engagementState = String(node.meta?.engagementState ?? 'inactive')
