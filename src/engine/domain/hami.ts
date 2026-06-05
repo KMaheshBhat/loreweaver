@@ -133,3 +133,22 @@ export class Payload extends EventEmitter {
     this.emit(`flow:${type}`, id, flow)
   }
 }
+
+/**
+ * Fundamental generic constructor type for HAMI domain mixins.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type GenericConstructor<T = object> = new (...args: any[]) => T
+
+/**
+ * Functional composition utility for applying domain mixins.
+ * Allows for an ordered, readable array of capabilities.
+ */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export function applyMixins<T extends GenericConstructor>(
+  Base: T,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  mixins: Array<(base: any) => any>
+) {
+  return mixins.reduce((acc, mixin) => mixin(acc), Base)
+}

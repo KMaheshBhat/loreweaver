@@ -1,7 +1,6 @@
-import { Payload, PayloadFlow, PayloadAccessor } from '@engine/domain/hami'
+import { Payload, PayloadFlow, PayloadAccessor, GenericConstructor } from '@engine/domain/hami'
 import { MintIntent, MintOptions, MintProvider } from '@engine/port/mint'
 import { Intent } from '@engine/model/hami'
-import { GConstructor } from './capability'
 
 export interface IDMintCapability {
   createIdMintingFlow(
@@ -12,9 +11,9 @@ export interface IDMintCapability {
   getMintedId(key: string): string | undefined
 }
 
-export function WithIdMinting<TBase extends GConstructor<Payload>>(
+export function WithIdMinting<TBase extends GenericConstructor<Payload>>(
   Base: TBase
-): TBase & GConstructor<IDMintCapability> {
+): TBase & GenericConstructor<IDMintCapability> {
   return class extends Base {
     private nodeId: string | undefined
     // TS Requirement: A mixin class must have this specific constructor signature

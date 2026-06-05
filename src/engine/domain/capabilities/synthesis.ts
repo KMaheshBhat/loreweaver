@@ -1,8 +1,7 @@
-import { Payload, PayloadFlow, PayloadAccessor } from '@engine/domain/hami'
+import { Payload, PayloadFlow, PayloadAccessor, GenericConstructor } from '@engine/domain/hami'
 import { TextToTextSynthesisProvider } from '@engine/port/synthesis'
 import { Intent } from '@engine/model/hami'
 import { BaseNode } from '@engine/model/base'
-import { GConstructor } from './capability'
 
 export interface SynthesisFlowCapabilityOptions {
   id: string
@@ -21,9 +20,9 @@ export interface SynthesisFlowCapability {
  * The Synthesis Capability Mixin.
  * Bridges "Stochastic Fuel" (LLMs) into "Deterministic Gears" (Flows).
  */
-export function WithSynthesisFlow<TBase extends GConstructor<Payload>>(
+export function WithSynthesisFlow<TBase extends GenericConstructor<Payload>>(
   Base: TBase
-): TBase & GConstructor<SynthesisFlowCapability> {
+): TBase & GenericConstructor<SynthesisFlowCapability> {
   return class extends Base {
     // TS Requirement: A mixin class must have this specific constructor signature
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
