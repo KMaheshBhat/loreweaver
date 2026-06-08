@@ -31,9 +31,16 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
       ]
     }
     let s: AssistantMessageEventStream
-    const rawProvider = (options?.provider as string) || 'openrouter'
-    const rawModelId = (options?.modelId as string) || 'local-model' // Dummy ID for llama.cpp
-    const baseUrl = (options?.baseUrl as string) || 'http://127.0.0.1:8033/v1' // Your local port
+    const {
+      provider = 'openrouter',
+      modelId = 'local-model',
+      baseUrl = 'http://127.0.0.1:8033/v1',
+      ...samplingOptions
+    } = options || {}
+    const rawProvider = provider as string
+    const rawModelId = modelId as string // Dummy ID for llama.cpp
+    // TODO capture remaining options as samplingOptions
+
     if (rawProvider == 'llama.cpp') {
       const model = {
         id: rawModelId,
@@ -49,7 +56,8 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
       } as Model<'openai-completions'>
       console.log(`PiAiSynthesisProvider: model`, model)
       s = stream(model, piContext, {
-        apiKey: 'dummy'
+        apiKey: 'dummy',
+        ...samplingOptions
       })
     } else {
       if (!isValidKnownProvider(rawProvider)) {
@@ -61,7 +69,7 @@ export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
         throw new Error(`Unknown model: ${rawModelId} for provider: ${provider}`)
       }
       console.log(`PiAiSynthesisProvider: model`, model)
-      s = stream(model, piContext)
+      s = stream(model, piContext, samplingOptions)
     }
 
     // Create a streaming response

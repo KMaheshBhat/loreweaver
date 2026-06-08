@@ -97,7 +97,13 @@ app.whenReady().then(async () => {
     id: 'llama.cpp',
     options: {
       provider: 'llama.cpp',
-      modelId: ''
+      modelId: '',
+      temperature: 1.0,
+      top_p: 0.95,
+      top_k: 20,
+      min_p: 0.0,
+      presence_penalty: 1.5,
+      repetition_penalty: 1.0
     }
   }
   ledger.addFlow(ledger.createSynthesisFlow(new PiAiSynthesisProvider(), [], openRouterFree))
