@@ -1,9 +1,9 @@
 import { createBaseNode, BaseNodeMap } from '@engine/model/base'
 
 export const seedNodes: BaseNodeMap = {
-  weaveInstructions: createBaseNode('weave:instructions')
+  weaveInstructions: createBaseNode('20260600000000')
+    .withGroup('weave:instructions')
     .withData({
-      group: 'weave',
       title: 'System Instructions',
       content: 'You are an expert story teller.  Continue the story given the following details.'
     })
@@ -12,9 +12,9 @@ export const seedNodes: BaseNodeMap = {
       engagementState: 'active'
     })
     .build(),
-  character1: createBaseNode('weave:char:valen')
+  character1: createBaseNode('20260605000000')
+    .withGroup('weave:char')
     .withData({
-      group: 'weave',
       title: 'Valen "The Unseen"',
       isUser: true,
       content:
@@ -29,9 +29,9 @@ export const seedNodes: BaseNodeMap = {
       engagementState: 'active'
     })
     .build(),
-  character2: createBaseNode('weave:char:kaelen')
+  character2: createBaseNode('20260605000001')
+    .withGroup('weave:char')
     .withData({
-      group: 'weave',
       title: 'Kaelen "The Bound"',
       isUser: true,
       content:
@@ -46,9 +46,9 @@ export const seedNodes: BaseNodeMap = {
       engagementState: 'active'
     })
     .build(),
-  summary1: createBaseNode('weave:summary:1')
+  summary1: createBaseNode('20260605000100')
+    .withGroup('weave:summary')
     .withData({
-      group: 'weave',
       title: 'The Tournament of the Marches',
       isUser: true,
       content:
@@ -59,48 +59,63 @@ export const seedNodes: BaseNodeMap = {
       engagementState: 'inactive'
     })
     .build(),
-  summary2: createBaseNode('weave:summary:2')
+  summary2: createBaseNode('20260605000101')
+    .withGroup('weave:summary')
     .withData({
-      group: 'weave',
       title: 'The Spires Sedition',
       isUser: true,
       content:
         'Looking for work, the duo arrives at a remote keep for what is advertised as a peaceful wedding feast, only for Kaelen to slowly realize they have walked into a nest of Seditionist traitors plotting a rebellion against the Iron Spires. Valen is captured trying to use his hidden identity to stop the uprising, forcing a heavily wounded Kaelen to bluff his way past bloodthirsty lords and rescue his ward before the Imperial Guard arrives to crush the treasonous plot. The pair narrowly slips away into the countryside before the chaos can expose them, leaving them paranoid, exhausted, and desperately trying to keep a lower profile at any local inn.'
     })
+    .withEdge({
+      kind: 'after',
+      toNodeId: '20260605000100',
+      data: {}
+    })
     .withMeta({
       recordState: 'committed',
       engagementState: 'active'
     })
     .build(),
-  scenario: createBaseNode('weave:scenario')
+  scenario: createBaseNode('20260605000200')
+    .withGroup('weave:scenario')
     .withData({
-      group: 'weave',
       title: 'A Dusty Crossroads Inn',
       content:
         '## The Scenario: A Dusty Crossroads Inn\n' +
         'Kaelen stands frozen in a crowded tavern yard, his massive frame blocking the doorway as a group of hostile, drunk local guards close in around him. Valen, a travel-worn youth in muddy boots, steps out from behind Kaelen\'s massive legs, crossing his arms and boldly flashing a heavy Sovereign Seal. The tavern falls completely silent as the guards instantly drop to their knees in terror."'
     })
+    .withEdge({
+      kind: 'after',
+      toNodeId: '20260605000101',
+      data: {}
+    })
     .withMeta({
       recordState: 'committed',
       engagementState: 'active'
     })
     .build(),
-  turn75: createBaseNode('weave:turn:20260605000000')
+  turn75: createBaseNode('20260605000300')
+    .withGroup('weave:turn')
     .withData({
-      group: 'weave',
       title: 'Turn #0',
       content:
-        'Kaelen lets out a heavy sigh, rubs his temples, and mutters, "Valen, you fool, we were supposed to be keeping a low profile.',
+        'Kaelen lets out a heavy sigh, rubs his temples, and mutters, "Valen, you fool, we were supposed to be keeping a low profile."',
       timestamp: 1774432800000
+    })
+    .withEdge({
+      kind: 'after',
+      toNodeId: '20260605000200',
+      data: {}
     })
     .withMeta({
       recordState: 'committed',
       engagementState: 'active'
     })
     .build(),
-  result75_1: createBaseNode('engine:result:75-1')
+  result75_1: createBaseNode('20260605000300-1')
+    .withGroup('weave:engine:result')
     .withData({
-      group: 'weave',
       title: 'Result #75-1',
       kind: 'causality',
       metrics: {
@@ -113,7 +128,7 @@ export const seedNodes: BaseNodeMap = {
     })
     .withEdge({
       kind: 'causality-target',
-      toNodeId: 'weave:turn:75',
+      toNodeId: 'weave:turn:20260605000300',
       data: {}
     })
     .withMeta({
@@ -121,9 +136,9 @@ export const seedNodes: BaseNodeMap = {
       engagementState: 'inactive'
     })
     .build(),
-  result76_1: createBaseNode('engine:result:76-1')
+  result76_1: createBaseNode('20260605000301-1')
+    .withGroup('weave:engine:result')
     .withData({
-      group: 'weave',
       title: 'Result #76-1',
       kind: 'causality',
       metrics: {
@@ -144,9 +159,9 @@ export const seedNodes: BaseNodeMap = {
       engagementState: 'inactive'
     })
     .build(),
-  result76_2: createBaseNode('engine:result:76-2')
+  result76_2: createBaseNode('20260605000301-2')
+    .withGroup('weave:engine:result')
     .withData({
-      group: 'weave',
       title: 'Result #76-2',
       kind: 'introspection',
       metrics: {
@@ -167,9 +182,9 @@ export const seedNodes: BaseNodeMap = {
       engagementState: 'inactive'
     })
     .build(),
-  result77_1: createBaseNode('engine:result:77-1')
+  result77_1: createBaseNode('20260605000302-1')
+    .withGroup('weave:engine:result')
     .withData({
-      group: 'weave',
       title: 'Result #77-1',
       kind: 'causality',
       metrics: {

@@ -1,6 +1,6 @@
 import { Intent } from '@engine/model/hami'
 import { PayloadAccessor, PayloadFlow } from '@engine/domain/hami'
-import { createBaseNode } from '@engine/model/base'
+import { BaseNode, createBaseNode } from '@engine/model/base'
 import { MintIntent } from '@engine/port/mint'
 
 /**
@@ -33,25 +33,27 @@ export class WeaverIncubate implements PayloadFlow {
       if (!tttSynthesizer) {
         throw new Error('tttSynthesizer not configured')
       }
-      const weaveNodes = Object.values(allNodes).filter((node) => node.data.group === 'weave')
+      const weaveNodes = Object.values(allNodes).filter((node) => {
+        return String(node.data?.group).startsWith('weave')
+      }) as BaseNode[]
       console.log(
         'Weaver: weaveNodes.id',
         weaveNodes.map((node) => node.id)
       )
       const siNodes = weaveNodes
-        .filter((node) => node.id.startsWith('weave:instructions'))
+        .filter((node) => node.data.group.startsWith('weave:instructions'))
         .sort((a, b) => a.id.localeCompare(b.id))
       const charNodes = weaveNodes
-        .filter((node) => node.id.startsWith('weave:char'))
+        .filter((node) => node.data.group.startsWith('weave:char'))
         .sort((a, b) => a.id.localeCompare(b.id))
       const summaryNodes = weaveNodes
-        .filter((node) => node.id.startsWith('weave:summary'))
+        .filter((node) => node.data.group.startsWith('weave:summary'))
         .sort((a, b) => a.id.localeCompare(b.id))
       const scenarioNodes = weaveNodes
-        .filter((node) => node.id.startsWith('weave:scenario'))
+        .filter((node) => node.data.group.startsWith('weave:scenario'))
         .sort((a, b) => a.id.localeCompare(b.id))
       const turnNodes = weaveNodes
-        .filter((node) => node.id.startsWith('weave:turn'))
+        .filter((node) => node.data.group.startsWith('weave:turn'))
         .sort((a, b) => a.id.localeCompare(b.id))
       const mintedNodeId = `loreweaver:submit-turn:${Date.now()}`
       accessor.addNode(createBaseNode(mintedNodeId).build())
@@ -75,7 +77,8 @@ export class WeaverIncubate implements PayloadFlow {
         throw new Error(`Expected ${intent.nodes.length} ids, got ${ids.length}`)
       }
       intent.nodes.forEach((node, i) => {
-        const nodeWithChronoId = createBaseNode(`weave:turn:${ids[i]}`)
+        const nodeWithChronoId = createBaseNode(`${ids[i]}`)
+          .withGroup('weave:turn')
           .withKind(node.kind)
           .withData({
             ...node.data,
@@ -138,16 +141,38 @@ export class WeaverIncubate implements PayloadFlow {
         }
       }
 
-      try {
-        const tttSynthesizerFlowId = `flow:synthesis:${tttSynthesizer}`
-        await accessor.runFlow(synthIntent, tttSynthesizerFlowId, {
-          proposedNodeId: proposedNode.id
-        })
-      } catch (e) {
-        console.error(`Weaver: Failed to execute TTT synthesis flow:`, e)
+      const synthDisabled = false
+
+      if (synthDisabled) {
+        try {
+          const tttSynthesizerFlowId = `flow:synthesis:${tttSynthesizer}`
+          await accessor.runFlow(synthIntent, tttSynthesizerFlowId, {
+            proposedNodeId: proposedNode.id
+          })
+        } catch (e) {
+          console.error(`Weaver: Failed to execute TTT synthesis flow:`, e)
+        }
+
+        console.log(`Weaver: Ingested ${intent.nodes.length} nodes for [Go! Go! Go!] sequence.`)
       }
 
-      console.log(`Weaver: Ingested ${intent.nodes.length} nodes for [Go! Go! Go!] sequence.`)
+      console.log(`Weaver: Preparing to commit ${turnNodes.length} nodes to FSStore...`)
+      const commitIntent = {
+        id: `commit-test:${Date.now()}`,
+        kind: 'record:commit',
+        nodes: turnNodes,
+        options: {
+          collection: 'records'
+        }
+      }
+
+      // Dispatch to the SOR Flow
+      try {
+        await accessor.runFlow(commitIntent, 'flow:sor:fs-store:incubate:fs-record')
+        console.log('Weaver: Persistence flush complete.')
+      } catch (e) {
+        console.error('Weaver: Persistence failure:', e)
+      }
     }
   }
 }

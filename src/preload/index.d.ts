@@ -6,18 +6,18 @@ declare global {
     electron: ElectronAPI
     api: {
       engine: {
-        client: () => Promise<GraphNode>
+        client: () => Promise<BaseNode>
         chrome: {
           sidebarNodes: () => Promise<ChromeNode[]>
           exitApp: () => void
         }
         weaver: {
-          nodes(): Promise<GraphNode[]>
+          nodes(): Promise<BaseNode[]>
           /**
            * Dispatches a proposed narrative turn (GraphNodes) to the engine
            * for ingestion and synthesis resolution.
            */
-          submitTurn(node: GraphNode | GraphNode[]): Promise<void>
+          submitTurn(node: BaseNode | BaseNode[]): Promise<void>
         }
       }
     }

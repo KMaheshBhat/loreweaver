@@ -1,4 +1,4 @@
-import { createDataNode } from './hami'
+import { createDataNode, DataNode } from './hami'
 
 /**
  * Represents a directed relationship from one LoreWeaver base node to another.
@@ -12,18 +12,21 @@ export interface BaseEdge {
   data: Record<string, unknown>
 }
 
+export interface BaseNodeData {
+  group: string
+  [key: string]: unknown
+}
+
 /**
  * The atomic unit of the Temporal Loom.
  * A `BaseNode` is a versioned, addressable record whose `data` holds the
  * domain-specific payload and whose `meta` carries engine bookkeeping
  * (e.g., `recordState`, `engagementState`).
  */
-export interface BaseNode {
-  id: string
-  kind: string
-  data: Record<string, unknown>
-  edges: Array<BaseEdge>
-  meta: Record<string, unknown>
+
+export interface BaseNode extends DataNode {
+  kind: 'loreweaver:generic'
+  data: BaseNodeData
 }
 
 /** Lookup table mapping node ids to their corresponding `BaseNode` instances. */
@@ -40,6 +43,7 @@ export interface BaseNodeBuilder {
   withEdge(edge: BaseEdge): this
   withEdges(edge: BaseEdge[]): this
   withMeta(data: Record<string, unknown>): this
+  withGroup(group: string): this
   build(): BaseNode
 }
 
@@ -51,6 +55,7 @@ export interface BaseNodeBuilder {
  */
 export function createBaseNode(id: string): BaseNodeBuilder {
   const dataNode = createDataNode(id).withKind('loreweaver:generic')
+  let group = ''
   const builder: BaseNodeBuilder = {
     withKind(k) {
       if (k.startsWith('loreweaver:')) {
@@ -76,8 +81,19 @@ export function createBaseNode(id: string): BaseNodeBuilder {
       dataNode.withMeta(m)
       return this
     },
+    withGroup(g) {
+      group = g
+      return this
+    },
     build() {
-      return dataNode.build()
+      const rawNode = dataNode.build()
+      return {
+        ...rawNode,
+        data: {
+          ...rawNode.data,
+          group
+        }
+      } as BaseNode
     }
   }
   return builder

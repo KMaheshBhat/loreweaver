@@ -1,5 +1,4 @@
-import { BaseNode, BaseNodeMap } from '@engine/model/base'
-import { Intent } from '@engine/model/hami'
+import { DataNodeMap, Intent } from '@engine/model/hami'
 
 /**
  * Universal Options for SoR operations.
@@ -13,7 +12,7 @@ export interface RecordOptions extends Record<string, unknown> {
  * Each intent kind now has a corresponding expected result type.
  */
 export type RecordResult =
-  | BaseNodeMap // For record:hydrate
+  | DataNodeMap // For record:hydrate
   | string[] // For record:discover (IDs) or record:index (status)
   | void // For record:commit
 
@@ -30,7 +29,7 @@ export interface RecordHydrateIntent extends Intent {
 
 export interface RecordCommitIntent extends Intent {
   kind: 'record:commit'
-  options: RecordOptions & { nodes: BaseNode[] }
+  options: RecordOptions
 }
 
 export interface RecordIndexIntent extends Intent {

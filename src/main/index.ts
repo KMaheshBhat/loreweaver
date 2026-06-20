@@ -12,6 +12,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 import { ChronoIDMintProvider } from '@adaptor/incubate/id-mint'
+import { FSStoreIncubate } from '@adaptor/incubate/fs-store'
 
 const loreChoice = 1 // 0 - high-magic-academy 1 - grim-low-fantasy
 const enableDevToolOnStart = false
@@ -82,8 +83,10 @@ app.whenReady().then(async () => {
   const weaver = new WeaverIncubate() // The operational adaptor
   const glf = new GrittyLowFantasyIncubate()
   const hma = new HighMagicAcademyIncubate()
+  const fss = new FSStoreIncubate({ rootDirectory: '.' })
   ledger.addFlow(chrome)
   ledger.addFlow(ledger.createIdMintingFlow(new ChronoIDMintProvider(), [], { id: 'id-mint' }))
+  ledger.addFlow(ledger.createRecordFlow(fss, [], { id: 'fs-record' }))
   loreChoice % 2 == 1 ? ledger.addFlow(glf) : ledger.addFlow(hma)
   ledger.addFlow(weaver)
   const openRouterFree = {
@@ -135,7 +138,7 @@ app.whenReady().then(async () => {
   })
 
   ipcMain.handle('weaver:nodes', async (): Promise<BaseNode[]> => {
-    return ledger.getGraphNodes().filter((node) => node.data.group === 'weave')
+    return ledger.getGraphNodes().filter((node) => node.data.group.startsWith('weave'))
   })
 
   ipcMain.handle('weaver:submit', async (_event, nodes: BaseNode[]): Promise<void> => {

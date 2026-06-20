@@ -29,7 +29,7 @@ function Tapestry(): React.JSX.Element {
       const targetPrefixes: string[] = weaverConfig?.data?.tapestry?.['prefixes'] ?? []
       prefixesRef.current = targetPrefixes
       const filtered = allNodes.filter((node) =>
-        targetPrefixes.some((prefix) => node.id.startsWith(prefix))
+        targetPrefixes.some((prefix) => node.data.group.startsWith(prefix))
       )
       setNodes(filtered)
     }
@@ -37,7 +37,7 @@ function Tapestry(): React.JSX.Element {
     const removeListener = window.electron.ipcRenderer.on(
       'node:created',
       (_event, newNode: BaseNode) => {
-        if (prefixesRef.current.some((prefix) => newNode.id.startsWith(prefix))) {
+        if (prefixesRef.current.some((prefix) => newNode.data.group.startsWith(prefix))) {
           setNodes((prev) => {
             if (prev.find((n) => n.id === newNode.id)) return prev // Prevent duplicates
             return [...prev, newNode]
@@ -54,6 +54,7 @@ function Tapestry(): React.JSX.Element {
     if (!draft.trim() || isBusy) return
     const turnId = `req:${Date.now()}`
     const proposedNode = createBaseNode(`weave:turn:${turnId}`)
+      .withGroup('weave:turn')
       .withData({
         group: 'weave',
         title: `Turn #${nodes.length + 1}`,
@@ -63,6 +64,11 @@ function Tapestry(): React.JSX.Element {
       .withMeta({
         recordState: 'proposed',
         engagementState: 'active'
+      })
+      .withEdge({
+        kind: 'after',
+        toNodeId: nodes[nodes.length - 1].id,
+        data: {}
       })
       .build()
     setBusy(true)

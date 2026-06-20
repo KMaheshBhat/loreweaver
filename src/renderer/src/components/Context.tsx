@@ -28,7 +28,7 @@ function Context(): React.JSX.Element {
 
       const targetPrefixes: string[] = weaverConfig?.data?.context?.['prefixes'] ?? []
       const filtered = allNodes.filter((node) =>
-        targetPrefixes.some((prefix) => node.id.startsWith(prefix))
+        targetPrefixes.some((prefix) => node.data.group.startsWith(prefix))
       )
       setNodes(filtered)
     }

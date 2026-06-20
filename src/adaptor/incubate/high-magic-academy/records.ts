@@ -1,9 +1,9 @@
 import { createBaseNode, BaseNodeMap } from '@engine/model/base'
 
 export const seedNodes: BaseNodeMap = {
-  weaveInstructions: createBaseNode('weave:instructions')
+  weaveInstructions: createBaseNode('20260600000000')
+    .withGroup('weave:instructions')
     .withData({
-      group: 'weave',
       title: 'System Instructions',
       content:
         'You are an expert fantasy storyteller. Continue the story given the following details.'
@@ -14,9 +14,9 @@ export const seedNodes: BaseNodeMap = {
     })
     .build(),
 
-  character1: createBaseNode('weave:char:elara')
+  character1: createBaseNode('20260605000000')
+    .withGroup('weave:char')
     .withData({
-      group: 'weave',
       title: 'Elara Finch',
       isUser: true,
       content:
@@ -28,9 +28,9 @@ export const seedNodes: BaseNodeMap = {
     })
     .build(),
 
-  character2: createBaseNode('weave:char:corwin')
+  character2: createBaseNode('20260605000001')
+    .withGroup('weave:char')
     .withData({
-      group: 'weave',
       title: 'Corwin Thorne',
       isUser: true,
       content:
@@ -42,9 +42,9 @@ export const seedNodes: BaseNodeMap = {
     })
     .build(),
 
-  summary1: createBaseNode('weave:summary:1')
+  summary1: createBaseNode('20260605000100')
+    .withGroup('weave:summary')
     .withData({
-      group: 'weave',
       title: 'The Moonroot Expedition',
       isUser: true,
       content:
@@ -56,9 +56,9 @@ export const seedNodes: BaseNodeMap = {
     })
     .build(),
 
-  summary2: createBaseNode('weave:summary:2')
+  summary2: createBaseNode('20260605000101')
+    .withGroup('weave:summary')
     .withData({
-      group: 'weave',
       title: 'The Clocktower Disturbance',
       isUser: true,
       content:
@@ -70,9 +70,9 @@ export const seedNodes: BaseNodeMap = {
     })
     .build(),
 
-  scenario: createBaseNode('weave:scenario')
+  scenario: createBaseNode('20260605000200')
+    .withGroup('weave:scenario')
     .withData({
-      group: 'weave',
       title: 'The Lantern Vault',
       content:
         '## The Scenario: The Lantern Vault\nDeep beneath the Academy of Arcane Arts lies the Lantern Vault, a chamber lined with thousands of suspended glass lanterns. Each lantern contains a captured memory donated by generations of wizards and witches. During a routine cataloging assignment, one lantern suddenly shatters. A silver stream of memory escapes and begins drifting through the chamber, causing nearby lanterns to flicker awake. Strange voices echo through the darkness as forgotten moments begin leaking into the present. Elara tightens her grip on her wand while Corwin stares upward at the growing storm of glowing memories. Somewhere in the vault, something has awakened.'
@@ -83,9 +83,9 @@ export const seedNodes: BaseNodeMap = {
     })
     .build(),
 
-  turn75: createBaseNode('weave:turn:75')
+  turn75: createBaseNode('20260605000300')
+    .withGroup('weave:turn')
     .withData({
-      group: 'weave',
       title: 'Turn #75',
       content: 'The silver memory-stream coils between the lanterns.',
       timestamp: 1774432800000
@@ -96,9 +96,9 @@ export const seedNodes: BaseNodeMap = {
     })
     .build(),
 
-  result75_1: createBaseNode('engine:result:75-1')
+  result75_1: createBaseNode('20260605000300-1')
+    .withGroup('weave:engine:result')
     .withData({
-      group: 'weave',
       title: 'Result #75-1',
       kind: 'causality',
       metrics: {
@@ -111,7 +111,7 @@ export const seedNodes: BaseNodeMap = {
     })
     .withEdge({
       kind: 'causality-target',
-      toNodeId: 'weave:turn:75',
+      toNodeId: 'weave:turn:20260605000300',
       data: {}
     })
     .withMeta({
@@ -120,9 +120,9 @@ export const seedNodes: BaseNodeMap = {
     })
     .build(),
 
-  turn76: createBaseNode('weave:turn:76')
+  turn76: createBaseNode('20260605000301')
+    .withGroup('weave:turn')
     .withData({
-      group: 'weave',
       title: 'Turn #76',
       content:
         'A lantern near the ceiling bursts, releasing a memory of a duel fought generations ago.',
@@ -134,9 +134,9 @@ export const seedNodes: BaseNodeMap = {
     })
     .build(),
 
-  result76_1: createBaseNode('engine:result:76-1')
+  result76_1: createBaseNode('20260605000301-1')
+    .withGroup('weave:engine:result')
     .withData({
-      group: 'weave',
       title: 'Result #76-1',
       kind: 'causality',
       metrics: {
@@ -158,9 +158,9 @@ export const seedNodes: BaseNodeMap = {
     })
     .build(),
 
-  result76_2: createBaseNode('engine:result:76-2')
+  result76_2: createBaseNode('20260605000301-2')
+    .withGroup('weave:engine:result')
     .withData({
-      group: 'weave',
       title: 'Result #76-2',
       kind: 'introspection',
       metrics: {
@@ -182,22 +182,22 @@ export const seedNodes: BaseNodeMap = {
     })
     .build(),
 
-  turn77: createBaseNode('weave:turn:77')
+  turn77: createBaseNode('20260605000302')
+    .withGroup('weave:turn')
     .withData({
-      group: 'weave',
       title: 'Turn #77',
       content: 'Elara notices that several lanterns now display the same unknown crest...',
       timestamp: 1774432920000
     })
     .withMeta({
-      recordState: 'hooga-booga',
+      recordState: 'committed',
       engagementState: 'active'
     })
     .build(),
 
-  result77_1: createBaseNode('engine:result:77-1')
+  result77_1: createBaseNode('20260605000302-1')
+    .withGroup('weave:engine:result')
     .withData({
-      group: 'weave',
       title: 'Result #77-1',
       kind: 'causality',
       metrics: {

@@ -16,7 +16,7 @@ export const seedNodes: BaseNodeMap = {
     .withMenuVisibility(true)
     .withData({
       submitTurn: {
-        tttSynthesizer: 'pi-ai-synthesis:incubate:llama.cpp'
+        tttSynthesizer: 'pi-ai-synthesis:incubate:openrouter-free'
       },
       context: {
         icon: '󰛡',
@@ -34,7 +34,7 @@ export const seedNodes: BaseNodeMap = {
         icon: '󰛡',
         title: 'Accounting',
         subTitle: 'The Causality',
-        prefixes: ['engine:result']
+        prefixes: ['weave:engine:result']
       }
     })
     .build(),

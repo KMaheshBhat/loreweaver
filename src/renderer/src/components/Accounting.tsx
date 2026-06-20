@@ -28,7 +28,7 @@ function Accounting(): React.JSX.Element {
 
       const targetPrefixes: string[] = weaverConfig?.data?.accounting?.['prefixes'] ?? []
       const filtered = allNodes.filter((node) =>
-        targetPrefixes.some((prefix) => node.id.startsWith(prefix))
+        targetPrefixes.some((prefix) => node.data.group.startsWith(prefix))
       )
       setNodes(filtered)
     }

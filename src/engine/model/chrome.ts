@@ -1,11 +1,11 @@
-import { createBaseNode, BaseNode, BaseNodeBuilder } from './base'
+import { createBaseNode, BaseNode, BaseNodeBuilder, BaseNodeData } from './base'
 
 /**
  * Payload shape for a Chrome (application chrome) node.
  * Describes a top-level application surface such as a primary mode
  * (Weaver, Keeper, Settings) and its menu/visibility configuration.
  */
-export interface ChromeNodeData {
+export interface ChromeNodeData extends BaseNodeData {
   title: string
   routeMode: 'weaver' | 'keeper' | 'settings'
   availableInMenu: boolean
@@ -18,7 +18,6 @@ export interface ChromeNodeData {
  * Used by the System of Experience to render navigation and route state.
  */
 export interface ChromeNode extends BaseNode {
-  kind: 'loreweaver:chrome'
   data: ChromeNodeData
 }
 
@@ -69,6 +68,10 @@ export function createChromeNode(id: string): ChromeNodeBuilder {
     },
     withMeta(m) {
       base.withMeta(m)
+      return this
+    },
+    withGroup(g) {
+      base.withGroup(g)
       return this
     },
     withTitle(t) {
