@@ -1,21 +1,68 @@
 import { BaseNode, BaseNodeMap } from '@engine/model/base'
+import { Intent } from '@engine/model/hami'
 
 /**
- * The persistence contract for the System of Record.
- * Implementations of this interface are responsible for loading
- * and committing graph nodes to/from storage.
+ * Universal Options for SoR operations.
+ */
+export interface RecordOptions extends Record<string, unknown> {
+  collection: string
+}
+
+/**
+ * Result Union: Replaces 'any' to provide deterministic return types.
+ * Each intent kind now has a corresponding expected result type.
+ */
+export type RecordResult =
+  | BaseNodeMap // For record:hydrate
+  | string[] // For record:discover (IDs) or record:index (status)
+  | void // For record:commit
+
+export type RecordIntent =
+  | RecordHydrateIntent
+  | RecordCommitIntent
+  | RecordIndexIntent
+  | RecordDiscoverIntent
+
+export interface RecordHydrateIntent extends Intent {
+  kind: 'record:hydrate'
+  options: RecordOptions & { ids?: string[] }
+}
+
+export interface RecordCommitIntent extends Intent {
+  kind: 'record:commit'
+  options: RecordOptions & { nodes: BaseNode[] }
+}
+
+export interface RecordIndexIntent extends Intent {
+  kind: 'record:index'
+  options: RecordOptions & { event: 'full-build' | 'incremental' }
+}
+
+export interface RecordDiscoverIntent extends Intent {
+  kind: 'record:discover'
+  options: RecordOptions & {
+    // Replaced 'any' with Record to satisfy linter and maintain data-first structure
+    params?: Record<string, unknown>
+    traversal?: { id: string; direction: 'in' | 'out' | 'both' }
+  }
+}
+
+/**
+ * The Polymorphic System of Record Port.
  */
 export interface RecordProvider {
-  /**
-   * Hydrates the authoritative in-memory graph map from storage during boot.
-   * @param options Transient runtime knobs (e.g., historical offset bounds, read-isolation levels).
-   */
-  loadGraph(options?: Record<string, unknown>): Promise<BaseNodeMap>
+  readonly kind: string
 
   /**
-   * Commits a transactional batch of processed nodes to the ledger at the end of a turn.
-   * @param nodes The collection of dirty or newly committed nodes to write.
-   * @param options Transaction levers (e.g., atomic commit flags, bypass cache markers).
+   * The Synchronous Diagnostic Bouncer:
+   * Acts as a high-speed logic gate. Because it is synchronous, the Orchestrator
+   * can fail-fast during the 'Gather' phase of the tick cycle.
    */
-  commitBatch(nodes: BaseNode[], options?: Record<string, unknown>): Promise<void>
+  canHandle(intent: RecordIntent): boolean
+
+  /**
+   * The Command Router:
+   * Now returns a typed RecordResult instead of 'any'.
+   */
+  execute(intent: RecordIntent): Promise<RecordResult>
 }
