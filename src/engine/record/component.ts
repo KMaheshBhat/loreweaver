@@ -1,14 +1,24 @@
 import { Intent, PayloadAccessor, PayloadFlow } from '@hami-frameworx/core'
-import { RecordIntent, RecordProvider, RecordResult } from './record'
+import {
+  RecordIntent,
+  RecordProvider,
+  RecordResult,
+  kindRecordIntentHydrate,
+  kindRecordIntentCommit,
+  kindRecordIntentIndex,
+  kindRecordIntentDiscover,
+  kindRecordFlowBase
+} from './model'
 
 export class RecordFlow implements PayloadFlow {
   public readonly id: string
-  public readonly kind = 'record'
+  public readonly kind: string
   public readonly supportedIntents: string[]
   private provider: RecordProvider
 
   constructor(provider: RecordProvider, targetIntents: string[], options: { id: string }) {
-    this.id = `flow:sor:${provider.kind}:${options.id}`
+    this.id = `${options.id}`
+    this.kind = `${kindRecordFlowBase}:${provider.kind}`
     this.supportedIntents = targetIntents
     this.provider = provider
   }
@@ -33,19 +43,19 @@ export class RecordFlow implements PayloadFlow {
     const result: RecordResult = await this.provider.execute(recordIntent)
 
     switch (recordIntent.kind) {
-      case 'record:hydrate':
+      case kindRecordIntentHydrate:
         // Result is a BaseNodeMap; Reconcile/Merge into the God Object
         if (result) {
           Object.values(result).forEach((node) => accessor.addNode(node))
         }
         break
 
-      case 'record:commit':
+      case kindRecordIntentCommit:
         // Transactional flush to disk complete; usually returns void
         break
 
-      case 'record:discover':
-      case 'record:index':
+      case kindRecordIntentDiscover:
+      case kindRecordIntentIndex:
         if (recordIntent.options.targetNodeId && recordIntent.options.targetDataKey) {
           accessor.updateNode(
             recordIntent.options.targetNodeId as string,

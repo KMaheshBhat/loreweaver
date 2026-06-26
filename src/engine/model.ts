@@ -98,3 +98,5 @@ export function createBaseNode(id: string): BaseNodeBuilder {
   }
   return builder
 }
+
+export const kindSystemIntent = 'loreweaver:system:intent'

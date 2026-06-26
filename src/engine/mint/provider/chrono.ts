@@ -1,11 +1,11 @@
 import { uuidv7 } from 'uuidv7'
-import { MintIntent, MintProvider } from '@engine/mint/mint'
+import { MintIntent, MintProvider } from '../model'
 
 /**
- * Chrono ID Minting Provider.
+ * Chrono Minting Provider.
  * Ensures uniqueness and chronological sortability for batch generation
  */
-export class ChronoIDMintProvider implements MintProvider {
+export class ChronoMintProvider implements MintProvider {
   public readonly kind = 'chrono-id-mint:incubate'
 
   public async mintIDs(intent: MintIntent): Promise<string[]> {
@@ -13,7 +13,7 @@ export class ChronoIDMintProvider implements MintProvider {
     const ids: string[] = []
 
     for (let i = 0; i < count; i++) {
-      if (type === 'uuidv7') {
+      if (type === 'uuid') {
         ids.push(uuidv7())
       } else if (type === 'tsid') {
         ids.push(this.generateTsid())
@@ -22,13 +22,12 @@ export class ChronoIDMintProvider implements MintProvider {
         ids.push(`${Date.now()}`)
       }
 
-      // The established trade-off: Pause for 1 second between generations
-      // to avoid collisions in second-resolution TSIDs. [Conversation History]
+      // Pause for 1 second between generations to avoid collisions in
+      // second-resolution TSIDs.
       if (i < count - 1 && type === 'tsid') {
         await new Promise((resolve) => setTimeout(resolve, 1000))
       }
     }
-
     return ids
   }
 

@@ -1,6 +1,9 @@
 import { createBaseNode, BaseNodeMap } from '@engine/model'
 import { createChromeNode } from '@engine/chrome/model'
 
+// const tttSynthesizer = 'system:flow:synthesis:openrouter-free'
+const tttSynthesizer = 'system:flow:synthesis:llama.cpp'
+
 export const seedNodes: BaseNodeMap = {
   client: createBaseNode('client')
     .withData({
@@ -16,7 +19,7 @@ export const seedNodes: BaseNodeMap = {
     .withMenuVisibility(true)
     .withData({
       submitTurn: {
-        tttSynthesizer: 'pi-ai-synthesis:incubate:openrouter-free'
+        tttSynthesizer: tttSynthesizer
       },
       context: {
         icon: '󰛡',

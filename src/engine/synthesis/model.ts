@@ -1,6 +1,9 @@
 import { BaseNode } from '@engine/model'
 import { Intent } from '@hami-frameworx/core'
 
+export const kindSynthesisFlowBase = 'loreweaver:synthesis:flow'
+export const kindSynthesisIntent = 'loreweaver:synthesis:intent'
+
 /**
  * A chunk of text generated during streaming synthesis.
  * Carries the actual text delta and optional metadata from the

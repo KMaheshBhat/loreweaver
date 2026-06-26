@@ -1,28 +1,38 @@
-import { MintIntent, MintOptions, MintProvider } from '@engine/mint/mint'
 import { Intent, PayloadAccessor, PayloadFlow } from '@hami-frameworx/core'
+import { kindMintFlowBase, MintIntent, kindMintIntent, MintOptions, MintProvider } from './model'
+
+export function mintIntent(options: MintOptions): MintIntent {
+  return {
+    id: `${crypto.randomUUID()}`,
+    kind: kindMintIntent,
+    nodes: [],
+    options
+  }
+}
 
 export class MintFlow implements PayloadFlow {
   public readonly id: string
-  public readonly kind = 'mint'
+  public readonly kind: string
   public readonly supportedIntents: string[]
   private provider: MintProvider
 
   constructor(provider: MintProvider, targetIntents: string[], options: { id: string }) {
-    this.id = `flow:mint:${provider.kind}:${options.id}`
+    this.id = options.id
+    this.kind = `${kindMintFlowBase}:${provider.kind}`
     this.supportedIntents = targetIntents
     this.provider = provider
   }
 
   async execute(accessor: PayloadAccessor, intent: Intent): Promise<void> {
+    console.log(
+      `Executing mint flow: ${this.id}<${this.kind}> with intent ${JSON.stringify(intent)}`
+    )
     const mintIntent = intent as MintIntent
     const { targetNodeId, targetDataKey, count = 1 } = mintIntent.options as MintOptions
-    console.log(`Loom: Minting ${count} IDs for [${targetNodeId}.${targetDataKey}]...`)
+    if (isNaN(count) || count < 1) {
+      throw new Error('count must be a positive integer')
+    }
     const ids = await this.provider.mintIDs(mintIntent, intent.options)
-    accessor.updateNode(
-      targetNodeId,
-      { [targetDataKey]: ids.length === 1 ? ids : ids },
-      { recordState: 'committed' },
-      []
-    )
+    accessor.updateNode(targetNodeId, { [targetDataKey]: ids.length === 1 ? ids : ids }, {}, [])
   }
 }

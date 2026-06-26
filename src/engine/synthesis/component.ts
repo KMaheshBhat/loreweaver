@@ -1,15 +1,15 @@
 import { BaseNode } from '@engine/model'
 import { Intent, PayloadAccessor, PayloadFlow } from '@hami-frameworx/core'
-import { TextToTextSynthesisProvider } from './synthesis'
+import { kindSynthesisFlowBase, TextToTextSynthesisProvider } from './model'
 
-export interface SynthesisFlowCapabilityOptions {
+export interface SynthesisFlowOptions {
   id: string
   options?: Record<string, unknown>
 }
 
 export class SynthesisFlow implements PayloadFlow {
   public readonly id: string
-  public readonly kind = 'synthesis'
+  public readonly kind: string
   public readonly supportedIntents: string[]
   private provider: TextToTextSynthesisProvider
   private baseOptions: Record<string, unknown>
@@ -17,9 +17,10 @@ export class SynthesisFlow implements PayloadFlow {
   constructor(
     provider: TextToTextSynthesisProvider,
     targetIntents: string[],
-    options: SynthesisFlowCapabilityOptions
+    options: SynthesisFlowOptions
   ) {
-    this.id = `flow:synthesis:${provider.kind}:${options.id}`
+    this.id = options.id
+    this.kind = `${kindSynthesisFlowBase}:${provider.kind}`
     this.supportedIntents = targetIntents
     this.provider = provider
     this.baseOptions = options.options ?? {}
@@ -30,6 +31,9 @@ export class SynthesisFlow implements PayloadFlow {
     intent: Intent,
     options?: Record<string, unknown>
   ): Promise<void> {
+    console.log(
+      `Executing synthesis flow: ${this.id}<${this.kind}> with intent ${JSON.stringify(intent)}`
+    )
     // Narrowing nodes to domain GraphNodes for context
     const contextNodes = Object.values(accessor.getNodes()) as BaseNode[]
 
@@ -67,6 +71,9 @@ export class SynthesisFlow implements PayloadFlow {
     }
 
     // Finalize: Commit the final code-clean prose and permanently store the thought process
+    console.log(
+      `Synthesis completed for node [${responseNodeId}].\nThought: ${accumulatedThought}.\nProse: ${accumulatedProse} `
+    )
     accessor.updateNode(
       responseNodeId,
       { content: accumulatedProse, thinkContent: accumulatedThought },

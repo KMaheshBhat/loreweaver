@@ -1,15 +1,16 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync } from 'node:fs'
 import { join, basename, extname } from 'node:path'
 import matter from 'gray-matter'
-import { RecordIntent, RecordProvider, RecordResult } from './record'
+import { RecordIntent, RecordProvider, RecordResult } from '../model'
 import { DataNode, DataNodeMap } from '@hami-frameworx/core'
+import { record } from '../'
 
 /**
  * Standardized FSStore Adaptor.
  * Aligned with TBC Record and the Vault standards.
  * Enforces flat front matter and Title-to-Content replication.
  */
-export class FSStoreIncubate implements RecordProvider {
+export class FSStoreProvider implements RecordProvider {
   public readonly kind = 'fs-store:incubate'
   private rootDirectory: string
 
@@ -30,10 +31,10 @@ export class FSStoreIncubate implements RecordProvider {
     const collectionPath = join(this.rootDirectory, collection)
 
     switch (intent.kind) {
-      case 'record:hydrate':
+      case record.intentKinds.hydrate:
         return this.hydrateCollection(collection, collectionPath)
 
-      case 'record:commit':
+      case record.intentKinds.commit:
         return this.commitNodes(collectionPath, intent.nodes as DataNode[])
 
       default:

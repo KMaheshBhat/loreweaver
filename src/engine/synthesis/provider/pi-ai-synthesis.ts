@@ -8,7 +8,7 @@ import {
   stream
 } from '@earendil-works/pi-ai'
 import { BaseNode } from '@engine/model'
-import { TextSynthesisChunk, TextToTextSynthesisProvider } from './synthesis'
+import { TextSynthesisChunk, TextToTextSynthesisProvider } from '../model'
 import { Intent } from '@hami-frameworx/core'
 
 export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {

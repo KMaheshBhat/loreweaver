@@ -1,4 +1,6 @@
-import { createBaseNode, BaseNode, BaseNodeBuilder, BaseNodeData } from '@engine/model'
+import { BaseNode, BaseNodeBuilder, BaseNodeData, createBaseNode } from '@engine/model'
+
+export const kindChromeFlow = 'loreweaver:chrome:flow'
 
 /**
  * Payload shape for a Chrome (application chrome) node.
