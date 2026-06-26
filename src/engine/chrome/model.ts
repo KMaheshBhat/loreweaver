@@ -1,4 +1,4 @@
-import { createBaseNode, BaseNode, BaseNodeBuilder, BaseNodeData } from './base'
+import { createBaseNode, BaseNode, BaseNodeBuilder, BaseNodeData } from '@engine/model'
 
 /**
  * Payload shape for a Chrome (application chrome) node.

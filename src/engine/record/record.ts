@@ -1,4 +1,4 @@
-import { DataNodeMap, Intent } from '@engine/model/hami'
+import { DataNodeMap, Intent } from '@hami-frameworx/core'
 
 /**
  * Universal Options for SoR operations.

@@ -1,6 +1,6 @@
 import { ReactNode, ReactElement, useState, useCallback, useEffect } from 'react'
 import { UIContext, AppMode } from './UIContext'
-import { BaseNode } from '@engine/model/base'
+import { BaseNode } from '@engine/model'
 
 export const UIProvider = ({ children }: { children: ReactNode }): ReactElement => {
   const [currentMode, setMode] = useState<AppMode>('weaver')

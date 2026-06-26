@@ -7,9 +7,9 @@ import {
   Model,
   stream
 } from '@earendil-works/pi-ai'
-import { BaseNode } from '@engine/model/base'
-import { Intent } from '@engine/model/hami'
-import { TextSynthesisChunk, TextToTextSynthesisProvider } from '@engine/port/synthesis'
+import { BaseNode } from '@engine/model'
+import { TextSynthesisChunk, TextToTextSynthesisProvider } from './synthesis'
+import { Intent } from '@hami-frameworx/core'
 
 export class PiAiSynthesisProvider implements TextToTextSynthesisProvider {
   public readonly kind = 'pi-ai-synthesis:incubate'

@@ -1,6 +1,5 @@
-import { Intent } from '@engine/model/hami'
 import { seedNodes } from './records'
-import { PayloadAccessor, PayloadFlow } from '@engine/domain/hami'
+import { Intent, PayloadAccessor, PayloadFlow } from '@hami-frameworx/core'
 
 /**
  * The High Magic Academy Genesis Adaptor.

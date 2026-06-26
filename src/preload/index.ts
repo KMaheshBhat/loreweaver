@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { BaseNode } from '@engine/model/base'
+import { BaseNode } from '@engine/model'
 
 ipcRenderer.setMaxListeners(1000)
 

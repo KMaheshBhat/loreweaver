@@ -1,4 +1,4 @@
-import { BaseNode } from '@engine/model/base'
+import { BaseNode } from '@engine/model'
 import { useUI } from '@renderer/context/UIContext'
 import { useEffect, useState } from 'react'
 

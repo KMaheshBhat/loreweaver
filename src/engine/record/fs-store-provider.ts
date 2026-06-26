@@ -1,8 +1,8 @@
-import { RecordProvider, RecordIntent, RecordResult } from '@engine/port/record'
 import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync } from 'node:fs'
 import { join, basename, extname } from 'node:path'
 import matter from 'gray-matter'
-import { DataNode, DataNodeMap } from '@engine/model/hami'
+import { RecordIntent, RecordProvider, RecordResult } from './record'
+import { DataNode, DataNodeMap } from '@hami-frameworx/core'
 
 /**
  * Standardized FSStore Adaptor.

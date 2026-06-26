@@ -1,6 +1,5 @@
-import { Intent } from '@engine/model/hami'
 import { seedNodes } from './records'
-import { PayloadAccessor, PayloadFlow } from '@engine/domain/hami'
+import { Intent, PayloadAccessor, PayloadFlow } from '@hami-frameworx/core'
 
 /**
  * The Gritty Low Fantasy Genesis Adaptor.

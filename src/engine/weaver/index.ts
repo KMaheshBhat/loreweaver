@@ -1,7 +1,6 @@
-import { Intent } from '@engine/model/hami'
-import { PayloadAccessor, PayloadFlow } from '@engine/domain/hami'
-import { BaseNode, createBaseNode } from '@engine/model/base'
-import { MintIntent } from '@engine/port/mint'
+import { BaseNode, createBaseNode } from '@engine/model'
+import { MintIntent } from '@engine/mint/mint'
+import { Intent, PayloadAccessor, PayloadFlow } from '@hami-frameworx/core'
 
 /**
  * The Weaver Operational Adaptor.

@@ -1,6 +1,5 @@
-import { Intent } from '@engine/model/hami'
 import { seedNodes } from './records'
-import { PayloadAccessor, PayloadFlow } from '@engine/domain/hami'
+import { DataNode, Intent, PayloadAccessor, PayloadFlow } from '@hami-frameworx/core'
 
 /**
  * The Chrome Genesis Adaptor.
@@ -26,7 +25,7 @@ export class ChromeIncubate implements PayloadFlow {
       console.log(
         'Loom Throne: Stabilizing the System Frame. Please keep your hands and feet inside the viewport...'
       )
-      Object.values(seedNodes).forEach((node) => accessor.addNode(node))
+      Object.values(seedNodes).forEach((node) => accessor.addNode(node as DataNode))
     }
   }
 }

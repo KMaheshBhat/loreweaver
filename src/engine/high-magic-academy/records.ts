@@ -1,4 +1,4 @@
-import { createBaseNode, BaseNodeMap } from '@engine/model/base'
+import { createBaseNode, BaseNodeMap } from '@engine/model'
 
 export const seedNodes: BaseNodeMap = {
   weaveInstructions: createBaseNode('20260600000000')

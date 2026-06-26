@@ -1,5 +1,5 @@
-import { BaseNode } from '@engine/model/base'
-import { Intent } from '@engine/model/hami'
+import { BaseNode } from '@engine/model'
+import { Intent } from '@hami-frameworx/core'
 
 /**
  * A chunk of text generated during streaming synthesis.

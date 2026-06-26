@@ -1,5 +1,5 @@
-import { createBaseNode, BaseNodeMap } from '@engine/model/base'
-import { createChromeNode } from '@engine/model/chrome'
+import { createBaseNode, BaseNodeMap } from '@engine/model'
+import { createChromeNode } from '@engine/chrome/model'
 
 export const seedNodes: BaseNodeMap = {
   client: createBaseNode('client')

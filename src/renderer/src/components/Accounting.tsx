@@ -1,5 +1,5 @@
-import { BaseNode } from '@engine/model/base'
-import { createChromeNode } from '@engine/model/chrome'
+import { BaseNode } from '@engine/model'
+import { createChromeNode } from '@engine/chrome/model'
 import { useEffect, useState } from 'react'
 import Card from './Card'
 import Title from './Title'

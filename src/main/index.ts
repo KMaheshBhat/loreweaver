@@ -1,20 +1,13 @@
-import { ChromeIncubate } from '@adaptor/incubate/chrome'
-import { GrittyLowFantasyIncubate } from '@adaptor/incubate/gritty-low-fantasy'
-import { HighMagicAcademyIncubate } from '@adaptor/incubate/high-magic-academy'
-import { PiAiSynthesisProvider } from '@adaptor/incubate/pi-ai'
-import { WeaverIncubate } from '@adaptor/incubate/weaver'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { Ledger } from '@engine/domain/ledger'
-import { BaseNode } from '@engine/model/base'
-import { ChromeNode, isSidebarNode } from '@engine/model/chrome'
-import { Intent } from '@engine/model/hami'
+import { BaseNode } from '@engine/model'
+import { ChromeNode, isSidebarNode } from '@engine/chrome/model'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
-import { ChronoIDMintProvider } from '@adaptor/incubate/id-mint'
-import { FSStoreIncubate } from '@adaptor/incubate/fs-store'
 
-const loreChoice = 1 // 0 - high-magic-academy 1 - grim-low-fantasy
+import { Intent, version } from '@hami-frameworx/core'
+import { ledger } from '@engine/index'
+
 const enableDevToolOnStart = false
 
 /**
@@ -78,17 +71,19 @@ app.whenReady().then(async () => {
   })
 
   // Initialize the Deterministic Vessel (Empty)
-  const ledger = new Ledger()
+  const l = ledger.bootstrap() // l = mixin-less ledger
+  /*
+  const lLedger = new Ledger() // lLedger = legacy ledger
   const chrome = new ChromeIncubate()
   const weaver = new WeaverIncubate() // The operational adaptor
   const glf = new GrittyLowFantasyIncubate()
   const hma = new HighMagicAcademyIncubate()
   const fss = new FSStoreIncubate({ rootDirectory: '.' })
-  ledger.addFlow(chrome)
-  ledger.addFlow(ledger.createIdMintingFlow(new ChronoIDMintProvider(), [], { id: 'id-mint' }))
-  ledger.addFlow(ledger.createRecordFlow(fss, [], { id: 'fs-record' }))
-  loreChoice % 2 == 1 ? ledger.addFlow(glf) : ledger.addFlow(hma)
-  ledger.addFlow(weaver)
+  lLedger.addFlow(chrome)
+  lLedger.addFlow(lLedger.createIdMintingFlow(new ChronoIDMintProvider(), [], { id: 'id-mint' }))
+  lLedger.addFlow(lLedger.createRecordFlow(fss, [], { id: 'fs-record' }))
+  loreChoice % 2 == 1 ? lLedger.addFlow(glf) : lLedger.addFlow(hma)
+  lLedger.addFlow(weaver)
   const openRouterFree = {
     id: 'openrouter-free',
     options: {
@@ -109,14 +104,15 @@ app.whenReady().then(async () => {
       repetition_penalty: 1.0
     }
   }
-  ledger.addFlow(ledger.createSynthesisFlow(new PiAiSynthesisProvider(), [], openRouterFree))
-  ledger.addFlow(ledger.createSynthesisFlow(new PiAiSynthesisProvider(), [], llamaCpp))
+  lLedger.addFlow(lLedger.createSynthesisFlow(new PiAiSynthesisProvider(), [], openRouterFree))
+  lLedger.addFlow(lLedger.createSynthesisFlow(new PiAiSynthesisProvider(), [], llamaCpp))
+  */
 
   // The Reactive Bridge (Forwarding Ledger events to UI) [8]
   const forward = (win: BrowserWindow): void => {
-    ledger.on('node:created', (n) => win.webContents.send('node:created', n))
-    ledger.on('node:updated', (n) => win.webContents.send('node:updated', n))
-    ledger.on('node:removed', (n) => win.webContents.send('node:removed', n))
+    l.on('node:created', (n) => win.webContents.send('node:created', n))
+    l.on('node:updated', (n) => win.webContents.send('node:updated', n))
+    l.on('node:removed', (n) => win.webContents.send('node:removed', n))
   }
 
   // On-Start Lifecycle: Trigger Genesis
@@ -127,18 +123,18 @@ app.whenReady().then(async () => {
     nodes: [],
     options: { source: 'system' }
   }
-  ledger.runFlow(initIntent)
+  l.runFlow(initIntent)
 
   ipcMain.handle('client:node', async (): Promise<BaseNode | undefined> => {
-    return ledger.getNode('client')
+    return l.getNode('client')
   })
 
   ipcMain.handle('chrome:nodes:sidebar', async (): Promise<ChromeNode[]> => {
-    return ledger.getGraphNodes().filter(isSidebarNode)
+    return l.getGraphNodes().filter(isSidebarNode)
   })
 
   ipcMain.handle('weaver:nodes', async (): Promise<BaseNode[]> => {
-    return ledger.getGraphNodes().filter((node) => node.data.group.startsWith('weave'))
+    return l.getGraphNodes().filter((node) => node.data.group.startsWith('weave'))
   })
 
   ipcMain.handle('weaver:submit', async (_event, nodes: BaseNode[]): Promise<void> => {
@@ -148,7 +144,7 @@ app.whenReady().then(async () => {
       nodes: nodes,
       options: { source: 'client' }
     }
-    await ledger.runFlow(submitIntent)
+    await l.runFlow(submitIntent)
   })
 
   ipcMain.on('engine:chrome:exit', () => {
@@ -166,6 +162,8 @@ app.whenReady().then(async () => {
       forward(newWindow)
     }
   })
+
+  console.log(`HAMI ${version}`)
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

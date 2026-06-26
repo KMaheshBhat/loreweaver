@@ -1,4 +1,4 @@
-import { BaseNode } from '@engine/model/base'
+import { BaseNode } from '@engine/model'
 
 interface TitleProps {
   node: BaseNode

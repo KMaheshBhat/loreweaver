@@ -1,4 +1,4 @@
-import { createDataNode, DataNode } from './hami'
+import { createDataNode, DataEdge, DataNode } from '@hami-frameworx/core'
 
 /**
  * Represents a directed relationship from one LoreWeaver base node to another.
@@ -6,7 +6,7 @@ import { createDataNode, DataNode } from './hami'
  * the engine to model typed relationships (e.g., causality-target,
  * introspection-target) without coupling the core model to any single domain.
  */
-export interface BaseEdge {
+export interface BaseEdge extends DataEdge {
   toNodeId: string
   kind: string
   data: Record<string, unknown>

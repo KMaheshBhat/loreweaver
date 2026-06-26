@@ -1,5 +1,5 @@
-import { BaseNode } from '@engine/model/base'
-import { ChromeNode, createChromeNode } from '@engine/model/chrome'
+import { BaseNode } from '@engine/model'
+import { ChromeNode, createChromeNode } from '@engine/chrome/model'
 import { useEffect, useMemo, useState } from 'react'
 import { useUI } from '../context/UIContext'
 import NavItem from './NavItem'

@@ -1,5 +1,5 @@
 import { uuidv7 } from 'uuidv7'
-import { MintIntent, MintProvider } from '@engine/port/mint'
+import { MintIntent, MintProvider } from '@engine/mint/mint'
 
 /**
  * Chrono ID Minting Provider.

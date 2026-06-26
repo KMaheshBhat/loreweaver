@@ -1,4 +1,4 @@
-import { Intent } from '@engine/model/hami'
+import { Intent } from '@hami-frameworx/core'
 
 export interface MintOptions extends Record<string, unknown> {
   type: string

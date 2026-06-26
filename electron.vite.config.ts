@@ -27,8 +27,7 @@ export default defineConfig({
     resolve: {
       alias: {
         '@renderer': resolve('src/renderer/src'),
-        '@engine': resolve('src/engine'),
-        '@adaptor': resolve('src/adaptor')
+        '@engine': resolve('src/engine')
       }
     },
     plugins: [tailwindcss(), react()]
