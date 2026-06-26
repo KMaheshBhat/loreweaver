@@ -1,4 +1,4 @@
-import { RecordFlow } from './component'
+import { RecordFlow } from './flow'
 import {
   kindRecordFlowBase,
   kindRecordIntentCommit,

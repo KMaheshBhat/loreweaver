@@ -1,4 +1,4 @@
-import { WeaverFlow } from './component'
+import { WeaverFlow } from './flow'
 
 export const weaver = {
   flow: WeaverFlow

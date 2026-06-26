@@ -1,4 +1,4 @@
-import { SynthesisFlow } from './component'
+import { SynthesisFlow } from './flow'
 
 export const synthesis = {
   flow: SynthesisFlow

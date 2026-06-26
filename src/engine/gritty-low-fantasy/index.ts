@@ -1,4 +1,4 @@
-import { GrittyLowFantasyFlow } from './component'
+import { GrittyLowFantasyFlow } from './flow'
 import { kindGrittyLowFantasyFlow } from './model'
 
 export const grittyLowFantasy = {

@@ -20,3 +20,12 @@ export interface MintProvider {
   readonly kind: string
   mintIDs(intent: MintIntent, options?: Record<string, unknown>): Promise<string[]>
 }
+
+export function mintIntent(options: MintOptions): MintIntent {
+  return {
+    id: `${crypto.randomUUID()}`,
+    kind: kindMintIntent,
+    nodes: [],
+    options
+  }
+}

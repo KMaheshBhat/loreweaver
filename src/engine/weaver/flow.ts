@@ -1,7 +1,7 @@
 import { BaseNode, createBaseNode } from '@engine/model'
 import { kindRecordIntentCommit } from '@engine/record/model'
 import { Intent, PayloadAccessor, PayloadFlow } from '@hami-frameworx/core'
-import { engine } from '../'
+import { engine } from '..'
 import { kindWeaverFlow, kindWeaverIntentSubmitTurn } from './model'
 
 /**

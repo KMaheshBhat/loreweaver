@@ -1,14 +1,5 @@
 import { Intent, PayloadAccessor, PayloadFlow } from '@hami-frameworx/core'
-import { kindMintFlowBase, MintIntent, kindMintIntent, MintOptions, MintProvider } from './model'
-
-export function mintIntent(options: MintOptions): MintIntent {
-  return {
-    id: `${crypto.randomUUID()}`,
-    kind: kindMintIntent,
-    nodes: [],
-    options
-  }
-}
+import { kindMintFlowBase, MintIntent, MintOptions, MintProvider } from './model'
 
 export class MintFlow implements PayloadFlow {
   public readonly id: string

@@ -1,4 +1,4 @@
-import { ChromeFlow } from './component'
+import { ChromeFlow } from './flow'
 import { kindChromeFlow } from './model'
 
 export const chrome = {

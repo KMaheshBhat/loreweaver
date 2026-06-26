@@ -1,4 +1,4 @@
-import { HighMagicAcademyFlow } from './component'
+import { HighMagicAcademyFlow } from './flow'
 import { kindHighMagicAcademyFlow } from './model'
 
 export const highMagicAcademy = {
